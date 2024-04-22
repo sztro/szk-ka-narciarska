@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS instruktorzy CASCADE;
 DROP TABLE IF EXISTS instruktorzy_stopnie CASCADE;
 DROP TABLE IF EXISTS stopnie CASCADE;
 DROP TABLE IF EXISTS ubezpieczenia CASCADE;
-DROP TABLE IF EXISTS instruktorzy_dostepnosc CASCADE;
+DROP TABLE IF EXISTS dostepnosc_sezon CASCADE;
 DROP TABLE IF EXISTS klienci CASCADE;
 DROP TABLE IF EXISTS dzieci_odznaki CASCADE;
 DROP TABLE IF EXISTS odznaki CASCADE;
@@ -16,7 +16,6 @@ CREATE TABLE instruktorzy (
 	nazwisko VARCHAR(30) NOT NULL,
 	numer_telefonu NUMERIC(9) NOT NULL
 );
-	
 CREATE TABLE stopnie (
 	id_stopnia SERIAL PRIMARY KEY,
 	nazwa VARCHAR(100) NOT NULL,
@@ -192,6 +191,24 @@ INSERT INTO klienci (imie, nazwisko, kontakt, data_urodz) VALUES
     ('Filip', 'Michalski', 727868999, '2014-03-24'),
     ('Nadia', 'Szymańska', 828999111, '2013-09-01'),
     ('Leon', 'Wojciechowski', 333244555, '2012-08-07');
+   
+INSERT INTO odznaki (opis,sport) VALUES
+    ('biała', 'narty'),
+    ('biała', 'snowboard'),
+    ('zielona', 'narty'),
+    ('zielona', 'snowboard'),
+    ('niebieska', 'narty'),
+    ('niebieska', 'snowboard'),
+    ('czerwona', 'narty'),
+    ('czerwona', 'snowboard'),
+    ('czarna', 'narty'),
+    ('czarna', 'snowboard'),
+    ('brązowa', 'narty'),
+    ('brązowa', 'snowboard'),
+    ('srebrna', 'narty'),
+    ('srebrna', 'snowboard'),
+    ('złota', 'narty'),
+    ('złota', 'snowboard');
 
 INSERT INTO dzieci_odznaki(id_klienta, id_odznaki, data_uzysk) VALUES
     (2, 1, '2024-01-17'),
@@ -234,12 +251,12 @@ INSERT INTO dzieci_odznaki(id_klienta, id_odznaki, data_uzysk) VALUES
     (37, 5, '2024-02-01'),
     (38, 2, '2024-01-03'),
     (39, 2, '2024-01-03'),
-    (25, 5, '2023-03-21'),
-    (35, 5, '2023-03-21'),
-    (36, 5, '2023-03-21'),
-    (37, 5, '2023-03-21'),
-    (38, 5, '2023-03-21'),
-    (39, 5, '2023-03-21'),
+    (25, 3, '2023-03-21'),
+    (35, 3, '2023-03-21'),
+    (36, 3, '2023-03-21'),
+    (37, 3, '2023-03-21'),
+    (38, 3, '2023-03-21'),
+    (39, 3, '2023-03-21'),
     (25, 2, '2023-03-21'),
     (28, 2, '2023-03-21'),
     (15, 4, '2023-03-21'),
@@ -299,5 +316,49 @@ INSERT INTO dzieci_grupy (id_klienta, id_grupy) VALUES
 	(33, 4),
 	(34, 4),
 	(35, 4);
+	
+INSERT INTO harmonogram (id_instruktora, "data", godzina_od, godzina_do, id_klienta, id_grupy, czy_nieobecnosc) VALUES
+	(1, '2024-01-11', 9, 12, NULL, 1, false),
+	(1, '2024-01-12', 9, 12, NULL, 1, false),
+	(1, '2024-01-13', 9, 12, NULL, 1, false),
+	(1, '2024-01-14', 9, 12, NULL, 1, false),
+	(1, '2024-01-15', 9, 12, NULL, 1, false),
+	(1, '2024-01-16', 9, 12, NULL, 1, false),
+	(1, '2024-01-17', 9, 12, NULL, 1, false),
+	(2, '2024-01-18', 9, 12, NULL, 2, false),
+	(2, '2024-01-19', 9, 12, NULL, 2, false),
+	(2, '2024-01-20', 9, 12, NULL, 2, false),
+	(2, '2024-01-21', 9, 12, NULL, 2, false),
+	(2, '2024-01-22', 9, 12, NULL, 2, false),
+	(2, '2024-01-23', 9, 12, NULL, 2, false),
+	(2, '2024-01-24', 9, 12, NULL, 2, false),
+	(3, '2024-01-25', 9, 12, NULL, 3, false),
+	(3, '2024-01-26', 9, 12, NULL, 3, false),
+	(3, '2024-01-27', 9, 12, NULL, 3, false),
+	(3, '2024-01-28', 9, 12, NULL, 3, false),
+	(3, '2024-01-29', 9, 12, NULL, 3, false),
+	(3, '2024-01-30', 9, 12, NULL, 3, false),
+	(3, '2024-01-31', 9, 12, NULL, 3, false),
+	(7, '2024-01-18', 9, 12, NULL, 4, false),
+	(7, '2024-01-19', 9, 12, NULL, 4, false),
+	(7, '2024-01-20', 9, 12, NULL, 4, false),
+	(7, '2024-01-21', 9, 12, NULL, 4, false),
+	(7, '2024-01-22', 9, 12, NULL, 4, false),
+	(7, '2024-01-23', 9, 12, NULL, 4, false),
+	(7, '2024-01-24', 9, 12, NULL, 4, false),
+	(6, '2023-12-28', 9, 12, NULL, 5, false),
+	(6, '2023-12-29', 9, 12, NULL, 5, false),
+	(6, '2023-12-30', 9, 12, NULL, 5, false),
+	(6, '2023-12-31', 9, 12, NULL, 5, false),
+	(6, '2024-01-01', 9, 12, NULL, 5, false),
+	(6, '2024-01-02', 9, 12, NULL, 5, false),
+	(6, '2024-01-03', 9, 12, NULL, 5, false),
+	(6, '2024-01-04', 9, 12, NULL, 6, false),
+	(6, '2024-01-05', 9, 12, NULL, 6, false),
+	(6, '2024-01-06', 9, 12, NULL, 6, false),
+	(6, '2024-01-07', 9, 12, NULL, 6, false),
+	(6, '2024-01-08', 9, 12, NULL, 6, false),
+	(6, '2024-01-09', 9, 12, NULL, 6, false),
+	(6, '2024-01-10', 9, 12, NULL, 6, false),
 	
 	
