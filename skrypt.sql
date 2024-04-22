@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS instruktorzy CASCADE;
 DROP TABLE IF EXISTS instruktorzy_stopnie CASCADE;
 DROP TABLE IF EXISTS stopnie CASCADE;
 DROP TABLE IF EXISTS ubezpieczenia CASCADE;
-DROP TABLE IF EXISTS instruktorzy_dostepnosc CASCADE;
+DROP TABLE IF EXISTS dostepnosc_sezon CASCADE;
 DROP TABLE IF EXISTS klienci CASCADE;
 DROP TABLE IF EXISTS dzieci_odznaki CASCADE;
 DROP TABLE IF EXISTS odznaki CASCADE;
@@ -16,7 +16,6 @@ CREATE TABLE instruktorzy (
 	nazwisko VARCHAR(30) NOT NULL,
 	numer_telefonu NUMERIC(9) NOT NULL
 );
-	
 CREATE TABLE stopnie (
 	id_stopnia SERIAL PRIMARY KEY,
 	nazwa VARCHAR(100) NOT NULL,
