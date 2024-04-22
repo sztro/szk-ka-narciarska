@@ -179,6 +179,24 @@ INSERT INTO klienci (imie, nazwisko, kontakt, data_urodz) VALUES
     ('Filip', 'Michalski', 727868999, '2014-03-24'),
     ('Nadia', 'Szymańska', 828999111, '2013-09-01'),
     ('Leon', 'Wojciechowski', 333244555, '2012-08-07');
+   
+INSERT INTO odznaki (opis,sport) VALUES
+    ('biała', 'narty'),
+    ('biała', 'snowboard'),
+    ('zielona', 'narty'),
+    ('zielona', 'snowboard'),
+    ('niebieska', 'narty'),
+    ('niebieska', 'snowboard'),
+    ('czerwona', 'narty'),
+    ('czerwona', 'snowboard'),
+    ('czarna', 'narty'),
+    ('czarna', 'snowboard'),
+    ('brązowa', 'narty'),
+    ('brązowa', 'snowboard'),
+    ('srebrna', 'narty'),
+    ('srebrna', 'snowboard'),
+    ('złota', 'narty'),
+    ('złota', 'snowboard');
 
 INSERT INTO dzieci_odznaki(id_klienta, id_odznaki, data_uzysk) VALUES
     (2, 1, '2024-01-17'),
