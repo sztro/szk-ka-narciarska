@@ -86,11 +86,11 @@ CREATE TABLE harmonogram (
 	godz_do NUMERIC(2) NOT NULL,
 	id_klienta INT REFERENCES klienci,
 	id_grupy INT REFERENCES grupy,
-	czy_nieobecność BOOL NOT NULL,
+	czy_nieobecnosc BOOL NOT NULL,
 	CHECK(godz_od >= 9 AND godz_od <= 20),
 	CHECK(godz_do >= 9 AND godz_do <= 20),
 	CHECK(godz_do > godz_od),
-	CHECK(czy_nieobecność = false OR (id_klienta IS NULL AND id_grupy IS NULL))
+	CHECK(czy_nieobecnosc = false OR (id_klienta IS NULL AND id_grupy IS NULL))
 );
 
 INSERT INTO instruktorzy (imie, nazwisko, numer_telefonu) VALUES
@@ -304,7 +304,7 @@ INSERT INTO dzieci_grupy (id_klienta, id_grupy) VALUES
 	(34, 4),
 	(35, 4);
 	
-INSERT INTO harmonogram (id_instruktora, "data", godzina_od, godzina_do, id_klienta, id_grupy, czy_nieobecnosc) VALUES
+INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc) VALUES
 	(1, '2024-01-11', 9, 12, NULL, 1, false),
 	(1, '2024-01-12', 9, 12, NULL, 1, false),
 	(1, '2024-01-13', 9, 12, NULL, 1, false),
@@ -346,6 +346,8 @@ INSERT INTO harmonogram (id_instruktora, "data", godzina_od, godzina_do, id_klie
 	(6, '2024-01-07', 9, 12, NULL, 6, false),
 	(6, '2024-01-08', 9, 12, NULL, 6, false),
 	(6, '2024-01-09', 9, 12, NULL, 6, false),
-	(6, '2024-01-10', 9, 12, NULL, 6, false),
+	(6, '2024-01-10', 9, 12, NULL, 6, false)
+
+	;
 	
 	
