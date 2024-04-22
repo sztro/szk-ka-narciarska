@@ -103,6 +103,19 @@ INSERT INTO instruktorzy (imie, nazwisko, numer_telefonu) VALUES
 	('Albert', 'Einstein', 314159265),
 	('Leonhard', 'Euler', 271828182);
 
+INSERT INTO dostepnosc_sezon (id_instruktora, data_od, data_do) VALUES
+    (1, '2024-01-01', '2024-01-18'),
+    (1, '2024-01-23', '2024-02-10'),
+    (2, '2023-12-26', '2024-01-05'),
+    (2, '2024-01-16', '2023-02-07'),
+    (3, '2024-01-20', '2024-02-15'),
+    (4, '2023-12-25', '2024-01-01'),
+    (4, '2024-01-15', '2024-01-25'),
+    (6, '2023-12-26', '2024-01-13'),
+    (6, '2024-01-15', '2024-01-19'),
+    (7, '2023-12-26', '2024-01-05'),
+    (7, '2024-01-17', '2024-01-27');
+
 INSERT INTO stopnie (nazwa, stawka_godzinowa) VALUES
 	('Pomocnik Instruktora PZN', 65),
 	('Instruktor SITN', 70),
