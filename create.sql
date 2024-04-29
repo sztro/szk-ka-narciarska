@@ -915,7 +915,6 @@ INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, i
 	(4, '2024-01-21', 15, 17, 23, NULL, false),
 	(4, '2024-01-21', 17, 18, 15, NULL, false),
 	(7, '2024-01-21', 13, 15, 17, NULL, false),
-	(7, '2024-01-21', 16, 18, 38, NULL, false),
-	;
+	(7, '2024-01-21', 16, 18, 38, NULL, false);
 	
 	
