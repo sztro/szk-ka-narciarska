@@ -35,7 +35,8 @@ CREATE TABLE stawki_stopnie (
 CREATE TABLE instruktorzy_stopnie (
 	id_instruktora INT REFERENCES instruktorzy NOT NULL,
 	id_stopnia INT REFERENCES stopnie NOT NULL,
-	data_od DATE NOT NULL
+	data_od DATE NOT NULL,
+	PRIMARY KEY (id_instruktora, id_stopnia)
 );
 	
 CREATE TABLE ubezpieczenia (
@@ -51,7 +52,8 @@ CREATE TABLE dostepnosc_sezon (
 	id_instruktora INT REFERENCES instruktorzy NOT NULL,
 	data_od DATE NOT NULL,
 	data_do DATE NOT NULL,
-	CHECK(data_od <= data_do)
+	CHECK(data_od <= data_do),
+	PRIMARY KEY (id_instruktora, data_od)
 );
 
 CREATE TABLE klienci (
@@ -76,7 +78,8 @@ CREATE TABLE odznaki (
 CREATE TABLE dzieci_odznaki (
     id_klienta INT REFERENCES klienci NOT NULL,
     id_odznaki INT REFERENCES odznaki NOT NULL,
-    data_uzysk DATE NOT NULL
+    data_uzysk DATE NOT NULL,
+	PRIMARY KEY (id_klienta, id_odznaki, data_uzysk)
 );
 
 CREATE TABLE grupy (
@@ -105,7 +108,8 @@ CREATE TABLE harmonogram (
 	CHECK(godz_od >= 9 AND godz_od <= 20),
 	CHECK(godz_do >= 9 AND godz_do <= 20),
 	CHECK(godz_do > godz_od),
-	CHECK(czy_nieobecnosc = false OR (id_klienta IS NULL AND id_grupy IS NULL))
+	CHECK(czy_nieobecnosc = false OR (id_klienta IS NULL AND id_grupy IS NULL)),
+	PRIMARY KEY (id_instruktora, "data", godz_od)
 );
 
 INSERT INTO instruktorzy (imie, nazwisko, numer_telefonu) VALUES
@@ -897,10 +901,7 @@ INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, i
 	(1, '2024-01-19', 9, 12, 1, NULL, false),
 	(1, '2024-01-19', 13, 15, 2, NULL,false),
 	(1, '2024-01-19', 16, 19, 3, NULL, false),
-	(1, '2024-01-19', 13, 15, 5, NULL, false),
-	(2, '2024-01-19', 13, 15, 7, NULL, false),
 	(2, '2024-01-19', 16, 18, 8, NULL, false),
-	(2, '2024-01-19', 9, 12, 9, NULL, false),
 	(2, '2024-01-19', 13, 15, 10, NULL, false),
 	(4, '2024-01-19', 9, 11, 11, NULL, false),
 	(4, '2024-01-19', 11, 12, NULL, NULL, true),
