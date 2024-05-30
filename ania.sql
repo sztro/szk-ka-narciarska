@@ -1,4 +1,4 @@
-create or replace function wstaw_do_klienci (imiee varchar(30), nazwiskoo varchar(30), kontaktt numeric(9), dataa date) 
+create or replace function wstaw_klienta (imiee varchar(30), nazwiskoo varchar(30), kontaktt numeric(9), dataa date) 
 returns bool 
 as $$
 declare 
@@ -18,7 +18,7 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace function wstaw_do_harmonogram_nieobecnosci (id int, dataa date, godzina_od numeric(2), godzina_do numeric(2))
+create or replace function wstaw_nieobecnosci (id int, dataa date, godzina_od numeric(2), godzina_do numeric(2))
 returns bool
 as $$
 begin 
