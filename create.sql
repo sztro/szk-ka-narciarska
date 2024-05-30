@@ -152,7 +152,7 @@ INSERT INTO ubezpieczenia (numer_polisy, id_instruktora, data_od, data_do) VALUE
 
 INSERT INTO klienci (imie, nazwisko, kontakt, data_urodz) VALUES
 	('Piotr', 'Micek', 126647594, NULL),
-    ('Katerzyna', 'Grygiel',126646672 ,'2006-04-12'),
+    ('Katarzyna', 'Grygiel',126646672 ,'2006-04-12'),
     ('Andrzej', 'Pezarski', 126647564, NULL),
     ('Iwona', 'Cieślik', 126647560, '1978-12-24'),
     ('Marek', 'Zaionc', 126646649,'1953-02-16'),
