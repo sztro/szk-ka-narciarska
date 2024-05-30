@@ -130,7 +130,7 @@ INSERT INTO dostepnosc_sezon (id_instruktora, data_od, data_do) VALUES
     (7, '2023-12-26', '2024-01-05'),
     (7, '2024-01-17', '2024-01-27');
 
-INSERT INTO stopnie (nazwa, stawka_godzinowa) VALUES
+INSERT INTO stopnie (nazwa) VALUES
 	('Pomocnik Instruktora PZN'),
 	('Instruktor SITN'),
 	('Instruktor PZN'),
