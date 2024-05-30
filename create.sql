@@ -94,7 +94,8 @@ CREATE TABLE grupy (
 
 CREATE TABLE dzieci_grupy (
     id_klienta INT REFERENCES klienci NOT NULL,
-    id_grupy INT REFERENCES grupy NOT NULL
+    id_grupy INT REFERENCES grupy NOT NULL,
+	PRIMARY KEY (id_klienta, id_grupy)
 );
 	
 CREATE TABLE harmonogram (
