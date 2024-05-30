@@ -130,3 +130,35 @@ begin
 	return l_godzin * stawka;
 end;
 $$ language plpgsql;
+
+create or replace function umow_dowolny(klient int, dzien date, godzina int)
+	returns bool as 
+$$
+declare
+	id integer;
+begin
+	
+	select a.id --into id
+	from (
+		select 
+			l.id,
+			count(lp.pesel) as liczba_pacjentow
+		from 
+			lekarze l
+			join specjalizacje s on s.id_lekarza = l.id
+			left join lekarze_prowadzacy lp on lp.lekarz = l.id
+		where 
+			s.specjalizacja = 'Medycyna rodzinna'
+		group by 
+			l.id
+		order by 
+			count(lp.pesel) asc, 
+			l.id asc
+	) a
+	limit 1;
+
+	insert into lekarze_prowadzacy(pesel, lekarz) values
+	(new.pesel, id);
+	return new;
+end;
+$$ language plpgsql;
