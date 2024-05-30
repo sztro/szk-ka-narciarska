@@ -110,6 +110,7 @@ CREATE TABLE harmonogram (
 	CHECK(godz_do >= 9 AND godz_do <= 20),
 	CHECK(godz_do > godz_od),
 	CHECK(czy_nieobecnosc = false OR (id_klienta IS NULL AND id_grupy IS NULL)),
+	CHECK(czy_nieobecnosc = true OR ((id_klienta IS NULL AND id_grupy IS NOT NULL) OR (id_klienta IS NOT NULL AND id_grupy IS NULL))),
 	PRIMARY KEY (id_instruktora, "data", godz_od)
 );
 
@@ -929,7 +930,7 @@ INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, i
 	(4, '2024-01-20', 15, 18, 34, NULL, false),
 	(4, '2024-01-20', 19, 20, 35, NULL, false),
 	(7, '2024-01-20', 13, 15, 27, NULL, false),
-	(7, '2024-01-20', 15, 16, NULL, NULL, false),
+	(7, '2024-01-20', 15, 16, NULL, NULL, true),
 	(7, '2024-01-20', 16, 18, 9, NULL, false),
 --21.01
 	(2, '2024-01-21', 13, 15, 22, NULL, false),
