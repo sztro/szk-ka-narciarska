@@ -429,7 +429,7 @@ INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, i
 	(7, '2023-12-27', 14, 15, NULL, NULL, true),
 	(7, '2023-12-27', 15, 16, 35, NULL, false),
 	(7, '2023-12-27', 17, 18, 36, NULL, false),
-	(7, '2023-12-27', 19, 20, NULL, NULL, true)
+	(7, '2023-12-27', 19, 20, NULL, NULL, true),
 -- 28.12
 	(2, '2023-12-28', 9, 10, 1, NULL, false),
 	(2, '2023-12-28', 10, 11, 2, NULL, false),
@@ -473,7 +473,7 @@ INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, i
 	(4, '2023-12-29', 14, 15, 9, NULL, false),
 	(4, '2023-12-29', 15, 16, NULL, NULL, true),
 	(4, '2023-12-29', 16, 18, 11, NULL, false),
-	(4, '2023-12-29', 19, 20, 12, NULL, false),,
+	(4, '2023-12-29', 19, 20, 12, NULL, false),
 	(6, '2023-12-29', 12, 14, 20, NULL, false),
 	(6, '2023-12-29', 14, 15, 19, NULL, false),
 	(6, '2023-12-29', 15, 16, NULL, NULL, true),
@@ -841,7 +841,7 @@ INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, i
 	(6, '2024-01-17', 10, 12, 13, NULL, false),
 	(6, '2024-01-17', 12, 14, NULL, NULL, true),
 	(6, '2024-01-17', 16, 18, 19, NULL, false),
-	(6, '2024-01-17', 18, 20, 26, NULL, false).
+	(6, '2024-01-17', 18, 20, 26, NULL, false),
 	(7, '2024-01-17', 9, 10, 21, NULL, false),
 	(7, '2024-01-17', 13, 15, 40, NULL, false),
 	(7, '2024-01-17', 17, 19, 27, NULL, false),
