@@ -20,7 +20,7 @@ CREATE TABLE instruktorzy (
 );
 CREATE TABLE stopnie (
 	id_stopnia SERIAL PRIMARY KEY,
-	nazwa VARCHAR(100) NOT NULL,
+	nazwa VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE stawki_stopnie (
@@ -29,7 +29,7 @@ CREATE TABLE stawki_stopnie (
 	data_od DATE NOT NULL,
 	PRIMARY KEY (id_stopnia, data_od),
 	CHECK (stawka_godzinowa >= 0),
-	CHECK (data_od >= CURRENT_DATE)
+	CHECK (data_od <= CURRENT_DATE)
 );
 
 CREATE TABLE instruktorzy_stopnie (
@@ -70,7 +70,7 @@ CREATE TABLE sporty (
 CREATE TABLE odznaki (
     id_odznaki SERIAL PRIMARY KEY,
     opis VARCHAR(20),
-    id_sport INT REFERENCES sporty NOT NULL
+    id_sportu INT REFERENCES sporty NOT NULL
 );
 
 CREATE TABLE dzieci_odznaki (
@@ -139,14 +139,14 @@ INSERT INTO stopnie (nazwa) VALUES
 	('Instruktor SITS'),
 	('Instruktor Zawodowy SITS');
 
-INSERT INTO stawka_godzinowa (id_stopnia, stawka_godzinowa, data_od) VALUES
-	(1, 65),
-	(2, 70),
-	(3, 75),
-	(4, 80),
-	(5, 65),
-	(6, 70),
-	(7,75);
+INSERT INTO stawki_stopnie (id_stopnia, stawka_godzinowa, data_od) VALUES
+	(1, 65, '2014-01-01'),
+	(2, 70, '2014-01-01'),
+	(3, 75, '2014-01-01'),
+	(4, 80, '2014-01-01'),
+	(5, 65, '2014-01-01'),
+	(6, 70, '2014-01-01'),
+	(7, 75, '2014-01-01');
 
 
 INSERT INTO instruktorzy_stopnie (id_instruktora, id_stopnia, data_od) VALUES
@@ -221,7 +221,7 @@ INSERT INTO sporty (opis) VALUES
 	('narty'),
 	('snowboard');
    
-INSERT INTO odznaki (opis,sport) VALUES
+INSERT INTO odznaki (opis, id_sportu) VALUES
     ('biała', 1),
     ('biała', 2),
     ('zielona', 1),
