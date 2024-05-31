@@ -7,4 +7,5 @@ end;
 $grupy_update$ language plpgsql;
 create or replace trigger grupy_upd_del
 before delete or update on grupy
-for each row execute procedure grupy_upd_del(); 
+for each row execute procedure grupy_upd_del();
+
