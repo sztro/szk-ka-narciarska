@@ -1,18 +1,12 @@
+drop function wyswietl_harmonogram(dzien date);
 create or replace function wyswietl_harmonogram(dzien date)
-returns table (id_instruktora int, "9" varchar, "10" varchar, "11" varchar, "12" varchar, "13" varchar,  
-    "14" varchar,  "15" varchar, "16" varchar, "17" varchar, "18" varchar, "19" varchar, "20" varchar
+returns table (instrukor varchar(61), "9" text, "10" text, "11" text, "12" text, "13" text,  
+    "14" text,  "15" text, "16" text, "17" text, "18" text, "19" text, "20" text
 ) as $$
 begin
     return query
     select 
-        i.imie || ' ' || i.nazwisko as "Instruktor",
-        max(case when h.godz_od <= 8 and h.godz_do > 8 then 
-            case 
-                when h.czy_nieobecnosc then 'nieobecność'
-                when h.id_klienta is not null then k.imie
-                when h.id_grupy is not null then 'grupa ' 
-            end 
-        end) as "8",
+        cast(i.imie || ' ' || i.nazwisko AS varchar(61)) as "Instruktor",
         max(case when h.godz_od <= 9 and h.godz_do > 9 then 
             case 
                 when h.czy_nieobecnosc then 'nieobecność'
@@ -160,6 +154,7 @@ begin
 end;
 $$ language plpgsql;
 
+select * from wyswietl_harmonogram('2024-01-01');
 
 
 
