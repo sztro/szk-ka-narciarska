@@ -17,16 +17,21 @@ public class Menu extends Application {
         primaryStage.setTitle("Menu");
 
         Button btnHarmonogram = new Button("Harmonogram");
+        Button btnZnajdzKlienta = new Button("Znajdź ID klienta");
+        Button btnZnajdzInstruktora = new Button("Znajdź ID instruktora");
+        Button btnWyswietlGrupy = new Button("Wyswietl dostępne grupy");
         Button btnDodajKlienta = new Button("Dodaj klienta");
         Button btnUmowNaLekcjeZInstruktorem = new Button("Umów na lekcję z konkretnym instruktorem");
         Button btnUmowNaLekcjeZDowolnymInstruktorem = new Button("Umów na lekcję z dowolnym instruktorem");
         Button btnDodajDoGrupy = new Button("Dodaj do grupy");
+        Button btnDodajGrupe = new Button("Dodaj grupe");
         Button btnDodajNieobecnosc = new Button("Dodaj nieobecność godzinową");
         Button btnWyswietlWyplateDzienna = new Button("Wyświetl wypłatę dzienną");
 
+
         VBox vbox = new VBox();
-        vbox.getChildren().addAll(btnHarmonogram, btnDodajKlienta, btnUmowNaLekcjeZInstruktorem,
-                btnUmowNaLekcjeZDowolnymInstruktorem, btnDodajDoGrupy, btnDodajNieobecnosc, btnWyswietlWyplateDzienna);
+        vbox.getChildren().addAll(btnHarmonogram, btnZnajdzKlienta, btnZnajdzInstruktora, btnWyswietlGrupy, btnDodajKlienta, btnUmowNaLekcjeZInstruktorem,
+                btnUmowNaLekcjeZDowolnymInstruktorem, btnDodajDoGrupy, btnDodajGrupe, btnDodajNieobecnosc, btnWyswietlWyplateDzienna);
         vbox.setSpacing(10); // Dodanie odstępów między przyciskami
         vbox.setPadding(new Insets(10)); // Dodanie marginesów do kontenera
 
