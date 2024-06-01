@@ -117,6 +117,7 @@ CREATE TABLE lista_oczekujacych (
 	id_klienta INT NOT NULL REFERENCES klienci,
 	data_rozpoczecia DATE NOT NULL,
 	id_odznaki INT NOT NULL REFERENCES odznaki
+	PRIMARY KEY(id_klienta, data_rozpoczecia, id_odznaki)
 )
 INSERT INTO instruktorzy (imie, nazwisko, numer_telefonu) VALUES
 	('Szymon', 'Trofimiec', 135792468),
