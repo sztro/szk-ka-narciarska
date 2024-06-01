@@ -19,7 +19,7 @@ class CustomCellRenderer extends DefaultTableCellRenderer {
             c.setBackground(Color.WHITE);
             c.setForeground(Color.BLACK);
         } else if ("nieobecność".equals(value)) {
-            c.setBackground(Color.decode("#465775"));
+            c.setBackground(Color.decode("#6077A1"));
             c.setForeground(Color.BLACK);
         } else {
             c.setBackground(Color.decode("#8EB1ED"));
@@ -31,7 +31,11 @@ class CustomCellRenderer extends DefaultTableCellRenderer {
 }
 
 public class Harmonogram {
-    public static void main(String[] args) {
+    private String data;
+    public Harmonogram(String data) {
+        this.data = data;
+    }
+    public void show() {
         String url = "jdbc:postgresql://localhost:5432/szkolka";
         String user = "ula";
         String password = "ula";
@@ -39,7 +43,7 @@ public class Harmonogram {
         try {
             Connection connection = DriverManager.getConnection(url, user, password);
             Statement statement = connection.createStatement();
-            String query = "SELECT * FROM wyswietl_harmonogram('2024-01-01')";
+            String query = "SELECT * FROM wyswietl_harmonogram('" + data + "')";
             ResultSet resultSet = statement.executeQuery(query);
 
             // Pobranie metadanych kolumn
