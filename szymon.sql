@@ -55,3 +55,13 @@ end;
 $aft_grupy_insert$ language plpgsql;
 create or replace trigger aft_grupy_insert after insert on grupy
 for each row execute procedure aft_grupy_insert();
+create or replace function licznosc_grupy(id_grp int)
+returns int as
+$$
+declare
+a int;
+begin
+	select count(*) from dzieci_grupy d into a where d.id_grupy = id_grp;
+	return a;
+end;
+$$ language plpgsql;
