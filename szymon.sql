@@ -65,3 +65,28 @@ begin
 	return a;
 end;
 $$ language plpgsql;
+-----------------------------------------
+create or replace function lista_oczekujacych_tr()
+returns trigger as
+$lista_oczekujacych_tr$
+declare
+	id_grp int;
+begin
+	if exists(
+		select * from grupy 
+		where data_rozpoczecia = new.data_rozpoczecia and id_odznaki = new.id_odznaki 
+		and licznosc_grupy(id_grupy) < maks_dzieci
+	)then
+		select id_grupy from grupy into id_grp
+		where data_rozpoczecia = new.data_rozpoczecia and id_odznaki = new.id_odznaki 
+		and licznosc_grupy(id_grupy) < maks_dzieci
+		limit 1;
+		insert into dzieci_grupy (id_klienta, id_grupy) VALUES (new.id_klienta, id_grp);
+		return null;
+	end if;
+	return new;
+end;
+$lista_oczekujacych_tr$ language plpgsql;
+create or replace trigger lista_oczekujacych_tr before insert or update on lista_oczekujacych
+for each row execute procedure lista_oczekujacych_tr();
+
