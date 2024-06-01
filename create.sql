@@ -113,7 +113,11 @@ CREATE TABLE harmonogram (
 	CHECK(czy_nieobecnosc = true OR ((id_klienta IS NULL AND id_grupy IS NOT NULL) OR (id_klienta IS NOT NULL AND id_grupy IS NULL))),
 	PRIMARY KEY (id_instruktora, "data", godz_od)
 );
-
+CREATE TABLE lista_oczekujacych (
+	id_klienta INT NOT NULL REFERENCES klienci,
+	data_rozpoczecia DATE NOT NULL,
+	id_odznaki INT NOT NULL REFERENCES odznaki
+)
 INSERT INTO instruktorzy (imie, nazwisko, numer_telefonu) VALUES
 	('Szymon', 'Trofimiec', 135792468),
 	('Urszula', 'Pilśniak', 111222555),
