@@ -131,34 +131,39 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace function umow_dowolny(klient int, dzien date, godzina int)
+create or replace function umow_dowolny(klient int, dzien date, h_od int, h_do int)
 	returns bool as 
 $$
 declare
 	id integer;
 begin
-	
-	select a.id --into id
-	from (
-		select 
-			l.id,
-			count(lp.pesel) as liczba_pacjentow
-		from 
-			lekarze l
-			join specjalizacje s on s.id_lekarza = l.id
-			left join lekarze_prowadzacy lp on lp.lekarz = l.id
-		where 
-			s.specjalizacja = 'Medycyna rodzinna'
-		group by 
-			l.id
-		order by 
-			count(lp.pesel) asc, 
-			l.id asc
-	) a
+	select h.id_instruktora into id
+	from harmonogram h 
+	join dostepnosc_sezon ds on h.id_instruktora = ds.id_instruktora 
+	where h.id_instruktora not in (
+		select id_instruktora 
+		from harmonogram h 
+		where "data" = dzien
+			and h.godz_od <= h_od
+			and h.godz_do >= h_do	
+		)
+		and ds.data_od <= dzien
+		and ds.data_do >= dzien
+		and h."data" = dzien
+	group by h.id_instruktora 
+	order by count(*)
 	limit 1;
-
-	insert into lekarze_prowadzacy(pesel, lekarz) values
-	(new.pesel, id);
-	return new;
+	if id is null then return false; end if;
+	insert into harmonogram(pesel, lekarz) values
+	(id, dzien, h_od, h_do, klient, NULL, false);
+	return true;
 end;
 $$ language plpgsql;
+
+
+
+
+
+
+
+
