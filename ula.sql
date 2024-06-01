@@ -1,6 +1,6 @@
 drop function wyswietl_harmonogram(dzien date);
 create or replace function wyswietl_harmonogram(dzien date)
-returns table (instrukor varchar(61), "9" text, "10" text, "11" text, "12" text, "13" text,  
+returns table (Instrukor varchar(61), "9" text, "10" text, "11" text, "12" text, "13" text,  
     "14" text,  "15" text, "16" text, "17" text, "18" text, "19" text, "20" text
 ) as $$
 begin
@@ -153,8 +153,6 @@ begin
 	return true;
 end;
 $$ language plpgsql;
-
-select * from wyswietl_harmonogram('2024-01-01');
 
 
 
