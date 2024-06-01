@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
+import main.User;
 class CustomCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
@@ -36,9 +36,9 @@ public class Harmonogram {
         this.data = data;
     }
     public void show() {
-        String url = "jdbc:postgresql://localhost:5432/szkolka";
-        String user = "ula";
-        String password = "ula";
+        String url = User.url ;
+        String user = User.username;
+        String password = User.password;
 
         try {
             Connection connection = DriverManager.getConnection(url, user, password);
