@@ -9,8 +9,9 @@ DROP TABLE IF EXISTS odznaki CASCADE;
 DROP TABLE IF EXISTS dzieci_grupy CASCADE;
 DROP TABLE IF EXISTS grupy CASCADE;
 DROP TABLE IF EXISTS harmonogram CASCADE;
-DROP TABLE IF EXISTS stawki_stopnie;
-DROP TABLE IF EXISTS sporty;
+DROP TABLE IF EXISTS stawki_stopnie CASCADE;
+DROP TABLE IF EXISTS sporty CASCADE;
+DROP TABLE IF EXISTS lista_oczekujacych CASCADE;
 
 CREATE TABLE instruktorzy (
 	id_instruktora SERIAL PRIMARY KEY,
@@ -18,9 +19,16 @@ CREATE TABLE instruktorzy (
 	nazwisko VARCHAR(30) NOT NULL,
 	numer_telefonu NUMERIC(9) NOT NULL
 );
+
+CREATE TABLE sporty (
+	id_sportu SERIAL PRIMARY KEY,
+	opis VARCHAR(9)
+);
+
 CREATE TABLE stopnie (
 	id_stopnia SERIAL PRIMARY KEY,
-	nazwa VARCHAR(100) NOT NULL
+	nazwa VARCHAR(100) NOT NULL,
+	id_sportu INT REFERENCES sporty NOT NULL
 );
 
 CREATE TABLE stawki_stopnie (
@@ -62,11 +70,6 @@ CREATE TABLE klienci (
     nazwisko VARCHAR(30) NOT NULL,
     kontakt NUMERIC(9) NOT NULL,
     data_urodz DATE
-);
-
-CREATE TABLE sporty (
-	id_sportu SERIAL PRIMARY KEY,
-	opis VARCHAR(9)
 );
 
 CREATE TABLE odznaki (
@@ -113,12 +116,14 @@ CREATE TABLE harmonogram (
 	CHECK(czy_nieobecnosc = true OR ((id_klienta IS NULL AND id_grupy IS NOT NULL) OR (id_klienta IS NOT NULL AND id_grupy IS NULL))),
 	PRIMARY KEY (id_instruktora, "data", godz_od)
 );
+
 CREATE TABLE lista_oczekujacych (
 	id_klienta INT NOT NULL REFERENCES klienci,
 	data_rozpoczecia DATE NOT NULL,
-	id_odznaki INT NOT NULL REFERENCES odznaki
+	id_odznaki INT NOT NULL REFERENCES odznaki,
 	PRIMARY KEY(id_klienta, data_rozpoczecia, id_odznaki)
-)
+);
+
 INSERT INTO instruktorzy (imie, nazwisko, numer_telefonu) VALUES
 	('Szymon', 'Trofimiec', 135792468),
 	('Urszula', 'Pilśniak', 111222555),
@@ -140,15 +145,19 @@ INSERT INTO dostepnosc_sezon (id_instruktora, data_od, data_do) VALUES
     (6, '2024-01-15', '2024-01-19'),
     (7, '2023-12-26', '2024-01-05'),
     (7, '2024-01-17', '2024-01-27');
+   
+INSERT INTO sporty (opis) VALUES
+	('narty'),
+	('snowboard');
 
-INSERT INTO stopnie (nazwa) VALUES
-	('Pomocnik Instruktora PZN'),
-	('Instruktor SITN'),
-	('Instruktor PZN'),
-	('Instruktor ISIA'),
-	('Asystent Instruktora SITS'),
-	('Instruktor SITS'),
-	('Instruktor Zawodowy SITS');
+INSERT INTO stopnie (nazwa, id_sportu) VALUES
+	('Pomocnik Instruktora PZN', 1),
+	('Instruktor SITN', 1),
+	('Instruktor PZN', 1),
+	('Instruktor ISIA', 1),
+	('Asystent Instruktora SITS', 2),
+	('Instruktor SITS', 2),
+	('Instruktor Zawodowy SITS', 2);
 
 INSERT INTO stawki_stopnie (id_stopnia, stawka_godzinowa, data_od) VALUES
 	(1, 65, '2014-01-01'),
@@ -227,10 +236,6 @@ INSERT INTO klienci (imie, nazwisko, kontakt, data_urodz) VALUES
     ('Filip', 'Michalski', 727868999, '2014-03-24'),
     ('Nadia', 'Szymańska', 828999111, '2013-09-01'),
     ('Leon', 'Wojciechowski', 333244555, '2012-08-07');
-
-INSERT INTO sporty (opis) VALUES
-	('narty'),
-	('snowboard');
    
 INSERT INTO odznaki (opis, id_sportu) VALUES
     ('biała', 1),

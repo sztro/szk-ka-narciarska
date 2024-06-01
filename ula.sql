@@ -126,7 +126,7 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace function umow_dowolny(klient int, dzien date, h_od int, h_do int)
+create or replace function umow_dowolny(klient int, dzien date, h_od int, h_do int, sport int)
 	returns bool as 
 $$
 declare
