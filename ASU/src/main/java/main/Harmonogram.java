@@ -9,14 +9,14 @@ import java.sql.Statement;
 
 public class Harmonogram {
     public static void main(String[] args) {
-        String url = "jdbc:postgresql://localhost:5432/your_database";
-        String user = "your_username";
-        String password = "your_password";
+        String url = "jdbc:postgresql://localhost:5432/szkolka";
+        String user = "ania";
+        String password = "10ak11ak";
 
         try {
             Connection connection = DriverManager.getConnection(url, user, password);
             Statement statement = connection.createStatement();
-            String query = "SELECT * FROM your_table";
+            String query = "SELECT * FROM wyswietl_harmonogram('2024-01-01')";
             ResultSet resultSet = statement.executeQuery(query);
 
             // Pobranie metadanych kolumn
