@@ -1,4 +1,5 @@
 drop function wyswietl_harmonogram(dzien date);
+
 create or replace function wyswietl_harmonogram(dzien date)
 returns table (Instrukor varchar(61), "9" text, "10" text, "11" text, "12" text, "13" text,  
     "14" text,  "15" text, "16" text, "17" text, "18" text, "19" text, "20" text
@@ -107,12 +108,12 @@ $$
 declare 
 	stawka int;
 	l_godzin int;
-begin 
+begin 	
 	select max(s.stawka_godzinowa)
 	into stawka 
 	from instruktorzy i 
-		join instruktorzy_stopnie si on si.id_instruktora = i.id_instruktora 
-		join stopnie s on s.id_stopnia = si.id_stopnia 
+		join instruktorzy_stopnie si on si.id_instruktora = i.id_instruktora  
+		join stawki_stopnie s on s.id_stopnia = si.id_stopnia 
 	where i.id_instruktora = instruktor
 	group by i.id_instruktora;
 	select count(*)  

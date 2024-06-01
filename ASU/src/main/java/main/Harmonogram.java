@@ -1,17 +1,40 @@
 package main;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+class CustomCellRenderer extends DefaultTableCellRenderer {
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                   boolean hasFocus, int row, int column) {
+        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+        if (value == null) {
+            c.setBackground(Color.WHITE);
+            c.setForeground(Color.BLACK);
+        } else if ("nieobecność".equals(value)) {
+            c.setBackground(Color.decode("#465775"));
+            c.setForeground(Color.BLACK);
+        } else {
+            c.setBackground(Color.decode("#8EB1ED"));
+            c.setForeground(Color.BLACK);
+        }
+
+        return c;
+    }
+}
+
 public class Harmonogram {
     public static void main(String[] args) {
         String url = "jdbc:postgresql://localhost:5432/szkolka";
-        String user = "ania";
-        String password = "10ak11ak";
+        String user = "ula";
+        String password = "ula";
 
         try {
             Connection connection = DriverManager.getConnection(url, user, password);
@@ -39,6 +62,12 @@ public class Harmonogram {
             // Tworzenie JTable
             JTable table = new JTable(tableModel);
             JScrollPane scrollPane = new JScrollPane(table);
+
+            // Ustawienie niestandardowego renderera dla wszystkich kolumn
+            CustomCellRenderer renderer = new CustomCellRenderer();
+            for (int i = 1; i < table.getColumnCount(); i++) {
+                table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+            }
 
             // Tworzenie okna i dodanie tabeli
             JFrame frame = new JFrame("PostgreSQL Table");
