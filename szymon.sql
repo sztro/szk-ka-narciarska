@@ -138,6 +138,7 @@ declare
 	liczba_osob int;
 	licznik int;
 	maks_osob int;
+	wskaznik int := 0;
 	chetni cursor for select * from lista_oczekujacych
 	where (data_rozpoczecia, id_odznaki) = (
 		select data_rozpoczecia, id_odznaki from grupy
@@ -151,25 +152,52 @@ begin
 	where (data_rozpoczecia, id_odznaki) = (
 		select data_rozpoczecia, id_odznaki from grupy
 		where id_grupy = old.id_grupy);
-	licznik := licznik + liczba_osob;	
-	if liczba_osob < maks_dzieci then 
+	licznik := licznik;	
+	if liczba_osob < maks_osob then 
 		open chetni;
-		while liczba_osob < maks_osob and liczba_osob < licznik loop
+		while liczba_osob < maks_osob and wskaznik < licznik loop
 			fetch from chetni into rekord;
-        		insert into dzieci_grupy (id_klienta, id_grupy) values (rekord.id_klienta, old.id_grupy);
-        		delete from lista_oczekujacych where current of chetni;
-        		liczba_osob := liczba_osob + 1;
+			wskaznik := wskaznik + 1;
+			if rekord.id_klienta in (select id_klienta from dzieci_grupy where id_grupy = old.id_grupy) then
+				delete from lista_oczekujacych where current of chetni;
+				continue;
+			end if;
+        	insert into dzieci_grupy (id_klienta, id_grupy) values (rekord.id_klienta, old.id_grupy);
+        	delete from lista_oczekujacych where current of chetni;
+        	liczba_osob := liczba_osob + 1;
 		end loop;
+		return new;
 	end if;
 	if liczba_osob = 0 then
 		delete from grupy where id_grupy = old.id_grupy;
 	end if;
+	return new;
 end;
 $dzieci_grupy_del$ language plpgsql;
-create or replace trigger dzieci_grupy_del after delete or update on dzieci_grupy
+create or replace trigger dzieci_grupy_del after update or delete on dzieci_grupy
 for each row execute procedure dzieci_grupy_del();
--------------------------------------
+------------------------------------------------------------------------------------------
 create or replace rule grupy_update as
 on update to grupy
 do instead nothing
-----------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+create or replace function dostepnosc_sezon_tr()
+returns trigger as
+$dostepnosc_sezon_tr$
+declare
+	data_licznik date;
+begin
+	data_licznik := new.data_od;
+	while data_licznik <= data_do loop
+		if not exists(
+			select * from ubezpieczenia 
+			where data_licznik between data_od and data_do
+			and id_instruktora = new.id_instruktora )
+		then return null;
+		end if;
+	end loop;
+	return new;
+end;
+$dostepnosc_sezon_tr$ language plpgsql;
+create or replace trigger dostepnosc_sezon_tr before update or insert on dostepnosc_sezon
+for each row execute procedure dostepnosc_sezon_tr();
