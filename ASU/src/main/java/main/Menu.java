@@ -171,6 +171,54 @@ public class Menu extends Application {
 
             });
         });
+
+        // Obsługa zdarzeń dla przycisku "Dodaj klienta"
+        btnDodajKlienta.setOnAction(e -> {
+            TextField firstNameField = new TextField();
+            TextField lastNameField = new TextField();
+            TextField contactField = new TextField();
+            DatePicker birthDatePicker = new DatePicker();
+
+            VBox inputVBox = new VBox(new javafx.scene.control.Label("Imię"), firstNameField,
+                    new javafx.scene.control.Label("Nazwisko"), lastNameField,
+                    new javafx.scene.control.Label("Kontakt"), contactField,
+                    new javafx.scene.control.Label("Data urodzenia"), birthDatePicker);
+            inputVBox.setSpacing(10);
+            inputVBox.setPadding(new Insets(10));
+
+            Button addButton = new Button("Dodaj");
+
+            VBox addVBox = new VBox(inputVBox, addButton);
+            addVBox.setSpacing(10);
+            addVBox.setPadding(new Insets(10));
+            addVBox.setAlignment(javafx.geometry.Pos.CENTER);
+
+            Stage addStage = new Stage();
+            addStage.setTitle("Dodaj klienta");
+            addStage.setScene(new Scene(addVBox, 300, 300));
+            addStage.show();
+
+            addButton.setOnAction(event -> {
+                String firstName = firstNameField.getText();
+                String lastName = lastNameField.getText();
+                String contact = contactField.getText();
+                LocalDate birthDate = birthDatePicker.getValue();
+                if (!firstName.isEmpty() && !lastName.isEmpty() && !contact.isEmpty()) {
+                    long contactNumber;
+                    try {
+                        contactNumber = Long.parseLong(contact);
+                        String birthDateString = (birthDate != null) ? birthDate.toString() : null;
+                        DodajKlienta addClient = new DodajKlienta(firstName, lastName, contactNumber, birthDateString);
+                        addClient.show();
+                        addStage.close();
+                    } catch (NumberFormatException ex) {
+                        System.out.println("Nieprawidłowy format numeru kontaktowego");
+                    }
+                } else {
+                    System.out.println("Proszę wypełnić wszystkie pola z wyjątkiem daty urodzenia, jeśli nie jest dostępna");
+                }
+            });
+        });
     }
 
     public static void main(String[] args) {
