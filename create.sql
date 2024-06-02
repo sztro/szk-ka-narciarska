@@ -102,20 +102,24 @@ CREATE TABLE dzieci_grupy (
 );
 	
 CREATE TABLE harmonogram (
-	id_instruktora INT REFERENCES instruktorzy NOT NULL on delete cascade,
-	"data" DATE NOT NULL,
-	godz_od NUMERIC(2) NOT NULL,
-	godz_do NUMERIC(2) NOT NULL,
-	id_klienta INT REFERENCES klienci on delete cascade,
-	id_grupy INT REFERENCES grupy on delete cascade,
-	czy_nieobecnosc BOOL NOT NULL,
-	id_sportu int references sporty,
-	CHECK(godz_od >= 9 AND godz_od <= 20),
-	CHECK(godz_do >= 9 AND godz_do <= 20),
-	CHECK(godz_do > godz_od),
-	CHECK(czy_nieobecnosc = false OR (id_klienta IS NULL AND id_grupy IS NULL)),
-	CHECK(czy_nieobecnosc = true OR ((id_klienta IS NULL AND id_grupy IS NOT NULL) OR (id_klienta IS NOT NULL AND id_grupy IS NULL))),
-	PRIMARY KEY (id_instruktora, "data", godz_od)
+    id_instruktora INT NOT NULL,
+    "data" DATE NOT NULL,
+    godz_od NUMERIC(2) NOT NULL,
+    godz_do NUMERIC(2) NOT NULL,
+    id_klienta INT,
+    id_grupy INT,
+    czy_nieobecnosc BOOL NOT NULL,
+    id_sportu INT,
+    PRIMARY KEY (id_instruktora, "data", godz_od),
+    FOREIGN KEY (id_instruktora) REFERENCES instruktorzy ON DELETE CASCADE,
+    FOREIGN KEY (id_klienta) REFERENCES klienci ON DELETE CASCADE,
+    FOREIGN KEY (id_grupy) REFERENCES grupy ON DELETE CASCADE,
+    FOREIGN KEY (id_sportu) REFERENCES sporty,
+    CHECK (godz_od >= 9 AND godz_od <= 20),
+    CHECK (godz_do >= 9 AND godz_do <= 20),
+    CHECK (godz_do > godz_od),
+    CHECK (czy_nieobecnosc = false OR (id_klienta IS NULL AND id_grupy IS NULL)),
+    CHECK (czy_nieobecnosc = true OR ((id_klienta IS NULL AND id_grupy IS NOT NULL) OR (id_klienta IS NOT NULL AND id_grupy IS NULL)))
 );
 
 CREATE TABLE lista_oczekujacych (
@@ -363,7 +367,7 @@ INSERT INTO dzieci_grupy (id_klienta, id_grupy) VALUES
 	(34, 4),
 	(35, 4);
 	
-INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc, id_instruktora) VALUES
+INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc, id_sportu) VALUES
 -- GRUPY
 	(1, '2024-01-11', 9, 12, NULL, 1, false, 1),
 	(1, '2024-01-12', 9, 12, NULL, 1, false, 1),
@@ -933,7 +937,7 @@ INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, i
 	(2, '2024-01-20', 18, 19, 25, NULL, false, 1),
 	(2, '2024-01-20', 19, 20, NULL, NULL, true, null),
 	(3, '2024-01-20', 9, 12, 26, NULL, false, 1),
-	(3, '2024-01-20', 12, 13, NULL, NULL, true),
+	(3, '2024-01-20', 12, 13, NULL, NULL, true, null),
 	(3, '2024-01-20', 13, 15, 17, NULL, false, 1),
 	(3, '2024-01-20', 16, 18, 28, NULL, false, 1),
 	(3, '2024-01-20', 18, 20, 10, NULL, false, 1),
