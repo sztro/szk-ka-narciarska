@@ -2,15 +2,20 @@ package main;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import javax.swing.*;
 import java.time.LocalDate;
+
+import static main.WindowSize.WIDTH;
+import static main.WindowSize.HIGH;
 
 public class Menu extends Application {
     private static final double BUTTON_WIDTH = 250; // Stała szerokość dla przycisków
@@ -64,7 +69,7 @@ public class Menu extends Application {
         hbox.setSpacing(20); // Odstęp między kolumnami
         hbox.setPadding(new Insets(10)); // Marginesy wokół HBox
 
-        Scene scene = new Scene(hbox, 880, 500);
+        Scene scene = new Scene(hbox, WIDTH, HIGH);
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -98,6 +103,42 @@ public class Menu extends Application {
                 } else {
                     // Obsłuż brak wybranej daty (opcjonalne)
                     System.out.println("Brak wybranej daty");
+                }
+            });
+        });
+
+        // Obsługa zdarzeń dla przycisku "Znajdz ID Instruktora"
+        btnZnajdzInstruktora.setOnAction(e -> {
+            // Tworzenie pola do wpisania imienia
+            TextField textField = new TextField();
+            textField.setPromptText("Wpisz imię");
+
+            Button okButton = new Button("Szukaj");
+
+            VBox vBox = new VBox(textField, okButton);
+            vBox.setSpacing(10);
+            vBox.setPadding(new Insets(10));
+            vBox.setAlignment(Pos.CENTER);
+
+            Stage stage = new Stage();
+            stage.setTitle("Wpisz imię");
+            stage.setScene(new Scene(vBox, 300, 150));
+            stage.show();
+
+            // Obsługa przycisku OK
+            okButton.setOnAction(event -> {
+                // Pobranie wpisanego imienia
+                String name = textField.getText();
+                if (!name.isEmpty()) {
+                    // Tworzenie obiektu klasy ZnajdzInstruktora z wpisanym imieniem
+                    ZnajdzInstruktora znajdzInstruktora = new ZnajdzInstruktora(name);
+                    // Wywołanie metody do dalszej obsługi wpisanego imienia
+                    znajdzInstruktora.show();
+                    // Zamknięcie okna
+                    stage.close();
+                } else {
+                    // Obsłuż brak wpisanego imienia (opcjonalne)
+                    System.out.println("Nie wpisano imienia");
                 }
             });
         });

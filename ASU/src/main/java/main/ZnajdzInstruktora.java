@@ -9,10 +9,14 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class Harmonogram {
-    private String data;
-    public Harmonogram(String data) {
-        this.data = data;
+
+import static main.WindowSize.WIDTH;
+import static main.WindowSize.HIGH;
+
+public class ZnajdzInstruktora {
+    private String imie;
+    public ZnajdzInstruktora(String imie) {
+        this.imie = imie;
     }
     public void show() {
         String url = User.URL;
@@ -22,7 +26,7 @@ public class Harmonogram {
         try {
             Connection connection = DriverManager.getConnection(url, user, password);
             Statement statement = connection.createStatement();
-            String query = "SELECT * FROM wyswietl_harmonogram('" + data + "')";
+            String query = "SELECT * FROM znajdz_instruktora('" + imie + "')";
             ResultSet resultSet = statement.executeQuery(query);
 
             // Pobranie metadanych kolumn
@@ -64,11 +68,11 @@ public class Harmonogram {
             }
 
             // Tworzenie okna i dodanie tabeli
-            JFrame frame = new JFrame("Harmonogram               " + data);
+            JFrame frame = new JFrame("Znajdz Instruktora");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.add(scrollPane);
-            frame.setSize(800, 600);
+            frame.setSize(WIDTH, HIGH);
+            frame.setLocationRelativeTo(null);
             frame.setVisible(true);
 
             resultSet.close();

@@ -2,8 +2,8 @@ drop function wyswietl_harmonogram(dzien date);
 
 create or replace function wyswietl_harmonogram(dzien date)
 returns table (Instrukor varchar(61), "9" text, "10" text, "11" text, "12" text, "13" text,  
-    "14" text,  "15" text, "16" text, "17" text, "18" text, "19" text, "20" text
-) as $$
+    "14" text,  "15" text, "16" text, "17" text, "18" text, "19" text, "20" text) as 
+$$
 begin
     return query
     select 
@@ -188,9 +188,16 @@ begin
 end;
 $$ language plpgsql;
 
-select umow_dowolny(2, '2024-01-02', 18, 19, 1);
-
-
+create or replace function znajdz_instruktora(im varchar(30)) 
+	returns table (id_instruktora int, imie varchar(30), nazwisko varchar(30)) as
+$$
+begin
+    return query
+    select i.id_instruktora, i.imie, i.nazwisko 
+    from instruktorzy i 
+    where i.imie = im;
+end;
+$$ language plpgsql; 
 
 
 
