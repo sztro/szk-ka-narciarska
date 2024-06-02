@@ -77,14 +77,11 @@ public class Menu extends Application {
         // Obsługa zdarzeń dla przycisku "Harmonogram"
         btnHarmonogram.setOnAction(e -> {
             DatePicker datePicker = new DatePicker();
-
             Button okButton = new Button("OK");
-
             VBox datePickerVBox = new VBox(datePicker, okButton);
             datePickerVBox.setSpacing(10);
             datePickerVBox.setPadding(new Insets(10));
             datePickerVBox.setAlignment(javafx.geometry.Pos.CENTER);
-
             Stage dateStage = new Stage();
             dateStage.setTitle("Wybierz datę");
             dateStage.setScene(new Scene(datePickerVBox, 300, 150));
@@ -92,17 +89,12 @@ public class Menu extends Application {
 
             // Tworzenie nowego okna i dodanie DatePicker
             okButton.setOnAction(event -> {
-                // Pobranie wybranej daty
                 LocalDate selectedDate = datePicker.getValue();
                 if (selectedDate != null) {
-                    // Tworzenie obiektu klasy Harmonogram z wybraną datą i oknem menu
                     Harmonogram harmonogram = new Harmonogram(selectedDate.toString());
-                    // Wyświetlenie zawartości harmonogramu w nowym oknie
                     harmonogram.show();
-                    // Zamknięcie okna wyboru daty
                     dateStage.close();
                 } else {
-                    // Obsłuż brak wybranej daty (opcjonalne)
                     System.out.println("Brak wybranej daty");
                 }
             });
@@ -110,39 +102,32 @@ public class Menu extends Application {
 
         // Obsługa zdarzeń dla przycisku "Znajdz ID Instruktora"
         btnZnajdzInstruktora.setOnAction(e -> {
-            // Tworzenie pola do wpisania imienia
             TextField textField = new TextField();
             textField.setPromptText("Wpisz imię");
-
             Button okButton = new Button("Szukaj");
-
             VBox vBox = new VBox(textField, okButton);
             vBox.setSpacing(10);
             vBox.setPadding(new Insets(10));
             vBox.setAlignment(Pos.CENTER);
-
             Stage stage = new Stage();
             stage.setTitle("Wpisz imię");
             stage.setScene(new Scene(vBox, 300, 150));
             stage.show();
 
-            // Obsługa przycisku OK
+            // Obsługa przycisku Szukaj
             okButton.setOnAction(event -> {
-                // Pobranie wpisanego imienia
                 String name = textField.getText();
                 if (!name.isEmpty()) {
-                    // Tworzenie obiektu klasy ZnajdzInstruktora z wpisanym imieniem
                     ZnajdzInstruktora znajdzInstruktora = new ZnajdzInstruktora(name);
-                    // Wywołanie metody do dalszej obsługi wpisanego imienia
                     znajdzInstruktora.show();
-                    // Zamknięcie okna
                     stage.close();
                 } else {
-                    // Obsłuż brak wpisanego imienia (opcjonalne)
                     System.out.println("Nie wpisano imienia");
                 }
             });
         });
+
+        // Obsługa zdarzeń dla przycisku "Znajdz ID Klienta"
         btnZnajdzKlienta.setOnAction((e) -> {
             TextField firstNameField = new TextField();
             TextField lastNameField = new TextField();
