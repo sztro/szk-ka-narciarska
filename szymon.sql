@@ -131,4 +131,8 @@ $harmonogram_add$
 create or replace trigger harmonogram_add before insert or update on harmonogram
 for each row execute procedure harmonogram_add();
 --------------------------------------------------------------------------------------
+create rule instruktorzy_delete as
+on delete to instruktorzy
+do instead nothing;
+---------------------------------------------------------------------------------------
 

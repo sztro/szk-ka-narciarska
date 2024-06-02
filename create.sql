@@ -79,7 +79,7 @@ CREATE TABLE odznaki (
 );
 
 CREATE TABLE dzieci_odznaki (
-    id_klienta INT REFERENCES klienci NOT NULL,
+    id_klienta INT REFERENCES klienci on delete cascade NOT NULL ,
     id_odznaki INT REFERENCES odznaki NOT NULL,
     data_uzysk DATE NOT NULL,
 	PRIMARY KEY (id_klienta, id_odznaki, data_uzysk)
@@ -123,7 +123,7 @@ CREATE TABLE harmonogram (
 );
 
 CREATE TABLE lista_oczekujacych (
-	id_klienta INT NOT NULL REFERENCES klienci,
+	id_klienta INT NOT NULL REFERENCES klienci on delete cascade,
 	data_rozpoczecia DATE NOT NULL,
 	id_odznaki INT NOT NULL REFERENCES odznaki,
 	PRIMARY KEY(id_klienta, data_rozpoczecia, id_odznaki)
