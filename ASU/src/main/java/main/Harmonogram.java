@@ -3,6 +3,8 @@ package main;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -66,6 +68,17 @@ public class Harmonogram {
             JTable table = new JTable(tableModel);
             JScrollPane scrollPane = new JScrollPane(table);
 
+            // Ustawienie szerokości pierwszej kolumny na szerokość najszerszego tekstu
+            TableColumn column = table.getColumnModel().getColumn(0);
+            int preferredWidth = 0;
+            for (int row = 0; row < table.getRowCount(); row++) {
+                TableCellRenderer cellRenderer = table.getCellRenderer(row, 0);
+                Component c = table.prepareRenderer(cellRenderer, row, 0);
+                preferredWidth = Math.max(c.getPreferredSize().width, preferredWidth);
+            }
+            column.setPreferredWidth(preferredWidth + 10); // Dodajemy 10 pikseli, aby zachować odstęp
+
+
             // Ustawienie niestandardowego renderera dla wszystkich kolumn
             CustomCellRenderer renderer = new CustomCellRenderer();
             for (int i = 1; i < table.getColumnCount(); i++) {
@@ -73,8 +86,9 @@ public class Harmonogram {
             }
 
             // Tworzenie okna i dodanie tabeli
-            JFrame frame = new JFrame("PostgreSQL Table");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            JFrame frame = new JFrame("Harmonogram");
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.add(scrollPane);
             frame.setSize(800, 600);
             frame.setVisible(true);

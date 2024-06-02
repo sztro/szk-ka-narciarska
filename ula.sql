@@ -106,36 +106,67 @@ create or replace function wyplata(instruktor int, dzien date)
 	returns int as 
 $$
 declare 
-	stawka int;
-	l_godzin int;
+	stawka_narty int;
+	stawka_deska int;
+	l_godzin_narty int;
+	l_godzin_deska int;
 begin 	
-	select max(s.stawka_godzinowa)
-	into stawka 
+	select s.stawka_godzinowa
+	into stawka_narty 
 	from instruktorzy i 
 		join instruktorzy_stopnie si on si.id_instruktora = i.id_instruktora  
 		join stawki_stopnie s on s.id_stopnia = si.id_stopnia 
+		join stopnie st on s.id_stopnia = st.id_stopnia 
 	where i.id_instruktora = instruktor
-	group by i.id_instruktora;
+		and st.id_sportu = 1
+	order by si.data_od desc
+	limit 1;
+	select s.stawka_godzinowa
+	into stawka_deska 
+	from instruktorzy i 
+		join instruktorzy_stopnie si on si.id_instruktora = i.id_instruktora  
+		join stawki_stopnie s on s.id_stopnia = si.id_stopnia 
+		join stopnie st on s.id_stopnia = st.id_stopnia 
+	where i.id_instruktora = instruktor
+		and st.id_sportu = 2
+	order by si.data_od desc
+	limit 1;
 	select count(*)  
-	into l_godzin
+	into l_godzin_narty
 	from harmonogram h 
-	where h.id_instruktora = instrukor
+	where h.id_instruktora = instruktor
 		and "data" = dzien
-		and czy_nieobecnosc is false;
-	return l_godzin * stawka;
+		and czy_nieobecnosc is false
+		and id_sportu = 1;
+	select count(*)  
+	into l_godzin_deska
+	from harmonogram h 
+	where h.id_instruktora = instruktor
+		and "data" = dzien
+		and czy_nieobecnosc is false
+		and id_sportu = 2;
+	return coalesce(l_godzin_narty * stawka_narty, 0) + coalesce(l_godzin_deska * stawka_deska, 0);
 end;
 $$ language plpgsql;
 
+select wyplata(1, '2024-01-01');
+
+
+drop function umow_dowolny(int, date, int, int, int); 
 create or replace function umow_dowolny(klient int, dzien date, h_od int, h_do int, sport int)
-	returns bool as 
+	returns varchar(30) as 
 $$
 declare
 	id integer;
+	imie varchar(30);
 begin
 	select h.id_instruktora into id
 	from harmonogram h 
 	join dostepnosc_sezon ds on h.id_instruktora = ds.id_instruktora 
-	where h.id_instruktora not in (
+	join instruktorzy_stopnie ins on ins.id_instruktora = h.id_instruktora 
+	join stopnie s on s.id_stopnia = ins.id_stopnia
+	where s.id_stopnia = sport
+		and h.id_instruktora not in (
 		select id_instruktora 
 		from harmonogram h 
 		where "data" = dzien
@@ -148,10 +179,13 @@ begin
 	group by h.id_instruktora 
 	order by count(*)
 	limit 1;
-	if id is null then return false; end if;
-	insert into harmonogram(pesel, lekarz) values
-	(id, dzien, h_od, h_do, klient, NULL, false);
-	return true;
+	if id is null then return null; end if;
+	insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc) values
+	(id, dzien, h_od, h_do, klient, null, false);
+	select i.imie into imie
+	from instruktorzy i 
+	where i.id_instruktora = id;
+	return imie;
 end;
 $$ language plpgsql;
 

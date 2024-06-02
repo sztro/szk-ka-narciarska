@@ -5,15 +5,19 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.time.LocalDate;
 
 public class Menu extends Application {
+    private static final double BUTTON_WIDTH = 250; // Stała szerokość dla przycisków
 
     @Override
     public void start(Stage primaryStage) {
+
         primaryStage.setTitle("Menu");
 
         Button btnHarmonogram = new Button("Harmonogram");
@@ -27,39 +31,75 @@ public class Menu extends Application {
         Button btnDodajGrupe = new Button("Dodaj grupe");
         Button btnDodajNieobecnosc = new Button("Dodaj nieobecność godzinową");
         Button btnWyswietlWyplateDzienna = new Button("Wyświetl wypłatę dzienną");
+        Button btnPrzyznajOdznaki = new Button("Przyznawanie odznak");
 
+        Button[] buttons = {btnHarmonogram, btnZnajdzKlienta, btnZnajdzInstruktora, btnWyswietlGrupy,
+                btnDodajKlienta, btnUmowNaLekcjeZInstruktorem, btnUmowNaLekcjeZDowolnymInstruktorem,
+                btnDodajDoGrupy, btnDodajGrupe, btnDodajNieobecnosc, btnWyswietlWyplateDzienna, btnPrzyznajOdznaki};
 
-        VBox vbox = new VBox();
-        vbox.getChildren().addAll(btnHarmonogram, btnZnajdzKlienta, btnZnajdzInstruktora, btnWyswietlGrupy, btnDodajKlienta, btnUmowNaLekcjeZInstruktorem,
-                btnUmowNaLekcjeZDowolnymInstruktorem, btnDodajDoGrupy, btnDodajGrupe, btnDodajNieobecnosc, btnWyswietlWyplateDzienna);
-        vbox.setSpacing(10); // Dodanie odstępów między przyciskami
-        vbox.setPadding(new Insets(10)); // Dodanie marginesów do kontenera
+        for (Button button : buttons) {
+            button.setPrefWidth(BUTTON_WIDTH);
+        }
 
-        vbox.setAlignment(javafx.geometry.Pos.CENTER); // Wyśrodkowanie przycisków
+        // Kolumna 1
+        VBox col1 = new VBox(btnHarmonogram, btnZnajdzInstruktora, btnDodajNieobecnosc, btnWyswietlWyplateDzienna);
+        col1.setSpacing(10);
+        col1.setPadding(new Insets(10));
+        col1.setAlignment(javafx.geometry.Pos.CENTER);
 
-        Scene scene = new Scene(vbox, 300, 250);
+        // Kolumna 2
+        VBox col2 = new VBox(btnZnajdzKlienta, btnDodajKlienta, btnUmowNaLekcjeZInstruktorem, btnUmowNaLekcjeZDowolnymInstruktorem);
+        col2.setSpacing(10);
+        col2.setPadding(new Insets(10));
+        col2.setAlignment(javafx.geometry.Pos.CENTER);
+
+        // Kolumna 3
+        VBox col3 = new VBox(btnWyswietlGrupy, btnDodajDoGrupy, btnDodajGrupe, btnPrzyznajOdznaki);
+        col3.setSpacing(10);
+        col3.setPadding(new Insets(10));
+        col3.setAlignment(javafx.geometry.Pos.CENTER);
+
+        // HBox do przechowywania kolumn
+        HBox hbox = new HBox(col1, col2, col3);
+        hbox.setSpacing(20); // Odstęp między kolumnami
+        hbox.setPadding(new Insets(10)); // Marginesy wokół HBox
+
+        Scene scene = new Scene(hbox, 880, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
 
         // Obsługa zdarzeń dla przycisku "Harmonogram"
         btnHarmonogram.setOnAction(e -> {
-            // Tworzenie DatePicker
             DatePicker datePicker = new DatePicker();
-            // Obsługa wybrania daty
-            datePicker.setOnAction(event -> {
-                // Pobranie wybranej daty
-                LocalDate selectedDate = datePicker.getValue();
-                // Tworzenie obiektu klasy Harmonogram z wybraną datą
-                Harmonogram harmonogram = new Harmonogram(selectedDate.toString());
-                // Wyświetlenie zawartości harmonogramu w nowym oknie
-                harmonogram.show();
-            });
+
+            Button okButton = new Button("OK");
+
+            VBox datePickerVBox = new VBox(datePicker, okButton);
+            datePickerVBox.setSpacing(10);
+            datePickerVBox.setPadding(new Insets(10));
+            datePickerVBox.setAlignment(javafx.geometry.Pos.CENTER);
+
+            Stage dateStage = new Stage();
+            dateStage.setTitle("Wybierz datę");
+            dateStage.setScene(new Scene(datePickerVBox, 300, 150));
+            dateStage.show();
 
             // Tworzenie nowego okna i dodanie DatePicker
-            Stage stage = new Stage();
-            stage.setTitle("Wybierz datę");
-            stage.setScene(new Scene(datePicker, 300, 250));
-            stage.show();
+            okButton.setOnAction(event -> {
+                // Pobranie wybranej daty
+                LocalDate selectedDate = datePicker.getValue();
+                if (selectedDate != null) {
+                    // Tworzenie obiektu klasy Harmonogram z wybraną datą i oknem menu
+                    Harmonogram harmonogram = new Harmonogram(selectedDate.toString());
+                    // Wyświetlenie zawartości harmonogramu w nowym oknie
+                    harmonogram.show();
+                    // Zamknięcie okna wyboru daty
+                    dateStage.close();
+                } else {
+                    // Obsłuż brak wybranej daty (opcjonalne)
+                    System.out.println("Brak wybranej daty");
+                }
+            });
         });
     }
 
