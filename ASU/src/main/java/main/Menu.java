@@ -279,7 +279,7 @@ public class Menu extends Application {
             // Tworzenie nowego okna dialogowego
             Stage confirmStage = new Stage();
             confirmStage.setTitle("Umów na lekcję z konkretnym instruktorem");
-            confirmStage.setScene(new Scene(confirmVBox, 300, 300));
+            confirmStage.setScene(new Scene(confirmVBox, 400, 500));
             confirmStage.show();
 
             // Obsługa zdarzenia po kliknięciu przycisku "Potwierdź"
