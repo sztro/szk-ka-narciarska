@@ -105,16 +105,16 @@ public class Menu extends Application {
             TextField textField = new TextField();
             textField.setPromptText("Wpisz imię");
             Button okButton = new Button("Szukaj");
-            VBox vBox = new VBox(textField, okButton);
-            vBox.setSpacing(10);
-            vBox.setPadding(new Insets(10));
+            Label label = new Label("Imię");
+            VBox input = new VBox(label, textField);
+            input.setSpacing(10);
+            input.setPadding(new Insets(10));
+            VBox vBox = new VBox(input, okButton);
             vBox.setAlignment(Pos.CENTER);
             Stage stage = new Stage();
-            stage.setTitle("Wpisz imię");
+            stage.setTitle("Znajdz Instruktora");
             stage.setScene(new Scene(vBox, 300, 150));
             stage.show();
-
-            // Obsługa przycisku Szukaj
             okButton.setOnAction(event -> {
                 String name = textField.getText();
                 if (!name.isEmpty()) {
@@ -201,6 +201,45 @@ public class Menu extends Application {
                     }
                 } else {
                     System.out.println("Proszę wypełnić wszystkie pola z wyjątkiem daty urodzenia, jeśli nie jest dostępna");
+                }
+            });
+        });
+
+        // Obsługa zdarzeń dla przycisku "Wyplata"
+        btnWyswietlWyplateDzienna.setOnAction(e -> {
+            TextField idField = new TextField();
+            DatePicker datePicker = new DatePicker();
+            VBox inputVBox = new VBox(
+                    new Label("ID Instruktora"),
+                    idField,
+                    new Label("Data"),
+                    datePicker
+            );
+            inputVBox.setSpacing(10);
+            inputVBox.setPadding(new Insets(10));
+            Button addButton = new Button("Pokaż");
+            VBox addVBox = new VBox(inputVBox, addButton);
+            addVBox.setSpacing(10);
+            addVBox.setPadding(new Insets(10));
+            addVBox.setAlignment(Pos.CENTER);
+            Stage addStage = new Stage();
+            addStage.setTitle("Wpisz Id instruktora i datę");
+            addStage.setScene(new Scene(addVBox, 300, 200));
+            addStage.show();
+            addButton.setOnAction(event -> {
+                String idText = idField.getText();
+                LocalDate selectedDate = datePicker.getValue();
+                if (!idText.isEmpty() && selectedDate != null) {
+                    try {
+                        int id = Integer.parseInt(idText);
+                        Wyplata wyplata = new Wyplata(id, selectedDate.toString());
+                        wyplata.show();
+                        addStage.close();
+                    } catch (NumberFormatException ex) {
+                        System.out.println("Nieprawidłowy format ID");
+                    }
+                } else {
+                    System.out.println("Proszę wypełnić wszystkie pola.");
                 }
             });
         });

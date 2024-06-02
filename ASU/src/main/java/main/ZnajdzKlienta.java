@@ -24,9 +24,9 @@ public class ZnajdzKlienta {
     }
 
     public void show() {
-        String url = "jdbc:postgresql://localhost:5432/szkolka";
-        String user = "ania";
-        String password = "10ak11ak";
+        String url = User.URL;
+        String user = User.USERNAME;
+        String password = User.PASSWORD;
 
         try {
             Connection connection = DriverManager.getConnection(url, user, password);
