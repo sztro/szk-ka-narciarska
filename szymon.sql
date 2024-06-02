@@ -1,14 +1,4 @@
-create or replace function grupy_upd_del()
-returns trigger as
-$grupy_update$
-begin
-return old;
-end;
-$grupy_update$ language plpgsql;
-create or replace trigger grupy_upd_del
-before delete or update on grupy
-for each row execute procedure grupy_upd_del();
-----------------------------------------------------
+
 create or replace function b_grupy_insert()
 returns trigger as
 $b_grupy_insert$
@@ -69,9 +59,9 @@ begin
 end;
 $$ language plpgsql;
 -----------------------------------------
-create or replace function lista_oczekujacych_tr()
+create or replace function lista_oczekujacych_ins()
 returns trigger as
-$lista_oczekujacych_tr$
+$lista_oczekujacych_ins$
 declare
 	id_grp int;
 begin
@@ -89,9 +79,9 @@ begin
 	end if;
 	return new;
 end;
-$lista_oczekujacych_tr$ language plpgsql;
-create or replace trigger lista_oczekujacych_tr before insert or update on lista_oczekujacych
-for each row execute procedure lista_oczekujacych_tr();
+$lista_oczekujacych_ins$ language plpgsql;
+create or replace trigger lista_oczekujacych_ins before insert or update on lista_oczekujacych
+for each row execute procedure lista_oczekujacych_ins();
 --------------------------------------
 create or replace function harmonogram_add()
 returns trigger as
@@ -127,8 +117,12 @@ begin
 	end if;
 	return new;
 end;
-$harmonogram_add$
+$harmonogram_add$ language plpgsql;
 create or replace trigger harmonogram_add before insert or update on harmonogram
 for each row execute procedure harmonogram_add();
 --------------------------------------------------------------------------------------
-
+create or replace rule instruktorzy_delete as
+on delete to instruktorzy
+do instead nothing;
+---------------------------------------------------------------------------------------
+	
