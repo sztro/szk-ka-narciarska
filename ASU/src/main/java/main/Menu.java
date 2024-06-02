@@ -3,19 +3,20 @@ package main;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import javax.swing.*;
 import java.time.LocalDate;
 
 import static main.WindowSize.WIDTH;
-import static main.WindowSize.HIGH;
+import static main.WindowSize.HEIGHT;
 
 public class Menu extends Application {
     private static final double BUTTON_WIDTH = 250; // Stała szerokość dla przycisków
@@ -69,7 +70,7 @@ public class Menu extends Application {
         hbox.setSpacing(20); // Odstęp między kolumnami
         hbox.setPadding(new Insets(10)); // Marginesy wokół HBox
 
-        Scene scene = new Scene(hbox, WIDTH, HIGH);
+        Scene scene = new Scene(hbox, WIDTH, HEIGHT);
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -140,6 +141,34 @@ public class Menu extends Application {
                     // Obsłuż brak wpisanego imienia (opcjonalne)
                     System.out.println("Nie wpisano imienia");
                 }
+            });
+        });
+        btnZnajdzKlienta.setOnAction((e) -> {
+            TextField firstNameField = new TextField();
+            TextField lastNameField = new TextField();
+            VBox inputVBox = new VBox(new Node[]{new Label("Imię"), firstNameField, new Label("Nazwisko"), lastNameField});
+            inputVBox.setSpacing(10.0);
+            inputVBox.setPadding(new Insets(10.0));
+            Button searchButton = new Button("Szukaj");
+            VBox searchVBox = new VBox(new Node[]{inputVBox, searchButton});
+            searchVBox.setSpacing(10.0);
+            searchVBox.setPadding(new Insets(10.0));
+            searchVBox.setAlignment(Pos.CENTER);
+            Stage searchStage = new Stage();
+            searchStage.setTitle("Znajdź ID klienta");
+            searchStage.setScene(new Scene(searchVBox, 300.0, 200.0));
+            searchStage.show();
+            searchButton.setOnAction((event) -> {
+                String firstName = firstNameField.getText();
+                String lastName = lastNameField.getText();
+                if (!firstName.isEmpty() && !lastName.isEmpty()) {
+                    ZnajdzKlienta findClientID = new ZnajdzKlienta(firstName, lastName);
+                    findClientID.show();
+                    searchStage.close();
+                } else {
+                    System.out.println("Proszę podać zarówno imię, jak i nazwisko");
+                }
+
             });
         });
     }
