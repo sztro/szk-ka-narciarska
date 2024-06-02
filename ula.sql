@@ -199,7 +199,17 @@ begin
 end;
 $$ language plpgsql; 
 
-select wyplata(20, '2024-01-01');
+create or replace function dodaj_nieobecnosc(instruktor int, dzien date, h_od numeric(2), h_do numeric(2)) 
+	returns bool as
+$$
+begin
+    insert into harmonogram(id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc, id_sportu) values
+		(instruktor, dzien, h_od, h_do, null, null, true, null);
+	return true;
+	exception
+	when others then return false;
+end;
+$$ language plpgsql;
 
 
 

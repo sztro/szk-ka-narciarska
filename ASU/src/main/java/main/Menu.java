@@ -303,7 +303,57 @@ public class Menu extends Application {
 
         // Obsługa zdarzeń dla przycisku "Dodaj nieobecnosc"
         btnDodajNieobecnosc.setOnAction(e -> {
+            TextField idField = new TextField();
+            DatePicker datePicker = new DatePicker();
+            TextField godzinaRozpoczeciaField = new TextField();
+            TextField godzinaZakonczeniaField = new TextField();
 
+            VBox inputVBox = new VBox(
+                    new Label("ID Instruktora"),
+                    idField,
+                    new Label("Data"),
+                    datePicker,
+                    new Label("Godzina rozpoczęcia"),
+                    godzinaRozpoczeciaField,
+                    new Label("Godzina zakończenia"),
+                    godzinaZakonczeniaField
+            );
+            inputVBox.setSpacing(10);
+            inputVBox.setPadding(new Insets(10));
+
+            Button addButton = new Button("Zatwierdź");
+            VBox addVBox = new VBox(inputVBox, addButton);
+            addVBox.setSpacing(10);
+            addVBox.setPadding(new Insets(10));
+            addVBox.setAlignment(Pos.CENTER);
+
+            Stage addStage = new Stage();
+            addStage.setTitle("Dodaj nieobecność");
+            addStage.setScene(new Scene(addVBox, 300, 300));
+            addStage.show();
+
+            addButton.setOnAction(event -> {
+                String idText = idField.getText();
+                LocalDate selectedDate = datePicker.getValue();
+                String godzinaRozpoczeciaText = godzinaRozpoczeciaField.getText();
+                String godzinaZakonczeniaText = godzinaZakonczeniaField.getText();
+
+                if (!idText.isEmpty() && selectedDate != null && !godzinaRozpoczeciaText.isEmpty() && !godzinaZakonczeniaText.isEmpty()) {
+                    try {
+                        int id = Integer.parseInt(idText);
+                        int godzinaRozpoczecia = Integer.parseInt(godzinaRozpoczeciaText);
+                        int godzinaZakonczenia = Integer.parseInt(godzinaZakonczeniaText);
+
+                        Nieobecnosc nieobecnosc = new Nieobecnosc(id, selectedDate.toString(), godzinaRozpoczecia, godzinaZakonczenia);
+                        nieobecnosc.show();
+                        addStage.close();
+                    } catch (NumberFormatException ex) {
+                        System.out.println("Nieprawidłowy format ID lub godziny");
+                    }
+                } else {
+                    System.out.println("Proszę wypełnić wszystkie pola.");
+                }
+            });
         });
 
         // Obsługa zdarzeń dla przycisku "Umow z dowolnym"
