@@ -210,6 +210,9 @@ begin
 end;
 $$ language plpgsql;
 
+create unique index klienci_idx on klienci(imie, nazwisko) include (id_klienta);
+create unique index instruktorzy_idx on instruktorzy(imie, nazwisko) include (id_instruktora);
+
 
 
 
