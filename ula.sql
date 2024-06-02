@@ -132,14 +132,14 @@ begin
 		and st.id_sportu = 2
 	order by si.data_od desc
 	limit 1;
-	select count(*)  
+	select sum(h.godz_do - h.godz_od)  
 	into l_godzin_narty
 	from harmonogram h 
 	where h.id_instruktora = instruktor
 		and "data" = dzien
 		and czy_nieobecnosc is false
 		and id_sportu = 1;
-	select count(*)  
+	select sum(h.godz_do - h.godz_od)    
 	into l_godzin_deska
 	from harmonogram h 
 	where h.id_instruktora = instruktor
@@ -149,7 +149,6 @@ begin
 	return coalesce(l_godzin_narty * stawka_narty, 0) + coalesce(l_godzin_deska * stawka_deska, 0);
 end;
 $$ language plpgsql;
-
 
 drop function umow_dowolny(int, date, int, int, int); 
 create or replace function umow_dowolny(klient int, dzien date, h_od int, h_do int, sport int)
