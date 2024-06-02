@@ -204,6 +204,61 @@ public class Menu extends Application {
                 }
             });
         });
+        // Obsługa zdarzeń dla przycisku "Umów na lekcję z konkretnym instruktorem"
+        btnUmowNaLekcjeZInstruktorem.setOnAction(e -> {
+            // Tworzenie pól tekstowych i innych kontrolek potrzebnych do wprowadzenia danych
+            TextField instructorIdField = new TextField();
+            DatePicker datePicker = new DatePicker();
+            TextField startHourField = new TextField();
+            TextField endHourField = new TextField();
+            TextField clientIdField = new TextField();
+            TextField sportIdField = new TextField();
+
+            // Tworzenie VBox do ułożenia kontrolek
+            VBox inputVBox = new VBox(
+                    new Label("ID instruktora"), instructorIdField,
+                    new Label("Data lekcji"), datePicker,
+                    new Label("Godzina rozpoczęcia"), startHourField,
+                    new Label("Godzina zakończenia"), endHourField,
+                    new Label("ID klienta"), clientIdField,
+                    new Label("ID sportu"), sportIdField
+            );
+            inputVBox.setSpacing(10);
+            inputVBox.setPadding(new Insets(10));
+
+            // Tworzenie przycisku do potwierdzenia danych
+            Button confirmButton = new Button("Potwierdź");
+
+            // Tworzenie VBox do ułożenia VBox z polami tekstowymi i przyciskiem
+            VBox confirmVBox = new VBox(inputVBox, confirmButton);
+            confirmVBox.setSpacing(10);
+            confirmVBox.setPadding(new Insets(10));
+            confirmVBox.setAlignment(Pos.CENTER);
+
+            // Tworzenie nowego okna dialogowego
+            Stage confirmStage = new Stage();
+            confirmStage.setTitle("Umów na lekcję z konkretnym instruktorem");
+            confirmStage.setScene(new Scene(confirmVBox, 300, 300));
+            confirmStage.show();
+
+            // Obsługa zdarzenia po kliknięciu przycisku "Potwierdź"
+            confirmButton.setOnAction(event -> {
+                // Pobranie danych wprowadzonych przez użytkownika
+                int instructorId = Integer.parseInt(instructorIdField.getText());
+                LocalDate selectedDate = datePicker.getValue();
+                int startHour = Integer.parseInt(startHourField.getText());
+                int endHour = Integer.parseInt(endHourField.getText());
+                int clientId = Integer.parseInt(clientIdField.getText());
+                int sportId = Integer.parseInt(sportIdField.getText());
+
+                // Wywołanie funkcji do umówienia lekcji z konkretnym instruktorem
+                UmowDoKonkretnego scheduleLesson = new UmowDoKonkretnego(instructorId, selectedDate.toString(), startHour, endHour, clientId, sportId);
+                scheduleLesson.show();
+
+                // Zamknięcie okna dialogowego
+                confirmStage.close();
+            });
+        });
     }
 
     public static void main(String[] args) {
