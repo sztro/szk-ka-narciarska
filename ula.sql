@@ -137,14 +137,14 @@ begin
 	from harmonogram h 
 	where h.id_instruktora = instruktor
 		and "data" = dzien
-		and czy_nieobecnosc is false;
+		and czy_nieobecnosc is false
 		and id_sportu = 1;
 	select count(*)  
 	into l_godzin_deska
 	from harmonogram h 
 	where h.id_instruktora = instruktor
 		and "data" = dzien
-		and czy_nieobecnosc is false;
+		and czy_nieobecnosc is false
 		and id_sportu = 2;
 	return coalesce(l_godzin_narty * stawka_narty, 0) + coalesce(l_godzin_deska * stawka_deska, 0);
 end;
