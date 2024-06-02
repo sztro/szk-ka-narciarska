@@ -55,10 +55,19 @@ begin
         if ((godzina_od < 9) or (godzina_do > 20)) then return false;
         end if;
  
-        INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc) VALUES
+        insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc) values
             (id_in, dataa, godzina_od, godzina_do, id_kli, null, false);
         return true;
     end if;
     return false;
+end;
+$$ language plpgsql;
+
+create or replace function id_klienta (i varchar(30), n varchar(30))
+returns table ( id_klienta int, imie varchar(30), nazwisko varchar(30), kontakt numeric(9), data_urodz date)
+as $$
+begin
+    return query
+        select * from klienci where klienci.imie = i and klienci.nazwisko = n;
 end;
 $$ language plpgsql;
