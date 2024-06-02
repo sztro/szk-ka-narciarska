@@ -224,7 +224,7 @@ public class Menu extends Application {
             addVBox.setPadding(new Insets(10));
             addVBox.setAlignment(Pos.CENTER);
             Stage addStage = new Stage();
-            addStage.setTitle("Wpisz Id instruktora i datę");
+            addStage.setTitle("Wyświetl wypłatę");
             addStage.setScene(new Scene(addVBox, 300, 200));
             addStage.show();
             addButton.setOnAction(event -> {
@@ -299,6 +299,36 @@ public class Menu extends Application {
                 // Zamknięcie okna dialogowego
                 confirmStage.close();
             });
+        });
+
+        // Obsługa zdarzeń dla przycisku "Dodaj nieobecnosc"
+        btnDodajNieobecnosc.setOnAction(e -> {
+
+        });
+
+        // Obsługa zdarzeń dla przycisku "Umow z dowolnym"
+        btnUmowNaLekcjeZDowolnymInstruktorem.setOnAction(e -> {
+
+        });
+
+        // Obsługa zdarzeń dla przycisku "Wyswietl dostepne grupy"
+        btnWyswietlGrupy.setOnAction(e -> {
+
+        });
+
+        // Obsługa zdarzeń dla przycisku "Dodaj do grupy"
+        btnDodajDoGrupy.setOnAction(e -> {
+
+        });
+
+        // Obsługa zdarzeń dla przycisku "Dodaj grupe"
+        btnDodajGrupe.setOnAction(e -> {
+
+        });
+
+        // Obsługa zdarzeń dla przycisku "Przyzawanie odznak"
+        btnPrzyznajOdznaki.setOnAction(e -> {
+
         });
     }
 
