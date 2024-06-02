@@ -22,7 +22,10 @@ begin
     select count(*) from lista_oczekujacych into licznik
 	where new.data_rozpoczecia = data_rozpoczecia and new.id_odznaki = id_odznaki;
    if licznik < new.min_dzieci then
-        raise exception 'za mało dzieci by utworzyć grupę';
+        raise exception using
+        	errcode = 'ERRDZ',
+        	message = 'Nie ma wystarczająco chętnych by utworzyć grupe',
+        	hint = 'Spróbuj  stworzyć grupe w innym terminie, o innym stopniu, lub poczekaj aż zapisze się wiecej osób';
         return null;
     end if;
 	return new;
@@ -89,4 +92,43 @@ end;
 $lista_oczekujacych_tr$ language plpgsql;
 create or replace trigger lista_oczekujacych_tr before insert or update on lista_oczekujacych
 for each row execute procedure lista_oczekujacych_tr();
+--------------------------------------
+create or replace function harmonogram_add()
+returns trigger as
+$harmonogram_add$
+declare
+	dzieci cursor for select * from dzieci_grupy where new.id_grupy = id_grupy;
+begin
+	if not exists(
+		select * from dostepnosc_sezon 
+		where id_instruktora = new.id_instruktora 
+		and new.data between data_od and data_do
+	) then 
+		raise exception using
+			errcode = 'NDOST',
+			message = 'Instruktor o id: '|| new.id_instruktora::text || ' niedostępny w tym czasie',
+			hint = 'Spróbuj dodać w innym terminie';
+		return old;
+	elsif exists (
+		select * from harmonogram
+		where "data" = new.data 
+		and id_instruktora = new.id_instruktora
+		and	(
+			(godz_od >= new.godz_od and godz_od < new.godz_do)
+			or (godz_do > new.godz_od and godz_do <= new.godz_do)
+			or (godz_od <= new.godz_od and godz_do >= new.godz_do)
+		)
+	) then 
+		raise exception using
+			errcode = 'INZAJ',
+			message = 'Instruktor o id : ' || new.id_instruktora::text || ' ma inne zajęcia w tym terminie',
+			hint = 'Wybierz inny termin';
+		return old;
+	end if;
+	return new;
+end;
+$harmonogram_add$
+create or replace trigger harmonogram_add before insert or update on harmonogram
+for each row execute procedure harmonogram_add();
+--------------------------------------------------------------------------------------
 
