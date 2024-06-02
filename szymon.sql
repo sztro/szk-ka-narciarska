@@ -37,17 +37,18 @@ begin
 	select count(*) from lista_oczekujacych into licznik
 	where new.data_rozpoczecia = data_rozpoczecia and new.id_odznaki = id_odznaki;
 	open chetni;
-    while wskaźnik < new.maks_dzieci and wskaźnik < licznik loop
-        fetch from chetni into rekord;
-        insert into dzieci_grupy (id_klienta, id_grupy) values (rekord.id_klienta, new.id_grupy);
-        delete from lista_oczekujacych where current of chetni;
-        wskaźnik := wskaźnik + 1;
+    	while wskaźnik < new.maks_dzieci and wskaźnik < licznik loop
+        	fetch from chetni into rekord;
+        	insert into dzieci_grupy (id_klienta, id_grupy) values (rekord.id_klienta, new.id_grupy);
+       		delete from lista_oczekujacych where current of chetni;
+        	wskaźnik := wskaźnik + 1;
     end loop;
     return new;
 end;
 $aft_grupy_insert$ language plpgsql;
 create or replace trigger aft_grupy_insert after insert on grupy
 for each row execute procedure aft_grupy_insert();
+-----------------------------------------------------------
 create or replace function licznosc_grupy(id_grp int)
 returns int as
 $$
@@ -65,15 +66,20 @@ $lista_oczekujacych_ins$
 declare
 	id_grp int;
 begin
-	if exists(
+	if new.id_klienta in (
+		select id_klienta from grupy right join dzieci_grupy using(id_grupy)
+		where data_rozpoczecia = new.data_rozpoczecia and id_odznaki = new.id_odznaki)
+	then return null;
+	elsif exists(
 		select * from grupy 
 		where data_rozpoczecia = new.data_rozpoczecia and id_odznaki = new.id_odznaki 
 		and licznosc_grupy(id_grupy) < maks_dzieci
-	)then
+	)then	
 		select id_grupy from grupy into id_grp
 		where data_rozpoczecia = new.data_rozpoczecia and id_odznaki = new.id_odznaki 
 		and licznosc_grupy(id_grupy) < maks_dzieci
 		limit 1;
+		
 		insert into dzieci_grupy (id_klienta, id_grupy) VALUES (new.id_klienta, id_grp);
 		return null;
 	end if;
@@ -121,8 +127,49 @@ $harmonogram_add$ language plpgsql;
 create or replace trigger harmonogram_add before insert or update on harmonogram
 for each row execute procedure harmonogram_add();
 --------------------------------------------------------------------------------------
-create or replace rule instruktorzy_delete as
+create or replace  rule instruktorzy_delete as
 on delete to instruktorzy
 do instead nothing;
 ---------------------------------------------------------------------------------------
-	
+create or replace function dzieci_grupy_del()
+returns trigger as
+$dzieci_grupy_del$
+declare
+	liczba_osob int;
+	licznik int;
+	maks_osob int;
+	chetni cursor for select * from lista_oczekujacych
+	where (data_rozpoczecia, id_odznaki) = (
+		select data_rozpoczecia, id_odznaki from grupy
+		where id_grupy = old.id_grupy
+	);
+	rekord record;
+begin
+	liczba_osob := licznosc_grupy(old.id_grupy);
+	select maks_dzieci from grupy into maks_osob where id_grupy = old.id_grupy;
+	select count(*) from lista_oczekujacych into licznik
+	where (data_rozpoczecia, id_odznaki) = (
+		select data_rozpoczecia, id_odznaki from grupy
+		where id_grupy = old.id_grupy);
+	licznik := licznik + liczba_osob;	
+	if liczba_osob < maks_dzieci then 
+		open chetni;
+		while liczba_osob < maks_osob and liczba_osob < licznik loop
+			fetch from chetni into rekord;
+        		insert into dzieci_grupy (id_klienta, id_grupy) values (rekord.id_klienta, old.id_grupy);
+        		delete from lista_oczekujacych where current of chetni;
+        		liczba_osob := liczba_osob + 1;
+		end loop;
+	end if;
+	if liczba_osob = 0 then
+		delete from grupy where id_grupy = old.id_grupy;
+	end if;
+end;
+$dzieci_grupy_del$ language plpgsql;
+create or replace trigger dzieci_grupy_del after delete or update on dzieci_grupy
+for each row execute procedure dzieci_grupy_del();
+-------------------------------------
+create or replace rule grupy_update as
+on update to grupy
+do instead nothing
+----------------------------------------------------------------------
