@@ -31,6 +31,17 @@ class CustomCellRenderer extends DefaultTableCellRenderer {
     }
 }
 
+class NonEditableTableModel extends DefaultTableModel {
+    public NonEditableTableModel(Object[] columnNames, int rowCount) {
+        super(columnNames, rowCount);
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false; // Wszystkie komórki są nieedytowalne
+    }
+}
+
 public class Harmonogram {
     private String data;
     public Harmonogram(String data) {
@@ -55,7 +66,7 @@ public class Harmonogram {
             }
 
             // Pobranie danych
-            DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+            NonEditableTableModel tableModel = new NonEditableTableModel(columnNames, 0);
             while (resultSet.next()) {
                 String[] rowData = new String[columnCount];
                 for (int i = 1; i <= columnCount; i++) {
@@ -86,7 +97,7 @@ public class Harmonogram {
             }
 
             // Tworzenie okna i dodanie tabeli
-            JFrame frame = new JFrame("Harmonogram");
+            JFrame frame = new JFrame("Harmonogram               " + data);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.add(scrollPane);

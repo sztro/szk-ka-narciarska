@@ -102,13 +102,14 @@ CREATE TABLE dzieci_grupy (
 );
 	
 CREATE TABLE harmonogram (
-	id_instruktora INT REFERENCES instruktorzy NOT NULL,
+	id_instruktora INT REFERENCES instruktorzy NOT NULL on delete cascade,
 	"data" DATE NOT NULL,
 	godz_od NUMERIC(2) NOT NULL,
 	godz_do NUMERIC(2) NOT NULL,
-	id_klienta INT REFERENCES klienci,
-	id_grupy INT REFERENCES grupy,
+	id_klienta INT REFERENCES klienci on delete cascade,
+	id_grupy INT REFERENCES grupy on delete cascade,
 	czy_nieobecnosc BOOL NOT NULL,
+	id_sportu int references sporty,
 	CHECK(godz_od >= 9 AND godz_od <= 20),
 	CHECK(godz_do >= 9 AND godz_do <= 20),
 	CHECK(godz_do > godz_od),
