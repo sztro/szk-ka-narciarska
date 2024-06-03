@@ -214,6 +214,7 @@ begin
 		and i.id_instruktora = instruktor
 	order by i.id_stopnia desc
 	limit 1;
+	return stopien_instruktora;
 end;
 $$ language plpgsql; 
 
@@ -225,14 +226,13 @@ create or replace function znajdz_instruktora(im varchar(30))
 $$
 begin
     return query
-    select i.id_instruktora, i.imie, i.nazwisko, max_stopien(i.id_instruktora, 1), max_stopien(i.id_instruktora, 1)
+    select i.id_instruktora, i.imie, i.nazwisko, max_stopien(i.id_instruktora, 1), max_stopien(i.id_instruktora, 2)
     from instruktorzy i 
     where i.imie = im;
 end;
 $$ language plpgsql; 
 
 ------------------------------------------------------------------------------------------------------------------------------------
-
 
 create or replace function dodaj_nieobecnosc(instruktor int, dzien date, h_od numeric(2), h_do numeric(2)) 
 	returns bool as

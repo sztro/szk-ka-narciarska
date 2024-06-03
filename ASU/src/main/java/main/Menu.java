@@ -90,12 +90,6 @@ public class Menu extends Application {
         VBox vbox = new VBox(gora, btnHarmonogram, hbox);
         vbox.setAlignment(javafx.geometry.Pos.CENTER);
 
-//        // BorderPane jako główny kontener
-//        BorderPane borderPane = new BorderPane();
-//        borderPane.setTop(gora);
-//        borderPane.setCenter(vbox);
-//        borderPane.;
-
         Scene scene = new Scene(vbox, WIDTH, HEIGHT);
         primaryStage.setScene(scene);
         primaryStage.show();
