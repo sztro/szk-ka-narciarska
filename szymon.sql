@@ -25,8 +25,8 @@ begin
 		)
 	) then
 		raise exception using
-			errcode = 'NDOST', 
-			message = 'Instruktor niedostepny';
+			errcode = 'TAKEN', 
+			message = 'Instruktor ma inne zajecia  w tym terminie ';
 		return null;
 	elsif  (
 		select id_sportu from odznaki 
@@ -165,7 +165,7 @@ begin
 		)	
 	) then 
 		raise exception using
-			errcode = 'INZAJ',
+			errcode = 'TAKEN',
 			message = 'Instruktor o id : ' || new.id_instruktora::text || ' ma inne zajęcia w tym terminie',
 			hint = 'Wybierz inny termin';
 		return old;
@@ -317,5 +317,26 @@ exception when others then
 	return 'Dodanie nie powiodło się';
 end;
 $$ language plpgsql;
---------
-
+-------------------------------------------------
+create or replace function dodaj_grupe
+	(id_instruktora int, id_odznaki int, data_rozpoczecia date, maks_dzieci int, min_dzieci int)
+returns text as
+$$
+begin
+	insert into grupy
+		(id_instruktora, id_odznaki,data_rozpoczecia, maks_dzieci, min_dzieci) 
+	values
+		(id_instruktora, id_odznaki, data_rozpoczecia, maks_dzieci, min_dzieci);
+	return 'Grupe utworzono pomyślnie';
+exception
+	when sqlstate 'ERRDZ' then
+		return 'Za mało dzieci by utworzyć grupe';
+	when sqlstate 'NDOST' then
+		return 'Instruktor nie ma dostępności w tym czasie';
+	when sqlstate 'STERR' then
+		return 'Instruktor nie ma kwalifikacji by prowadzić tą grupe';
+	when sqlstate 'TAKEN' then
+		return 'Instruktor ma inne zajęcia w tym terminie';
+end;
+$$ language plpgsql;
+-----------------------------------------------------------
