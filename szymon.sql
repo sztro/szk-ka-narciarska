@@ -67,7 +67,9 @@ end;
 $b_grupy_insert$ language plpgsql;
 create or replace trigger grupy_insert before insert on grupy
 for each row execute procedure b_grupy_insert();
-------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function aft_grupy_insert()
 returns trigger as
 $aft_grupy_insert$
@@ -92,7 +94,9 @@ end;
 $aft_grupy_insert$ language plpgsql;
 create or replace trigger aft_grupy_insert after insert on grupy
 for each row execute procedure aft_grupy_insert();
------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function licznosc_grupy(id_grp int)
 returns int as
 $$
@@ -103,7 +107,9 @@ begin
 	return a;
 end;
 $$ language plpgsql;
------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function max_odznaka(id_k int, id_s int)
 returns integer as
 $$
@@ -116,7 +122,9 @@ begin
 	return a;
 end;
 $$ language plpgsql;
--------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function lista_oczekujacych_ins()
 returns trigger as
 $lista_oczekujacych_ins$
@@ -153,7 +161,8 @@ $lista_oczekujacych_ins$ language plpgsql;
 create or replace trigger lista_oczekujacych_ins before insert or update on lista_oczekujacych
 for each row execute procedure lista_oczekujacych_ins();
 	
---------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function harmonogram_add()
 returns trigger as
 $harmonogram_add$
@@ -198,11 +207,15 @@ end;
 $harmonogram_add$ language plpgsql;
 create or replace trigger harmonogram_add before insert or update on harmonogram
 for each row execute procedure harmonogram_add();
---------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace  rule instruktorzy_delete as
 on delete to instruktorzy
 do instead nothing;
----------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function dzieci_grupy_del()
 returns trigger as
 $dzieci_grupy_del$
@@ -248,11 +261,15 @@ end;
 $dzieci_grupy_del$ language plpgsql;
 create or replace trigger dzieci_grupy_del after update or delete on dzieci_grupy
 for each row execute procedure dzieci_grupy_del();
-------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace rule grupy_update as
 on update to grupy
 do instead nothing;
---------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function dostepnosc_sezon_tr()
 returns trigger as
 $dostepnosc_sezon_tr$
@@ -274,7 +291,9 @@ end;
 $dostepnosc_sezon_tr$ language plpgsql;
 create or replace trigger dostepnosc_sezon_tr before update or insert on dostepnosc_sezon
 for each row execute procedure dostepnosc_sezon_tr();
------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function odznaki_immutability()
 returns trigger as
 $$
@@ -285,11 +304,15 @@ $$ language plpgsql;
 create or replace trigger odznaki_immutability
 before insert or update or delete on odznaki
 for each row execute procedure odznaki_immutability();
---------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 --TODO: trigger na dodawanie dogrup, ktory sprawdza czy dziecko ma odpowiednia odznake
 --sprawdzanie czy instruktor ma odpowiedni sport by prowadzic te zajecia uwu
 -- kupa
----------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function dzieci_grupy_insert()
 returns trigger as 
 $dzieci_grupy_insert$
@@ -309,11 +332,15 @@ end;
 $dzieci_grupy_insert$ language plpgsql;
 create or replace trigger dzieci_grupy_insert before insert or update on dzieci_grupy
 for each row execute procedure dzieci_grupy_insert();
------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace rule klienci_delete as
 on delete to klienci
 do instead nothing;
-----------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
  create or replace function dodaj_do_grupy(id_klienta int, id_odznaki int, data_rozpoczecia date)
 returns text as
 $$
@@ -335,7 +362,8 @@ exception
 end;
 $$ language plpgsql;
 	
-----------
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function dodaj_grupe
 	(id_instruktora int, id_odznaki int, data_rozpoczecia date, maks_dzieci int, min_dzieci int)
 returns text as
@@ -357,14 +385,18 @@ exception
 		return 'Instruktor ma inne zajęcia w tym terminie';
 end;
 $$ language plpgsql;
------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace rule dostepnosc_sezon_rule1 as
 on  update to dostepnosc_sezon
 do instead nothing;
 create or replace rule dostepnosc_sezon_rule2 as
 on delete to dostepnosc_sezon
 do instead nothing;
-----------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function nadaj_odznake(id_klienta int, id_odznaki int, data_uzysk date )
 returns bool as
 $$
@@ -377,4 +409,5 @@ begin
     		return false;
 end;
 $$ language plpgsql;
-----------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------

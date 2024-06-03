@@ -32,7 +32,9 @@ begin
     when others then return false;
 end;
 $$ language plpgsql;
+
 -----------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function umow_konkretny(id_in int, dataa date, godzina_od int, godzina_do int, id_kli int, id_sportu int)
 returns bool
 as $$
