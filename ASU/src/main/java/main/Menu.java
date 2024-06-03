@@ -512,7 +512,8 @@ public class Menu extends Application {
 
         // Obsługa zdarzeń dla przycisku "Przyzawanie odznak"
         btnPrzyznajOdznaki.setOnAction(e -> {
-
+            PrzyznajOdznaki przyznajOdznaki = new PrzyznajOdznaki();
+            przyznajOdznaki.show();
         });
 
         btnWyswietlPoczekalnie.setOnAction(e -> {
