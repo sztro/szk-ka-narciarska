@@ -2,9 +2,12 @@ create or replace function b_grupy_insert()
 returns trigger as
 $b_grupy_insert$
 declare
-    licznik int;
+    	licznik int;
 	godz_start int := new.godz_od;
 	godz_koniec int := new.godz_do;
+	stopnie_pomocnicze int[] := '{1, 5}';
+	
+	
 begin
     select count(*) from lista_oczekujacych into licznik
 	where new.data_rozpoczecia = data_rozpoczecia and new.id_odznaki = id_odznaki;
@@ -48,6 +51,16 @@ begin
 			errcode = 'NDOST',
 			message = 'Instruktor o id: '|| new.id_instruktora::text || ' niedostępny w tym czasie',
 			hint = 'Spróbuj dodać w innym terminie';
+		return null;
+	elsif (
+		select max(s.id_stopnia) from instruktorzy_stopnie s
+		left join stopnie st using(id_stopnia)
+		where id_instruktora = new.id_instruktora
+		and id_sportu = (select id_sportu from odznaki where id_odznaki = new.id_odznaki)
+		) = ANY(stopnie_pomocznicze) then
+		raise exception using
+			errcode = 'STERR',
+			message = 'Instruktor niewykwalifikowany do nauki tych zajec';
 		return null;
 	end if;
 	return new;
