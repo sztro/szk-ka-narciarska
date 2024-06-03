@@ -258,8 +258,8 @@ $$ language plpgsql;
 
 -----------------------------------------------------------------------------------------------------------------------------------
 
-create or replace function wyswietl poczekalnie(odznaka int, dzien date) 
-	returns
+--create or replace function wyswietl poczekalnie(odznaka int, dzien date) 
+--	returns
 
 
 
