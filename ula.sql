@@ -258,8 +258,9 @@ $$ language plpgsql;
 
 ------------------------------------------------------------------------------------------------------------------------------------
 
+drop function if exists wyswietl_poczekalnie(id_odz int, dzien date);
 create or replace function wyswietl_poczekalnie(id_odz int, dzien date) 
-	returns table (klient int, data_rozpoczecia date, odznaka text) as 
+	returns table (klient int, data_rozpoczecia date, odznaka varchar(9)) as 
 $$
 begin
 	return query 
@@ -274,8 +275,9 @@ $$ language plpgsql;
 
 ------------------------------------------------------------------------------------------------------------------------------------
 
+drop function if exists wyswietl_poczekalnie();
 create or replace function wyswietl_poczekalnie() 
-	returns table (klient int, data_rozpoczecia date, odznaka text) as 
+	returns table (klient int, data_rozpoczecia date, odznaka varchar(9)) as 
 $$
 begin
 	return query 
