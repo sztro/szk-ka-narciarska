@@ -40,7 +40,7 @@ public class DodajDoGrupy {
             }
 
             // Creating a window and displaying the message
-            JFrame frame = new JFrame("Umów na lekcję z konkretnym instruktorem");
+            JFrame frame = new JFrame(result);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setSize(500, 500  );
             frame.setLocationRelativeTo(null);
@@ -49,6 +49,8 @@ public class DodajDoGrupy {
             JLabel messageLabel = new JLabel();
             messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
             messageLabel.setText(result);
+            WyswietlPoczekalnie poczekalnia = new WyswietlPoczekalnie();
+            poczekalnia.show();
 
             frame.add(messageLabel, BorderLayout.CENTER);
             frame.setVisible(true);
