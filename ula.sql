@@ -248,8 +248,10 @@ $$ language plpgsql;
 
 ------------------------------------------------------------------------------------------------------------------------------------
 
-create unique index if not exists klienci_idx on klienci(imie, nazwisko) include (id_klienta);
-create unique index if not exists instruktorzy_idx on instruktorzy(imie) include (nazwisko, id_instruktora);
+drop index if exists klienci_idx;
+drop index if exists instruktorzy_idx;
+create index if not exists klienci_idx on klienci(imie, nazwisko); --include (id_klienta);
+create index if not exists instruktorzy_idx on instruktorzy(imie); --include (nazwisko, id_instruktora);
 
 ------------------------------------------------------------------------------------------------------------------------------------
 
