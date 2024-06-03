@@ -472,7 +472,7 @@ public class Menu extends Application {
                 // Tworzenie nowego okna dialogowego
                 Stage confirmStage = new Stage();
                 confirmStage.setTitle("Dodaj osobę do grupy");
-                confirmStage.setScene(new Scene(confirmVBox, 400, 500));
+                confirmStage.setScene(new Scene(confirmVBox, SMALL_WIDTH, 250));
                 confirmStage.show();
 
                 // Obsługa zdarzenia po kliknięciu przycisku "Potwierdź"
@@ -493,7 +493,8 @@ public class Menu extends Application {
 
         // Obsługa zdarzeń dla przycisku "Dodaj grupe"
         btnDodajGrupe.setOnAction(e -> {
-
+            DodajGrupe dodajGrupe = new DodajGrupe();
+            dodajGrupe.show();
         });
 
         // Obsługa zdarzeń dla przycisku "Przyzawanie odznak"
