@@ -9,15 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.Blend;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -88,7 +81,10 @@ public class Menu extends Application {
         gora.setPreserveRatio(true);
 
         VBox vbox = new VBox(gora, btnHarmonogram, hbox);
-        vbox.setAlignment(javafx.geometry.Pos.CENTER);
+        vbox.setAlignment(Pos.TOP_CENTER);
+
+        btnHarmonogram.setTranslateY(-60);
+        hbox.setTranslateY(-60);
 
         Scene scene = new Scene(vbox, WIDTH, HEIGHT);
         primaryStage.setScene(scene);
