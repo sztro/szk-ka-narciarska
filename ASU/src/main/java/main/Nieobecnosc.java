@@ -41,7 +41,7 @@ public class Nieobecnosc {
             e.printStackTrace();
         }
 
-        JFrame frame = new JFrame("Dodaj nieobecnosć");
+        JFrame frame = new JFrame("Dodaj nieobecność");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(SMALL_WIDTH, SMALL_HEIGHT);
         frame.setLayout(new BorderLayout());
@@ -49,9 +49,9 @@ public class Nieobecnosc {
         JLabel messageLabel = new JLabel();
         messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         if (wynik) {
-            messageLabel.setText("Dodano nieobecnosć pomyślnie");
+            messageLabel.setText("Dodano nieobecność pomyślnie");
         } else {
-            messageLabel.setText("Nie można dodać nieobecnosci");
+            messageLabel.setText("Nie można dodać nieobecności");
         }
         frame.add(messageLabel, BorderLayout.CENTER);
         frame.setVisible(true);

@@ -60,7 +60,7 @@ public class UmowDoDowolnego {
             if (result.equals("Brak instruktora")) {
                 messageLabel.setText("Niestety nie udało się umówić lekcji. Nie ma w tym terminie dostępnych instruktorów.");
             } else {
-                messageLabel.setText("Lekcja została umówiona pomyślnie. Do indtruktora: " + result);
+                messageLabel.setText("Lekcja została umówiona pomyślnie. Do instruktora: " + result);
             }
 
             frame.add(messageLabel, BorderLayout.CENTER);

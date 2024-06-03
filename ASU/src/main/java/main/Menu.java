@@ -9,14 +9,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
 
-import static main.WindowSize.WIDTH;
-import static main.WindowSize.HEIGHT;
+import static main.WindowSize.*;
 
 public class Menu extends Application {
     private static final double BUTTON_WIDTH = 250; // Stała szerokość dla przycisków
@@ -29,7 +29,7 @@ public class Menu extends Application {
         Button btnHarmonogram = new Button("Harmonogram");
         Button btnZnajdzKlienta = new Button("Znajdź ID klienta");
         Button btnZnajdzInstruktora = new Button("Znajdź ID instruktora");
-        Button btnWyswietlGrupy = new Button("Wyswietl dostępne grupy");
+        Button btnWyswietlGrupy = new Button("Wyświetl dostępne grupy");
         Button btnDodajKlienta = new Button("Dodaj klienta");
         Button btnUmowNaLekcjeZInstruktorem = new Button("Umów na lekcję z konkretnym instruktorem");
         Button btnUmowNaLekcjeZDowolnymInstruktorem = new Button("Umów na lekcję z dowolnym instruktorem");
@@ -38,8 +38,12 @@ public class Menu extends Application {
         Button btnDodajNieobecnosc = new Button("Dodaj nieobecność godzinową");
         Button btnWyswietlWyplateDzienna = new Button("Wyświetl wypłatę dzienną");
         Button btnPrzyznajOdznaki = new Button("Przyznawanie odznak");
+        Button btnWyswietlPoczekalnie = new Button("Wyświetl poczekalnię");
 
-        Button[] buttons = {btnHarmonogram, btnZnajdzKlienta, btnZnajdzInstruktora, btnWyswietlGrupy,
+        btnHarmonogram.setFont(new Font(15));
+        btnHarmonogram.setPrefWidth(WIDTH-500);
+
+        Button[] buttons = {btnWyswietlPoczekalnie, btnZnajdzKlienta, btnZnajdzInstruktora, btnWyswietlGrupy,
                 btnDodajKlienta, btnUmowNaLekcjeZInstruktorem, btnUmowNaLekcjeZDowolnymInstruktorem,
                 btnDodajDoGrupy, btnDodajGrupe, btnDodajNieobecnosc, btnWyswietlWyplateDzienna, btnPrzyznajOdznaki};
 
@@ -48,19 +52,19 @@ public class Menu extends Application {
         }
 
         // Kolumna 1
-        VBox col1 = new VBox(btnHarmonogram, btnZnajdzInstruktora, btnDodajNieobecnosc, btnWyswietlWyplateDzienna);
+        VBox col1 = new VBox(btnZnajdzKlienta, btnZnajdzInstruktora, btnDodajNieobecnosc, btnWyswietlWyplateDzienna);
         col1.setSpacing(10);
         col1.setPadding(new Insets(10));
         col1.setAlignment(javafx.geometry.Pos.CENTER);
 
         // Kolumna 2
-        VBox col2 = new VBox(btnZnajdzKlienta, btnDodajKlienta, btnUmowNaLekcjeZInstruktorem, btnUmowNaLekcjeZDowolnymInstruktorem);
+        VBox col2 = new VBox(btnHarmonogram, btnDodajKlienta, btnUmowNaLekcjeZInstruktorem, btnUmowNaLekcjeZDowolnymInstruktorem, btnPrzyznajOdznaki);
         col2.setSpacing(10);
         col2.setPadding(new Insets(10));
         col2.setAlignment(javafx.geometry.Pos.CENTER);
 
         // Kolumna 3
-        VBox col3 = new VBox(btnWyswietlGrupy, btnDodajDoGrupy, btnDodajGrupe, btnPrzyznajOdznaki);
+        VBox col3 = new VBox(btnWyswietlGrupy, btnDodajDoGrupy, btnDodajGrupe, btnWyswietlPoczekalnie);
         col3.setSpacing(10);
         col3.setPadding(new Insets(10));
         col3.setAlignment(javafx.geometry.Pos.CENTER);
@@ -70,7 +74,9 @@ public class Menu extends Application {
         hbox.setSpacing(20); // Odstęp między kolumnami
         hbox.setPadding(new Insets(10)); // Marginesy wokół HBox
 
-        Scene scene = new Scene(hbox, WIDTH, HEIGHT);
+        VBox vbox = new VBox(btnHarmonogram, hbox);
+        vbox.setAlignment(javafx.geometry.Pos.CENTER);
+        Scene scene = new Scene(vbox, WIDTH, HEIGHT);
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -411,7 +417,29 @@ public class Menu extends Application {
 
         // Obsługa zdarzeń dla przycisku "Wyswietl dostepne grupy"
         btnWyswietlGrupy.setOnAction(e -> {
+            DatePicker datePicker = new DatePicker();
+            Button okButton = new Button("OK");
 
+            VBox datePickerVBox = new VBox(datePicker, okButton);
+            datePickerVBox.setSpacing(10);
+            datePickerVBox.setPadding(new Insets(10));
+            datePickerVBox.setAlignment(Pos.CENTER);
+
+            Stage dateStage = new Stage();
+            dateStage.setTitle("Wybierz datę");
+            dateStage.setScene(new Scene(datePickerVBox, SMALL_WIDTH, SMALL_HEIGHT));
+            dateStage.show();
+
+            okButton.setOnAction(event -> {
+                LocalDate selectedDate = datePicker.getValue();
+                if (selectedDate != null) {
+                    WyswietlGrupy availableGroups = new WyswietlGrupy(selectedDate.toString());
+                    availableGroups.show();
+                    dateStage.close();
+                } else {
+                    System.out.println("Brak wybranej daty");
+                }
+            });
         });
 
         // Obsługa zdarzeń dla przycisku "Dodaj do grupy"
