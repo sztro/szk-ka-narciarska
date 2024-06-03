@@ -42,7 +42,7 @@ public class DodajDoGrupy {
             // Creating a window and displaying the message
             JFrame frame = new JFrame("Umów na lekcję z konkretnym instruktorem");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.setSize(500, SMALL_HEIGHT);
+            frame.setSize(500, 500  );
             frame.setLocationRelativeTo(null);
             frame.setLayout(new BorderLayout());
 
