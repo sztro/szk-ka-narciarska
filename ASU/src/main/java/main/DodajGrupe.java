@@ -68,7 +68,7 @@ public class DodajGrupe {
 
         try {
             Connection connection = DriverManager.getConnection(url, user, password);
-            String query = "SELECT dodaj_grupe(?, ?, ?, ?, ?)";
+            String query = "SELECT dodaj_grupe(idInstruktora, idOdznaki, dataRozpoczecia, maksDzieci, minDzieci)";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, idInstruktora);
             statement.setInt(2, idOdznaki);
