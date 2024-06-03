@@ -32,7 +32,7 @@ begin
     when others then return false;
 end;
 $$ language plpgsql;
-
+-----------------------------------------------------------------------------------------------------------------------------------
 create or replace function umow_konkretny(id_in int, dataa date, godzina_od int, godzina_do int, id_kli int, id_sportu int)
 returns bool
 as $$
@@ -49,16 +49,16 @@ $$ language plpgsql;
 
 drop function if exists id_klienta (i varchar(30), n varchar(30));
 create or replace function id_klienta (i varchar(30), n varchar(30))
-returns table (id_klienta int, imie varchar(30), nazwisko varchar(30), kontakt numeric(9), data_urodz date, "Odznaka (narty)" text, "Odznaka (snnowboard)" text)
+returns table (id_klienta int, imie varchar(30), nazwisko varchar(30), kontakt numeric(9), data_urodz date, "Odznaka (narty)" varchar(20), "Odznaka (snnowboard)" varchar(20))
 as $$
 begin
     return query
     select *, 
-    	max_odznaka(k.id_klienta, 1) as "Odznaka (narty)",
-    	max_odznaka(k.id_klienta, 2) as "Odznaka (snnowboard)"
+    	(select o.opis from odznaki o where o.id_odznaki = max_odznaka(k.id_klienta, 1)) as "Odznaka (narty)",
+    	(select o.opis from odznaki o where o.id_odznaki = max_odznaka(k.id_klienta, 2)) as "Odznaka (snnowboard)"
 	from klienci k
-	where klienci.imie = i 
-	and klienci.nazwisko = n;
+	where k.imie = i
+    and k.nazwisko = n;
 end;
 $$ language plpgsql;
 
