@@ -1,11 +1,10 @@
-
 create or replace function b_grupy_insert()
 returns trigger as
 $b_grupy_insert$
 declare
     licznik int;
-	godz_start int := 9;
-	godz_koniec int := 12;
+	godz_start int := new.godz_od;
+	godz_koniec int := new.godz_do;
 begin
     select count(*) from lista_oczekujacych into licznik
 	where new.data_rozpoczecia = data_rozpoczecia and new.id_odznaki = id_odznaki;
@@ -40,13 +39,23 @@ begin
 				errcode = 'STERR',
 				message = 'Instruktor nie uczy tego sportu';
 		return null;
+	elsif not exists(
+		select * from dostepnosc_sezon 
+		where id_instruktora = new.id_instruktora 
+		and new.data_rozpoczecia between data_od and data_do
+	) then 
+		raise exception using
+			errcode = 'NDOST',
+			message = 'Instruktor o id: '|| new.id_instruktora::text || ' niedostępny w tym czasie',
+			hint = 'Spróbuj dodać w innym terminie';
+		return null;
 	end if;
 	return new;
 end;
 $b_grupy_insert$ language plpgsql;
 create or replace trigger grupy_insert before insert on grupy
 for each row execute procedure b_grupy_insert();
------------------------------------
+------------------------------------------------------------------------------
 create or replace function aft_grupy_insert()
 returns trigger as
 $aft_grupy_insert$
@@ -71,7 +80,7 @@ end;
 $aft_grupy_insert$ language plpgsql;
 create or replace trigger aft_grupy_insert after insert on grupy
 for each row execute procedure aft_grupy_insert();
------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------
 create or replace function licznosc_grupy(id_grp int)
 returns int as
 $$
@@ -291,5 +300,22 @@ create or replace rule klienci_delete as
 on delete to klienci
 do instead nothing;
 ----------------------------------------------------------
-
+create or replace function dodaj_do_grupy(id_klienta int, id_odznaki int, data_rozpoczecia date)
+returns text as
+$$
+declare
+	ilosc_czekajacych int;
+begin
+	select count(*) from lista_oczekujacych into ilosc_czekajacych;
+	insert into lista_oczekujacych(id_klienta, id_odznaki, data_rozpoczecia) values (id_klienta, id_odznaki, data_rozpoczecia);
+	if (select count(*) from lista_oczekujacych) == ilosc_czekajacych then 
+		return 'Dodano do grupy';
+	else 
+		return 'Dodano do poczekani';
+	end if;
+exception when others then
+	return 'Dodanie nie powiodło się';
+end;
+$$ language plpgsql;
+--------
 
