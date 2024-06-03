@@ -82,7 +82,7 @@ CREATE TABLE dzieci_odznaki (
     id_klienta INT REFERENCES klienci on delete cascade NOT NULL ,
     id_odznaki INT REFERENCES odznaki NOT NULL,
     data_uzysk DATE NOT NULL,
-	PRIMARY KEY (id_klienta, id_odznaki, data_uzysk)
+	PRIMARY KEY (id_klienta, id_odznaki)
 );
 
 CREATE TABLE grupy (

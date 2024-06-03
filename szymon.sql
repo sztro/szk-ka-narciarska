@@ -2,15 +2,19 @@ create or replace function b_grupy_insert()
 returns trigger as
 $b_grupy_insert$
 declare
-    	licznik int;
-	godz_start int := new.godz_od;
-	godz_koniec int := new.godz_do;
-	stopnie_pomocnicze int[] := '{1, 5}';
-	
-	
+    licznik int;
+	godz_start int := 9;
+	godz_koniec int := 12;
+	stopnie_pomocnicze int[] = '{1,5}';
+	stopien_instruktora int;
 begin
     select count(*) from lista_oczekujacych into licznik
 	where new.data_rozpoczecia = data_rozpoczecia and new.id_odznaki = id_odznaki;
+	
+	select max(s.id_stopnia) from instruktorzy_stopnie s into stopien_instruktora
+		left join stopnie st using(id_stopnia)
+		where id_instruktora = new.id_instruktora
+		and id_sportu = (select id_sportu from odznaki where id_odznaki = new.id_odznaki);
    if licznik < new.min_dzieci then
         raise exception using
         	errcode = 'ERRDZ',
@@ -52,12 +56,7 @@ begin
 			message = 'Instruktor o id: '|| new.id_instruktora::text || ' niedostępny w tym czasie',
 			hint = 'Spróbuj dodać w innym terminie';
 		return null;
-	elsif (
-		select max(s.id_stopnia) from instruktorzy_stopnie s
-		left join stopnie st using(id_stopnia)
-		where id_instruktora = new.id_instruktora
-		and id_sportu = (select id_sportu from odznaki where id_odznaki = new.id_odznaki)
-		) = ANY(stopnie_pomocznicze) then
+	elsif stopien_instruktora = ANY(stopnie_pomocnicze) then
 		raise exception using
 			errcode = 'STERR',
 			message = 'Instruktor niewykwalifikowany do nauki tych zajec';
@@ -299,7 +298,7 @@ declare
 begin
 	select id_odznaki from grupy g into odznaka 
 	where g.id_grupy = new.id_grupy;
-	if max_odznaka(new.id_klienta, ( select id_sportu from odznaki where id_odznaki = odznaka  ) + 2 < odznaka)
+	if max_odznaka(new.id_klienta, ( select id_sportu from odznaki where id_odznaki = odznaka  ) )+ 2 < odznaka
 		then raise exception using
 			errcode = 'ODERR',
 			message = 'Dziecko nie ma odpowiedniej odznaki by wpisano je do grupy';
@@ -359,3 +358,23 @@ exception
 end;
 $$ language plpgsql;
 -----------------------------------------------------------
+create or replace rule dostepnosc_sezon_rule1 as
+on  update to dostepnosc_sezon
+do instead nothing;
+create or replace rule dostepnosc_sezon_rule2 as
+on delete to dostepnosc_sezon
+do instead nothing;
+----------------------------------------------------------
+create or replace function nadaj_odznake(id_klienta int, id_odznaki int, data_uzysk date )
+returns bool as
+$$
+begin
+	insert into dzieci_odznaki(id_klienta, id_odznaki, data_uzyskania) values
+	(id_klienta, id_odznaki, data_uzysk);
+	return true;
+exception
+	when others then
+		return false;
+end;
+$$ language plpgsql;
+----------------------------------------------------------------------
