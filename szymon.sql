@@ -52,10 +52,7 @@ returns trigger as
 $aft_grupy_insert$
 declare
 	licznik int;
-    chetni cursor for selsif max_odznaka(new.id_klienta, ( select id_sportu from odznaki where id_odznaki = new.id_odznaki) + 2 < new.id_odznaki)
-		then raise exception using
-			errcode = 'ODERR',
-			message = 'Dziecko nie ma odpowiedniej odznaki by wpisano je do grupy';elect l.id_klienta from lista_oczekujacych l
+    chetni cursor for select l.id_klienta from lista_oczekujacych l
 where l.data_rozpoczecia = new.data_rozpoczecia and l.id_odznaki = new.id_odznaki;
     rekord record;
     wskaźnik int := 0;

@@ -18,11 +18,13 @@ begin
 end;
 $$ language plpgsql;
 
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function wstaw_nieobecnosci (id int, dataa date, godzina_od numeric(2), godzina_do numeric(2))
 returns bool
 as $$
 begin 
-    insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc) VALUES
+    insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc) values
         (id, dataa, godzina_od, godzina_do, null, null, true, null);
     return true;
 
@@ -43,11 +45,21 @@ begin
 end;
 $$ language plpgsql;
 
+------------------------------------------------------------------------------------------------------------------------------------
+
+drop function if exists id_klienta (i varchar(30), n varchar(30));
 create or replace function id_klienta (i varchar(30), n varchar(30))
-returns table ( id_klienta int, imie varchar(30), nazwisko varchar(30), kontakt numeric(9), data_urodz date)
+returns table (id_klienta int, imie varchar(30), nazwisko varchar(30), kontakt numeric(9), data_urodz date, "Odznaka (narty)" text, "Odznaka (snnowboard)" text)
 as $$
 begin
     return query
-        select * from klienci where klienci.imie = i and klienci.nazwisko = n;
+    select *, 
+    	max_odznaka(k.id_klienta, 1) as "Odznaka (narty)",
+    	max_odznaka(k.id_klienta, 2) as "Odznaka (snnowboard)"
+	from klienci k
+	where klienci.imie = i 
+	and klienci.nazwisko = n;
 end;
 $$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------

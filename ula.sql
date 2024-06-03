@@ -1,4 +1,4 @@
-drop function wyswietl_harmonogram(dzien date);
+drop function if exists wyswietl_harmonogram(dzien date);
 create or replace function wyswietl_harmonogram(dzien date)
 returns table (Instrukor varchar(61), "9" text, "10" text, "11" text, "12" text, "13" text,  
     "14" text,  "15" text, "16" text, "17" text, "18" text, "19" text, "20" text) as 
@@ -101,7 +101,7 @@ begin
 end;
 $$ language plpgsql;
 
----------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
 
 create or replace function wyplata(instruktor int, dzien date)
 	returns int as 
@@ -150,9 +150,9 @@ begin
 end;
 $$ language plpgsql;
 
-----------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
 
-drop function umow_dowolny(int, date, int, int, int); 
+drop function if exists umow_dowolny(int, date, int, int, int); 
 create or replace function umow_dowolny(klient int, dzien date, h_od int, h_do int, sport int)
 	returns varchar(30) as 
 $$
@@ -189,7 +189,7 @@ begin
 end;
 $$ language plpgsql;
 
-----------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
 
 create or replace function znajdz_instruktora(im varchar(30)) 
 	returns table (id_instruktora int, imie varchar(30), nazwisko varchar(30)) as
@@ -214,12 +214,12 @@ begin
 end;
 $$ language plpgsql;
 
------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
 
 create unique index if not exists klienci_idx on klienci(imie, nazwisko) include (id_klienta);
 create unique index if not exists instruktorzy_idx on instruktorzy(imie) include (nazwisko, id_instruktora);
 
------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
 
 create or replace function ile_dzieci(grupa int) 
 	returns int as
@@ -235,7 +235,7 @@ begin
 end;
 $$ language plpgsql;
 
------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
 
 create or replace function wyswietl_grupy(dzien date)
 	returns table (odznaka varchar(30), sport varchar(30), instruktor text, data_rozpoczecia date, dzieci int) as 
@@ -256,11 +256,38 @@ begin
 end;
 $$ language plpgsql;
 
------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
 
---create or replace function wyswietl poczekalnie(odznaka int, dzien date) 
---	returns
+create or replace function wyswietl_poczekalnie(id_odz int, dzien date) 
+	returns table (klient int, data_rozpoczecia date, odznaka text) as 
+$$
+begin
+	return query 
+	select l.id_klienta, l.data_rozpoczecia, s.opis 
+	from lista_oczekujacych l
+	join odznaki o on o.id_odznaki = l.id_odznaki 
+	join sporty s on s.id_sportu = o.id_sportu
+	where l.id_odznaki = id_odz
+	and l.data_rozpoczecia = dzien;
+end;
+$$ language plpgsql;
 
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function wyswietl_poczekalnie() 
+	returns table (klient int, data_rozpoczecia date, odznaka text) as 
+$$
+begin
+	return query 
+	select l.id_klienta, l.data_rozpoczecia, s.opis 
+	from lista_oczekujacych l
+	join odznaki o on o.id_odznaki = l.id_odznaki 
+	join sporty s on s.id_sportu = o.id_sportu
+	order by l.data_rozpoczecia, l.id_odznaki;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
 
 
 
