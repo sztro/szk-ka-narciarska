@@ -365,3 +365,16 @@ create or replace rule dostepnosc_sezon_rule2 as
 on delete to dostepnosc_sezon
 do instead nothing;
 ----------------------------------------------------------
+create or replace function nadaj_odznake(id_klienta int, id_odznaki int, data_uzysk date )
+returns bool as
+$$
+begin
+	insert into dzieci_odznaki(id_klienta, id_odznaki, data_uzyskania) values
+	(id_klienta, id_odznaki, data_uzysk);
+	return true;
+exception
+	when others then
+		return false;
+end;
+$$ language plpgsql;
+----------------------------------------------------------------------
