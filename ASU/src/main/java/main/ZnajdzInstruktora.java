@@ -29,14 +29,12 @@ public class ZnajdzInstruktora {
             String query = "SELECT * FROM znajdz_instruktora('" + imie + "')";
             ResultSet resultSet = statement.executeQuery(query);
 
-            // Pobranie metadanych kolumn
             int columnCount = resultSet.getMetaData().getColumnCount();
             String[] columnNames = new String[columnCount];
             for (int i = 1; i <= columnCount; i++) {
                 columnNames[i - 1] = resultSet.getMetaData().getColumnName(i);
             }
 
-            // Pobranie danych
             NonEditableTableModel tableModel = new NonEditableTableModel(columnNames, 0);
             while (resultSet.next()) {
                 String[] rowData = new String[columnCount];
@@ -46,11 +44,9 @@ public class ZnajdzInstruktora {
                 tableModel.addRow(rowData);
             }
 
-            // Tworzenie JTable
             JTable table = new JTable(tableModel);
             JScrollPane scrollPane = new JScrollPane(table);
 
-            // Ustawienie szerokości pierwszej kolumny na szerokość najszerszego tekstu
             TableColumn column = table.getColumnModel().getColumn(0);
             int preferredWidth = 0;
             for (int row = 0; row < table.getRowCount(); row++) {
@@ -58,9 +54,8 @@ public class ZnajdzInstruktora {
                 Component c = table.prepareRenderer(cellRenderer, row, 0);
                 preferredWidth = Math.max(c.getPreferredSize().width, preferredWidth);
             }
-            column.setPreferredWidth(preferredWidth + 10); // Dodajemy 10 pikseli, aby zachować odstęp
+            column.setPreferredWidth(preferredWidth + 10);
 
-            // Tworzenie okna i dodanie tabeli
             JFrame frame = new JFrame("Znajdz Instruktora");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.add(scrollPane);

@@ -90,7 +90,6 @@ public class Menu extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // Obsługa zdarzeń dla przycisku "Harmonogram"
         btnHarmonogram.setOnAction(e -> {
             DatePicker datePicker = new DatePicker();
             datePicker.setValue(LocalDate.of(2024, 1, 1));
@@ -115,7 +114,6 @@ public class Menu extends Application {
             });
         });
 
-        // Obsługa zdarzeń dla przycisku "Znajdz ID Instruktora"
         btnZnajdzInstruktora.setOnAction(e -> {
             TextField textField = new TextField();
             textField.setPromptText("Wpisz imię");
@@ -142,7 +140,6 @@ public class Menu extends Application {
             });
         });
 
-        // Obsługa zdarzeń dla przycisku "Znajdz ID Klienta"
         btnZnajdzKlienta.setOnAction((e) -> {
             TextField firstNameField = new TextField();
             TextField lastNameField = new TextField();
@@ -172,7 +169,6 @@ public class Menu extends Application {
             });
         });
 
-        // Obsługa zdarzeń dla przycisku "Dodaj klienta"
         btnDodajKlienta.setOnAction(e -> {
             TextField firstNameField = new TextField();
             TextField lastNameField = new TextField();
@@ -214,8 +210,7 @@ public class Menu extends Application {
                 }
             });
         });
-        
-        // Obsługa zdarzeń dla przycisku "Wyplata"
+
         btnWyswietlWyplateDzienna.setOnAction(e -> {
             TextField idField = new TextField();
             DatePicker datePicker = new DatePicker();
@@ -255,7 +250,6 @@ public class Menu extends Application {
             });
         });
 
-        // Obsługa zdarzeń dla przycisku "Umów na lekcję z konkretnym instruktorem"
         btnUmowNaLekcjeZInstruktorem.setOnAction(e -> {
             TextField instructorIdField = new TextField();
             DatePicker datePicker = new DatePicker();
@@ -296,7 +290,6 @@ public class Menu extends Application {
             });
         });
 
-        // Obsługa zdarzeń dla przycisku "Dodaj nieobecnosc"
         btnDodajNieobecnosc.setOnAction(e -> {
             TextField idField = new TextField();
             DatePicker datePicker = new DatePicker();
@@ -347,7 +340,6 @@ public class Menu extends Application {
             });
         });
 
-        // Obsługa zdarzeń dla przycisku "Umow z dowolnym"
         btnUmowNaLekcjeZDowolnymInstruktorem.setOnAction(e -> {
             DatePicker datePicker = new DatePicker();
             datePicker.setValue(LocalDate.of(2024, 1, 1));
@@ -385,7 +377,6 @@ public class Menu extends Application {
             });
         });
 
-        // Obsługa zdarzeń dla przycisku "Wyswietl dostepne grupy"
         btnWyswietlGrupy.setOnAction(e -> {
             DatePicker datePicker = new DatePicker();
             datePicker.setValue(LocalDate.of(2024, 1, 1));
@@ -410,7 +401,6 @@ public class Menu extends Application {
             });
         });
 
-        // Obsługa zdarzeń dla przycisku "Dodaj do grupy"
         btnDodajDoGrupy.setOnAction(e -> {
                 TextField clientIdField = new TextField();
                 DatePicker datePicker = new DatePicker();
@@ -442,13 +432,11 @@ public class Menu extends Application {
                 });
         });
 
-        // Obsługa zdarzeń dla przycisku "Dodaj grupe"
         btnDodajGrupe.setOnAction(e -> {
             DodajGrupe dodajGrupe = new DodajGrupe();
             dodajGrupe.show();
         });
 
-        // Obsługa zdarzeń dla przycisku "Przyzawanie odznak"
         btnPrzyznajOdznaki.setOnAction(e -> {
             PrzyznajOdznaki przyznajOdznaki = new PrzyznajOdznaki();
             przyznajOdznaki.show();

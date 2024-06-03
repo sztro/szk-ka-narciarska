@@ -29,7 +29,6 @@ public class DodajDoGrupy {
             Connection connection = DriverManager.getConnection(url, user, password);
             Statement statement = connection.createStatement();
 
-            // Formulate the query
             String query = "SELECT dodaj_do_grupy(" + clientId + ", " + badgeId + ", '"  + date  +  "' )";
 
             ResultSet resultSet = statement.executeQuery(query);
@@ -39,7 +38,6 @@ public class DodajDoGrupy {
                 result = resultSet.getString(1);
             }
 
-            // Creating a window and displaying the message
             JFrame frame = new JFrame(result);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setSize(500, 500  );

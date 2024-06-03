@@ -35,7 +35,6 @@ public class UmowDoKonkretnego {
             Connection connection = DriverManager.getConnection(url, user, password);
             Statement statement = connection.createStatement();
 
-            // Formulate the query
             String query = "SELECT umow_konkretny(" + instructorId + ", '" + date + "', " + startHour + ", " + endHour + ", " + clientId + ", " + sportId + ")";
 
             ResultSet resultSet = statement.executeQuery(query);
@@ -45,7 +44,6 @@ public class UmowDoKonkretnego {
                 result = resultSet.getBoolean(1);
             }
 
-            // Creating a window and displaying the message
             JFrame frame = new JFrame("Umów na lekcję z konkretnym instruktorem");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setSize(SMALL_WIDTH, SMALL_HEIGHT);

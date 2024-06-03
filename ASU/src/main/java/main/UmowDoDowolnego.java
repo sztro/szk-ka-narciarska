@@ -37,7 +37,6 @@ public class UmowDoDowolnego {
             Connection connection = DriverManager.getConnection(url, user, password);
             Statement statement = connection.createStatement();
 
-            // Formulate the query
             String query = "SELECT umow_dowolny(" + clientId + ", '" + date + "', " + startHour + ", " + endHour + ", " + sportId + ")";
 
             ResultSet resultSet = statement.executeQuery(query);
@@ -47,7 +46,6 @@ public class UmowDoDowolnego {
                 result = resultSet.getString(1);
             }
 
-            // Creating a window and displaying the message
             JFrame frame = new JFrame("Umów na lekcję z konkretnym instruktorem");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setSize(500, SMALL_HEIGHT);

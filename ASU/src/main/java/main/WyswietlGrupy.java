@@ -29,14 +29,12 @@ public class WyswietlGrupy {
             String query = "SELECT * FROM wyswietl_grupy('" + date + "')";
             ResultSet resultSet = statement.executeQuery(query);
 
-            // Pobranie metadanych kolumn
             int columnCount = resultSet.getMetaData().getColumnCount();
             String[] columnNames = new String[columnCount];
             for (int i = 1; i <= columnCount; i++) {
                 columnNames[i - 1] = resultSet.getMetaData().getColumnName(i);
             }
 
-            // Pobranie danych
             NonEditableTableModel tableModel = new NonEditableTableModel(columnNames, 0);
             while (resultSet.next()) {
                 String[] rowData = new String[columnCount];
@@ -46,11 +44,9 @@ public class WyswietlGrupy {
                 tableModel.addRow(rowData);
             }
 
-            // Tworzenie JTable
             JTable table = new JTable(tableModel);
             JScrollPane scrollPane = new JScrollPane(table);
 
-            // Tworzenie okna i dodanie tabeli
             JFrame frame = new JFrame("Dostępne grupy dla daty: " + date);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setSize(WIDTH, HEIGHT);
