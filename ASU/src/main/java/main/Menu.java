@@ -78,8 +78,8 @@ public class Menu extends Application {
 
         // HBox do przechowywania kolumn
         HBox hbox = new HBox(col1, col2, col3);
-        hbox.setSpacing(20); // Odstęp między kolumnami
-        hbox.setPadding(new Insets(10)); // Marginesy wokół HBox
+        hbox.setSpacing(20);
+        hbox.setPadding(new Insets(10));
         hbox.setAlignment(javafx.geometry.Pos.CENTER);
 
         // Zdjęcie
@@ -97,6 +97,7 @@ public class Menu extends Application {
         // Obsługa zdarzeń dla przycisku "Harmonogram"
         btnHarmonogram.setOnAction(e -> {
             DatePicker datePicker = new DatePicker();
+            datePicker.setValue(LocalDate.of(2024, 1, 1));
             Button okButton = new Button("OK");
             VBox datePickerVBox = new VBox(datePicker, okButton);
             datePickerVBox.setSpacing(10);
@@ -106,8 +107,6 @@ public class Menu extends Application {
             dateStage.setTitle("Wybierz datę");
             dateStage.setScene(new Scene(datePickerVBox, 300, 150));
             dateStage.show();
-
-            // Tworzenie nowego okna i dodanie DatePicker
             okButton.setOnAction(event -> {
                 LocalDate selectedDate = datePicker.getValue();
                 if (selectedDate != null) {
@@ -183,26 +182,21 @@ public class Menu extends Application {
             TextField lastNameField = new TextField();
             TextField contactField = new TextField();
             DatePicker birthDatePicker = new DatePicker();
-
             VBox inputVBox = new VBox(new javafx.scene.control.Label("Imię"), firstNameField,
                     new javafx.scene.control.Label("Nazwisko"), lastNameField,
                     new javafx.scene.control.Label("Kontakt"), contactField,
                     new javafx.scene.control.Label("Data urodzenia"), birthDatePicker);
             inputVBox.setSpacing(10);
             inputVBox.setPadding(new Insets(10));
-
             Button addButton = new Button("Dodaj");
-
             VBox addVBox = new VBox(inputVBox, addButton);
             addVBox.setSpacing(10);
             addVBox.setPadding(new Insets(10));
             addVBox.setAlignment(javafx.geometry.Pos.CENTER);
-
             Stage addStage = new Stage();
             addStage.setTitle("Dodaj klienta");
             addStage.setScene(new Scene(addVBox, 300, 300));
             addStage.show();
-
             addButton.setOnAction(event -> {
                 String firstName = firstNameField.getText();
                 String lastName = lastNameField.getText();
@@ -224,12 +218,12 @@ public class Menu extends Application {
                 }
             });
         });
-
-
+        
         // Obsługa zdarzeń dla przycisku "Wyplata"
         btnWyswietlWyplateDzienna.setOnAction(e -> {
             TextField idField = new TextField();
             DatePicker datePicker = new DatePicker();
+            datePicker.setValue(LocalDate.of(2024, 1, 1));
             VBox inputVBox = new VBox(
                     new Label("ID Instruktora"),
                     idField,
@@ -267,15 +261,13 @@ public class Menu extends Application {
 
         // Obsługa zdarzeń dla przycisku "Umów na lekcję z konkretnym instruktorem"
         btnUmowNaLekcjeZInstruktorem.setOnAction(e -> {
-            // Tworzenie pól tekstowych i innych kontrolek potrzebnych do wprowadzenia danych
             TextField instructorIdField = new TextField();
             DatePicker datePicker = new DatePicker();
+            datePicker.setValue(LocalDate.of(2024, 1, 1));
             TextField startHourField = new TextField();
             TextField endHourField = new TextField();
             TextField clientIdField = new TextField();
             TextField sportIdField = new TextField();
-
-            // Tworzenie VBox do ułożenia kontrolek
             VBox inputVBox = new VBox(
                     new Label("ID instruktora"), instructorIdField,
                     new Label("Data lekcji"), datePicker,
@@ -286,37 +278,24 @@ public class Menu extends Application {
             );
             inputVBox.setSpacing(10);
             inputVBox.setPadding(new Insets(10));
-
-            // Tworzenie przycisku do potwierdzenia danych
             Button confirmButton = new Button("Potwierdź");
-
-            // Tworzenie VBox do ułożenia VBox z polami tekstowymi i przyciskiem
             VBox confirmVBox = new VBox(inputVBox, confirmButton);
             confirmVBox.setSpacing(10);
             confirmVBox.setPadding(new Insets(10));
             confirmVBox.setAlignment(Pos.CENTER);
-
-            // Tworzenie nowego okna dialogowego
             Stage confirmStage = new Stage();
             confirmStage.setTitle("Umów na lekcję z konkretnym instruktorem");
             confirmStage.setScene(new Scene(confirmVBox, 400, 500));
             confirmStage.show();
-
-            // Obsługa zdarzenia po kliknięciu przycisku "Potwierdź"
             confirmButton.setOnAction(event -> {
-                // Pobranie danych wprowadzonych przez użytkownika
                 int instructorId = Integer.parseInt(instructorIdField.getText());
                 LocalDate selectedDate = datePicker.getValue();
                 int startHour = Integer.parseInt(startHourField.getText());
                 int endHour = Integer.parseInt(endHourField.getText());
                 int clientId = Integer.parseInt(clientIdField.getText());
                 int sportId = Integer.parseInt(sportIdField.getText());
-
-                // Wywołanie funkcji do umówienia lekcji z konkretnym instruktorem
                 UmowDoKonkretnego scheduleLesson = new UmowDoKonkretnego(instructorId, selectedDate.toString(), startHour, endHour, clientId, sportId);
                 scheduleLesson.show();
-
-                // Zamknięcie okna dialogowego
                 confirmStage.close();
             });
         });
@@ -325,9 +304,9 @@ public class Menu extends Application {
         btnDodajNieobecnosc.setOnAction(e -> {
             TextField idField = new TextField();
             DatePicker datePicker = new DatePicker();
+            datePicker.setValue(LocalDate.of(2024, 1, 1));
             TextField godzinaRozpoczeciaField = new TextField();
             TextField godzinaZakonczeniaField = new TextField();
-
             VBox inputVBox = new VBox(
                     new Label("ID Instruktora"),
                     idField,
@@ -340,24 +319,20 @@ public class Menu extends Application {
             );
             inputVBox.setSpacing(10);
             inputVBox.setPadding(new Insets(10));
-
             Button addButton = new Button("Zatwierdź");
             VBox addVBox = new VBox(inputVBox, addButton);
             addVBox.setSpacing(10);
             addVBox.setPadding(new Insets(10));
             addVBox.setAlignment(Pos.CENTER);
-
             Stage addStage = new Stage();
             addStage.setTitle("Dodaj nieobecność");
             addStage.setScene(new Scene(addVBox, 300, 300));
             addStage.show();
-
             addButton.setOnAction(event -> {
                 String idText = idField.getText();
                 LocalDate selectedDate = datePicker.getValue();
                 String godzinaRozpoczeciaText = godzinaRozpoczeciaField.getText();
                 String godzinaZakonczeniaText = godzinaZakonczeniaField.getText();
-
                 if (!idText.isEmpty() && selectedDate != null && !godzinaRozpoczeciaText.isEmpty() && !godzinaZakonczeniaText.isEmpty()) {
                     try {
                         int id = Integer.parseInt(idText);
@@ -378,14 +353,12 @@ public class Menu extends Application {
 
         // Obsługa zdarzeń dla przycisku "Umow z dowolnym"
         btnUmowNaLekcjeZDowolnymInstruktorem.setOnAction(e -> {
-            // Tworzenie pól tekstowych i innych kontrolek potrzebnych do wprowadzenia danych
             DatePicker datePicker = new DatePicker();
+            datePicker.setValue(LocalDate.of(2024, 1, 1));
             TextField startHourField = new TextField();
             TextField endHourField = new TextField();
             TextField clientIdField = new TextField();
             TextField sportIdField = new TextField();
-
-            // Tworzenie VBox do ułożenia kontrolek
             VBox inputVBox = new VBox(
                     new Label("Data lekcji"), datePicker,
                     new Label("Godzina rozpoczęcia"), startHourField,
@@ -395,36 +368,23 @@ public class Menu extends Application {
             );
             inputVBox.setSpacing(10);
             inputVBox.setPadding(new Insets(10));
-
-            // Tworzenie przycisku do potwierdzenia danych
             Button confirmButton = new Button("Potwierdź");
-
-            // Tworzenie VBox do ułożenia VBox z polami tekstowymi i przyciskiem
             VBox confirmVBox = new VBox(inputVBox, confirmButton);
             confirmVBox.setSpacing(10);
             confirmVBox.setPadding(new Insets(10));
             confirmVBox.setAlignment(Pos.CENTER);
-
-            // Tworzenie nowego okna dialogowego
             Stage confirmStage = new Stage();
             confirmStage.setTitle("Umów na lekcję z konkretnym instruktorem");
             confirmStage.setScene(new Scene(confirmVBox, 400, 500));
             confirmStage.show();
-
-            // Obsługa zdarzenia po kliknięciu przycisku "Potwierdź"
             confirmButton.setOnAction(event -> {
-                // Pobranie danych wprowadzonych przez użytkownika
                 LocalDate selectedDate = datePicker.getValue();
                 int startHour = Integer.parseInt(startHourField.getText());
                 int endHour = Integer.parseInt(endHourField.getText());
                 int clientId = Integer.parseInt(clientIdField.getText());
                 int sportId = Integer.parseInt(sportIdField.getText());
-
-                // Wywołanie funkcji do umówienia lekcji z konkretnym instruktorem
                 UmowDoDowolnego scheduleLesson = new UmowDoDowolnego(selectedDate.toString(), startHour, endHour, clientId, sportId);
                 scheduleLesson.show();
-
-                // Zamknięcie okna dialogowego
                 confirmStage.close();
             });
         });
@@ -432,18 +392,16 @@ public class Menu extends Application {
         // Obsługa zdarzeń dla przycisku "Wyswietl dostepne grupy"
         btnWyswietlGrupy.setOnAction(e -> {
             DatePicker datePicker = new DatePicker();
+            datePicker.setValue(LocalDate.of(2024, 1, 1));
             Button okButton = new Button("OK");
-
             VBox datePickerVBox = new VBox(datePicker, okButton);
             datePickerVBox.setSpacing(10);
             datePickerVBox.setPadding(new Insets(10));
             datePickerVBox.setAlignment(Pos.CENTER);
-
             Stage dateStage = new Stage();
             dateStage.setTitle("Wybierz datę");
             dateStage.setScene(new Scene(datePickerVBox, SMALL_WIDTH, SMALL_HEIGHT));
             dateStage.show();
-
             okButton.setOnAction(event -> {
                 LocalDate selectedDate = datePicker.getValue();
                 if (selectedDate != null) {
@@ -458,13 +416,10 @@ public class Menu extends Application {
 
         // Obsługa zdarzeń dla przycisku "Dodaj do grupy"
         btnDodajDoGrupy.setOnAction(e -> {
-
-                // Tworzenie pól tekstowych i innych kontrolek potrzebnych do wprowadzenia danych
                 TextField clientIdField = new TextField();
                 DatePicker datePicker = new DatePicker();
+            datePicker.setValue(LocalDate.of(2024, 1, 1));
                 TextField badgePicker = new TextField();
-
-                // Tworzenie VBox do ułożenia kontrolek
                 VBox inputVBox = new VBox(
                         new Label("ID klienta"), clientIdField,
                         new Label("Data rozpoczęcia"), datePicker,
@@ -472,34 +427,21 @@ public class Menu extends Application {
                 );
                 inputVBox.setSpacing(10);
                 inputVBox.setPadding(new Insets(10));
-
-                // Tworzenie przycisku do potwierdzenia danych
                 Button confirmButton = new Button("Potwierdź");
-
-                // Tworzenie VBox do ułożenia VBox z polami tekstowymi i przyciskiem
                 VBox confirmVBox = new VBox(inputVBox, confirmButton);
                 confirmVBox.setSpacing(10);
                 confirmVBox.setPadding(new Insets(10));
                 confirmVBox.setAlignment(Pos.CENTER);
-
-                // Tworzenie nowego okna dialogowego
                 Stage confirmStage = new Stage();
                 confirmStage.setTitle("Dodaj osobę do grupy");
                 confirmStage.setScene(new Scene(confirmVBox, SMALL_WIDTH, 250));
                 confirmStage.show();
-
-                // Obsługa zdarzenia po kliknięciu przycisku "Potwierdź"
                 confirmButton.setOnAction(event -> {
-                    // Pobranie danych wprowadzonych przez użytkownika
                     int clientId = Integer.parseInt(clientIdField.getText());
                     LocalDate selectedDate = datePicker.getValue();
                     int badgeId = Integer.parseInt(badgePicker.getText());
-
-                    // Wywołanie funkcji do umówienia lekcji z konkretnym instruktorem
                     DodajDoGrupy addgroup = new DodajDoGrupy( clientId, selectedDate.toString(), badgeId);
                     addgroup.show();
-
-                    // Zamknięcie okna dialogowego
                     confirmStage.close();
                 });
         });

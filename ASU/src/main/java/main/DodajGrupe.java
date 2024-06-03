@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
 
 import static main.WindowSize.*;
 
@@ -31,6 +32,7 @@ public class DodajGrupe {
 
         Label dataRozpoczeciaLabel = new Label("Data Rozpoczęcia:");
         DatePicker dataRozpoczeciaPicker = new DatePicker();
+        dataRozpoczeciaPicker.setValue(LocalDate.of(2024, 1, 1));
 
         Label maksDzieciLabel = new Label("Maks. Dzieci:");
         TextField maksDzieciField = new TextField();
