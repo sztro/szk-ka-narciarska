@@ -446,6 +446,49 @@ public class Menu extends Application {
         // Obsługa zdarzeń dla przycisku "Dodaj do grupy"
         btnDodajDoGrupy.setOnAction(e -> {
 
+                // Tworzenie pól tekstowych i innych kontrolek potrzebnych do wprowadzenia danych
+                TextField clientIdField = new TextField();
+                DatePicker datePicker = new DatePicker();
+                TextField badgePicker = new TextField();
+
+                // Tworzenie VBox do ułożenia kontrolek
+                VBox inputVBox = new VBox(
+                        new Label("ID klienta"), clientIdField,
+                        new Label("Data rozpoczęcia"), datePicker,
+                        new Label("ID odznaki"), badgePicker
+                );
+                inputVBox.setSpacing(10);
+                inputVBox.setPadding(new Insets(10));
+
+                // Tworzenie przycisku do potwierdzenia danych
+                Button confirmButton = new Button("Potwierdź");
+
+                // Tworzenie VBox do ułożenia VBox z polami tekstowymi i przyciskiem
+                VBox confirmVBox = new VBox(inputVBox, confirmButton);
+                confirmVBox.setSpacing(10);
+                confirmVBox.setPadding(new Insets(10));
+                confirmVBox.setAlignment(Pos.CENTER);
+
+                // Tworzenie nowego okna dialogowego
+                Stage confirmStage = new Stage();
+                confirmStage.setTitle("Dodaj osobę do grupy");
+                confirmStage.setScene(new Scene(confirmVBox, 400, 500));
+                confirmStage.show();
+
+                // Obsługa zdarzenia po kliknięciu przycisku "Potwierdź"
+                confirmButton.setOnAction(event -> {
+                    // Pobranie danych wprowadzonych przez użytkownika
+                    int clientId = Integer.parseInt(clientIdField.getText());
+                    LocalDate selectedDate = datePicker.getValue();
+                    int badgeId = Integer.parseInt(badgePicker.getText());
+
+                    // Wywołanie funkcji do umówienia lekcji z konkretnym instruktorem
+                    DodajDoGrupy addgroup = new DodajDoGrupy( clientId, selectedDate.toString(), badgeId);
+                    addgroup.show();
+
+                    // Zamknięcie okna dialogowego
+                    confirmStage.close();
+                });
         });
 
         // Obsługa zdarzeń dla przycisku "Dodaj grupe"
