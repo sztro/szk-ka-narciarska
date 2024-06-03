@@ -193,7 +193,7 @@ for each row execute procedure dzieci_grupy_del();
 ------------------------------------------------------------------------------------------
 create or replace rule grupy_update as
 on update to grupy
-do instead nothing
+do instead nothing;
 --------------------------------------------------------------------------------------------------------
 create or replace function dostepnosc_sezon_tr()
 returns trigger as
@@ -220,7 +220,7 @@ create or replace function odznaki_immutability()
 returns trigger as
 $$
 begin
-	return null
+	return null;
 end;
 $$ language plpgsql;
 create or replace trigger odznaki_immutability
