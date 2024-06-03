@@ -1,5 +1,4 @@
 drop function wyswietl_harmonogram(dzien date);
-
 create or replace function wyswietl_harmonogram(dzien date)
 returns table (Instrukor varchar(61), "9" text, "10" text, "11" text, "12" text, "13" text,  
     "14" text,  "15" text, "16" text, "17" text, "18" text, "19" text, "20" text) as 
@@ -7,7 +6,7 @@ $$
 begin
     return query
     select 
-        cast(i.imie || ' ' || i.nazwisko AS varchar(61)) as "Instruktor",
+        cast(i.imie || ' ' || i.nazwisko as varchar(61)) as "Instruktor",
         max(case when h.godz_od <= 9 and h.godz_do > 9 then 
             case 
                 when h.czy_nieobecnosc then 'nieobecność'
@@ -102,6 +101,7 @@ begin
 end;
 $$ language plpgsql;
 
+---------------------------------------------------------------------------------------------------------------------------------------
 
 create or replace function wyplata(instruktor int, dzien date)
 	returns int as 
@@ -150,6 +150,8 @@ begin
 end;
 $$ language plpgsql;
 
+----------------------------------------------------------------------------------------------------------------------
+
 drop function umow_dowolny(int, date, int, int, int); 
 create or replace function umow_dowolny(klient int, dzien date, h_od int, h_do int, sport int)
 	returns varchar(30) as 
@@ -187,6 +189,8 @@ begin
 end;
 $$ language plpgsql;
 
+----------------------------------------------------------------------------------------------------------------------------
+
 create or replace function znajdz_instruktora(im varchar(30)) 
 	returns table (id_instruktora int, imie varchar(30), nazwisko varchar(30)) as
 $$
@@ -210,8 +214,52 @@ begin
 end;
 $$ language plpgsql;
 
-create unique index klienci_idx on klienci(imie, nazwisko) include (id_klienta);
-create unique index instruktorzy_idx on instruktorzy(imie, nazwisko) include (id_instruktora);
+-----------------------------------------------------------------------------------------------------------------------------------
+
+create unique index if not exists klienci_idx on klienci(imie, nazwisko) include (id_klienta);
+create unique index if not exists instruktorzy_idx on instruktorzy(imie) include (nazwisko, id_instruktora);
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function ile_dzieci(grupa int) 
+	returns int as
+$$ 
+declare 
+	suma int;
+begin
+	select count(*)
+	into suma
+	from dzieci_grupy d
+	where d.id_grupy = grupa;
+	return suma;
+end;
+$$ language plpgsql;
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function wyswietl_grupy(dzien date)
+	returns table (odznaka varchar(30), sport varchar(30), instruktor text, data_rozpoczecia date, dzieci int) as 
+$$ 
+begin 
+	return query
+	select 
+		o.opis,
+		s.opis,
+		i.imie || ' ' || substring(i.nazwisko, 1, 1),
+		g.data_rozpoczecia,
+		ile_dzieci(g.id_grupy)
+	from grupy g
+	join odznaki o on o.id_odznaki = g.id_odznaki 
+	join sporty s on s.id_sportu = o.id_sportu  
+	join instruktorzy i on i.id_instruktora = g.id_instruktora 
+	where g.data_rozpoczecia > dzien;
+end;
+$$ language plpgsql;
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function wyswietl poczekalnie(odznaka int, dzien date) 
+	returns
 
 
 
