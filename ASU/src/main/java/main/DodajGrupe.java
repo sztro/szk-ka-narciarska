@@ -10,10 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import javax.swing.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.time.LocalDate;
 
 import static main.WindowSize.*;
@@ -70,15 +67,11 @@ public class DodajGrupe {
 
         try {
             Connection connection = DriverManager.getConnection(url, user, password);
-            String query = "SELECT dodaj_grupe(idInstruktora, idOdznaki, dataRozpoczecia, maksDzieci, minDzieci)";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, idInstruktora);
-            statement.setInt(2, idOdznaki);
-            statement.setDate(3, java.sql.Date.valueOf(dataRozpoczecia));
-            statement.setInt(4, maksDzieci);
-            statement.setInt(5, minDzieci);
+            Statement statement = connection.createStatement();
+            String query = "SELECT dodaj_grupe(" + idInstruktora + ", " +  idOdznaki + ", '" + dataRozpoczecia + "', " + maksDzieci + ", " + minDzieci + ")";
 
-            ResultSet resultSet = statement.executeQuery();
+
+            ResultSet resultSet = statement.executeQuery(query);
             if (resultSet.next()) {
                 return resultSet.getString(1);
             }

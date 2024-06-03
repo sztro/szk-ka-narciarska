@@ -23,7 +23,7 @@ begin
         return null;
     elsif exists(
 		select * from harmonogram 
-		where "data" between new.data_rozpoczecia and new.data_rozpoczecia + interval '5 days'
+		where "data" between new.data_rozpoczecia and new.data_rozpoczecia + interval '4 days'
 		and id_instruktora = new.id_instruktora
 		and	(
 			(godz_od >= godz_start and godz_od < godz_koniec)
@@ -76,25 +76,42 @@ $aft_grupy_insert$
 declare
 	licznik int;
     chetni cursor for select l.id_klienta from lista_oczekujacych l
-where l.data_rozpoczecia = new.data_rozpoczecia and l.id_odznaki = new.id_odznaki;
+		where l.data_rozpoczecia = new.data_rozpoczecia 
+		and l.id_odznaki = new.id_odznaki;
     rekord record;
     wskaźnik int := 0;
+	temp_data date;
+	godz_start int := 9;
+	godz_koniec int := 12;
 begin
-	select count(*) from lista_oczekujacych into licznik
-	where new.data_rozpoczecia = data_rozpoczecia and new.id_odznaki = id_odznaki;
+	select 
+		count(*) 
+	from 
+		lista_oczekujacych 
+	into licznik
+	where 
+		new.data_rozpoczecia = data_rozpoczecia 
+		and new.id_odznaki = id_odznaki;
 	open chetni;
-    	while wskaźnik < new.maks_dzieci and wskaźnik < licznik loop
-        	fetch from chetni into rekord;
-        	insert into dzieci_grupy (id_klienta, id_grupy) values (rekord.id_klienta, new.id_grupy);
-       		delete from lista_oczekujacych where current of chetni;
-        	wskaźnik := wskaźnik + 1;
+    while wskaźnik < new.maks_dzieci and wskaźnik < licznik loop
+        fetch from chetni into rekord;
+        insert into dzieci_grupy (id_klienta, id_grupy) values (rekord.id_klienta, new.id_grupy);
+       	delete from lista_oczekujacych where current of chetni;
+       	wskaźnik := wskaźnik + 1;
     end loop;
+    wskaźnik := 0;
+    temp_data = new.data_rozpoczecia;
+    while wskaźnik < 5 loop
+		insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_grupy, czy_nieobecnosc, id_sportu)
+		values (new.id_instruktora, temp_data, godz_start, godz_koniec, new.id_grupy, false, (select id_sportu from odznaki where new.id_odznaki = id_odznaki));
+		wskaźnik := wskaźnik + 1;
+		temp_data := temp_data + interval '1 day';
+    end loop;	
     return new;
 end;
 $aft_grupy_insert$ language plpgsql;
 create or replace trigger aft_grupy_insert after insert on grupy
 for each row execute procedure aft_grupy_insert();
-
 ------------------------------------------------------------------------------------------------------------------------------------
 
 create or replace function licznosc_grupy(id_grp int)
