@@ -60,13 +60,6 @@ public class ZnajdzInstruktora {
             }
             column.setPreferredWidth(preferredWidth + 10); // Dodajemy 10 pikseli, aby zachować odstęp
 
-
-            // Ustawienie niestandardowego renderera dla wszystkich kolumn
-            CustomCellRenderer renderer = new CustomCellRenderer();
-            for (int i = 1; i < table.getColumnCount(); i++) {
-                table.getColumnModel().getColumn(i).setCellRenderer(renderer);
-            }
-
             // Tworzenie okna i dodanie tabeli
             JFrame frame = new JFrame("Znajdz Instruktora");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

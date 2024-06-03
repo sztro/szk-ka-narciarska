@@ -1,11 +1,11 @@
 drop function if exists wyswietl_harmonogram(dzien date);
 create or replace function wyswietl_harmonogram(dzien date)
-returns table ("Instrukor" varchar(61), "9" text, "10" text, "11" text, "12" text, "13" text,  
+returns table ("Instrukor" varchar(100), "9" text, "10" text, "11" text, "12" text, "13" text,  
     "14" text,  "15" text, "16" text, "17" text, "18" text, "19" text, "20" text) as 
 $$
 begin
     return query
-    select cast(b.imie || ' ' || b.nazwisko as varchar(61)) as "Instruktor",
+    select cast(b.id_instruktora || '. ' || b.imie || ' ' || b.nazwisko as varchar(100)) as "Instruktor",
     	a."9", a."10", a."11", a."12", a."13", a."14", a."15", a."16", a."17", a."18", a."19", a."20"
     from (    
 	    select 
@@ -201,10 +201,10 @@ $$ language plpgsql;
 ------------------------------------------------------------------------------------------------------------------------------------
 
 create or replace function max_stopien(instruktor int, sport int) 
-	returns varchar(20) as 
+	returns varchar(100) as 
 $$
 declare 
-	stopien_instruktora varchar(20);
+	stopien_instruktora varchar(100);
 begin 
 	select s.nazwa
 	into stopien_instruktora

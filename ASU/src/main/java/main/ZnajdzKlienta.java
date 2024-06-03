@@ -64,11 +64,6 @@ public class ZnajdzKlienta {
             }
 
             column.setPreferredWidth(preferredWidth + 10);
-            CustomCellRenderer renderer = new CustomCellRenderer();
-
-            for(int i = 1; i < table.getColumnCount(); ++i) {
-                table.getColumnModel().getColumn(i).setCellRenderer(renderer);
-            }
 
             JFrame frame = new JFrame("ID Klienta");
             frame.setDefaultCloseOperation(2);
