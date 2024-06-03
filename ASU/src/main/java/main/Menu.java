@@ -9,8 +9,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -74,8 +81,20 @@ public class Menu extends Application {
         hbox.setSpacing(20); // Odstęp między kolumnami
         hbox.setPadding(new Insets(10)); // Marginesy wokół HBox
 
-        VBox vbox = new VBox(btnHarmonogram, hbox);
+        // Zdjęcie
+        ImageView gora = new ImageView("/gora.png");
+        gora.setFitWidth(WIDTH);
+        gora.setPreserveRatio(true);
+
+        VBox vbox = new VBox(gora, btnHarmonogram, hbox);
         vbox.setAlignment(javafx.geometry.Pos.CENTER);
+
+//        // BorderPane jako główny kontener
+//        BorderPane borderPane = new BorderPane();
+//        borderPane.setTop(gora);
+//        borderPane.setCenter(vbox);
+//        borderPane.;
+
         Scene scene = new Scene(vbox, WIDTH, HEIGHT);
         primaryStage.setScene(scene);
         primaryStage.show();
