@@ -4,6 +4,8 @@ returns trigger as
 $b_grupy_insert$
 declare
     licznik int;
+	godz_start int := 9;
+	godz_koniec int := 12;
 begin
     select count(*) from lista_oczekujacych into licznik
 	where new.data_rozpoczecia = data_rozpoczecia and new.id_odznaki = id_odznaki;
@@ -13,13 +15,38 @@ begin
         	message = 'Nie ma wystarczająco chętnych by utworzyć grupe',
         	hint = 'Spróbuj  stworzyć grupe w innym terminie, o innym stopniu, lub poczekaj aż zapisze się wiecej osób';
         return null;
-    end if;
+    elsif exists(
+		select * from harmonogram 
+		where "data" between new.data_rozpoczecia and new.data_rozpoczecia + interval '5 days'
+		and id_instruktora = new.id_instruktora
+		and	(
+			(godz_od >= godz_start and godz_od < godz_koniec)
+			or (godz_do > godz_start and godz_do <= godz_koniec)
+			or (godz_od <= godz_start and godz_do >= godz_koniec)
+		)
+	) then
+		raise exception using
+			errcode = 'NDOST', 
+			message = 'Instruktor niedostepny';
+		return null;
+	elsif  (
+		select id_sportu from odznaki 
+		where id_odznaki = new.id_odznaki) NOT IN 
+		(select id_sportu from instruktorzy_stopnie 
+		left join stopnie using(id_stopnia) 
+		where id_instruktora = new.id_instruktora)
+		then
+			raise exception using
+				errcode = 'STERR',
+				message = 'Instruktor nie uczy tego sportu';
+		return null;
+	end if;
 	return new;
 end;
 $b_grupy_insert$ language plpgsql;
 create or replace trigger grupy_insert before insert on grupy
 for each row execute procedure b_grupy_insert();
----------------------------------------------------------------------------------------
+-----------------------------------
 create or replace function aft_grupy_insert()
 returns trigger as
 $aft_grupy_insert$
@@ -79,10 +106,11 @@ begin
 		select id_klienta from grupy right join dzieci_grupy using(id_grupy)
 		where data_rozpoczecia = new.data_rozpoczecia and id_odznaki = new.id_odznaki)
 	then return null;
-	elsif max_odznaka(new.id_klienta, ( select id_sportu from odznaki where id_odznaki = new.id_odznaki) + 2 < new.id_odznaki)
+	elsif max_odznaka(new.id_klienta, ( select id_sportu from odznaki where id_odznaki = new.id_odznaki) + 2 >= new.id_odznaki)
 		then raise exception using
 			errcode = 'ODERR',
 			message = 'Dziecko nie ma odpowiedniej odznaki by wpisano je do grupy';
+		return null;
 	elsif exists(
 		select * from grupy 
 		where data_rozpoczecia = new.data_rozpoczecia and id_odznaki = new.id_odznaki 
@@ -106,8 +134,6 @@ for each row execute procedure lista_oczekujacych_ins();
 create or replace function harmonogram_add()
 returns trigger as
 $harmonogram_add$
-declare
-	dzieci cursor for select * from dzieci_grupy where new.id_grupy = id_grupy;
 begin
 	if not exists(
 		select * from dostepnosc_sezon 
@@ -127,13 +153,22 @@ begin
 			(godz_od >= new.godz_od and godz_od < new.godz_do)
 			or (godz_do > new.godz_od and godz_do <= new.godz_do)
 			or (godz_od <= new.godz_od and godz_do >= new.godz_do)
-		)
+		)	
 	) then 
 		raise exception using
 			errcode = 'INZAJ',
 			message = 'Instruktor o id : ' || new.id_instruktora::text || ' ma inne zajęcia w tym terminie',
 			hint = 'Wybierz inny termin';
 		return old;
+	elsif new.id_sportu is not null and new.id_sportu NOT IN 
+		(select id_sportu from instruktorzy_stopnie 
+		left join stopnie using(id_stopnia) 
+		where id_instruktora = new.id_instruktora)
+		then
+			raise exception using
+				errcode = 'STERR',
+				message = 'Instruktor nie uczy tego sportu';
+		return null;
 	end if;
 	return new;
 end;
@@ -209,6 +244,7 @@ begin
 			and id_instruktora = new.id_instruktora )
 		then return null;
 		end if;
+		data_licznik := data_licznik + interval '1 day' ;
 	end loop;
 	return new;
 end;
@@ -231,4 +267,29 @@ for each row execute procedure odznaki_immutability();
 --sprawdzanie czy instruktor ma odpowiedni sport by prowadzic te zajecia uwu
 -- kupa
 ---------------------------------------------------------------------
+create or replace function dzieci_grupy_insert()
+returns trigger as 
+$dzieci_grupy_insert$
+declare
+	odznaka int;
+begin
+	select id_odznaki from grupy g into odznaka 
+	where g.id_grupy = new.id_grupy;
+	if max_odznaka(new.id_klienta, ( select id_sportu from odznaki where id_odznaki = odznaka  ) + 2 < odznaka)
+		then raise exception using
+			errcode = 'ODERR',
+			message = 'Dziecko nie ma odpowiedniej odznaki by wpisano je do grupy';
+		return old;
+	end if;
+	return new;
+end;
+$dzieci_grupy_insert$ language plpgsql;
+create or replace trigger dzieci_grupy_insert before insert or update on dzieci_grupy
+for each row execute procedure dzieci_grupy_insert();
+-----------------------------------------------------------
+create or replace rule klienci_delete as
+on delete to klienci
+do instead nothing;
+----------------------------------------------------------
+
 
