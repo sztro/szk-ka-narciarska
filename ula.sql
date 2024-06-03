@@ -110,7 +110,6 @@ begin
 end;
 $$ language plpgsql;
 
-select * from wyswietl_harmonogram('2024-01-01')
 ------------------------------------------------------------------------------------------------------------------------------------
 
 create or replace function wyplata(instruktor int, dzien date)
@@ -201,16 +200,39 @@ $$ language plpgsql;
 
 ------------------------------------------------------------------------------------------------------------------------------------
 
+create or replace function max_stopien(instruktor int, sport int) 
+	returns varchar(20) as 
+$$
+declare 
+	stopien_instruktora varchar(20);
+begin 
+	select s.nazwa
+	into stopien_instruktora
+	from instruktorzy_stopnie i 
+	left join stopnie s on s.id_stopnia = i.id_stopnia
+	where id_sportu = sport
+		and i.id_instruktora = instruktor
+	order by i.id_stopnia desc
+	limit 1;
+end;
+$$ language plpgsql; 
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+drop function if exists znajdz_instruktora(im varchar(30));
 create or replace function znajdz_instruktora(im varchar(30)) 
-	returns table (id_instruktora int, imie varchar(30), nazwisko varchar(30)) as
+	returns table (id_instruktora int, imie varchar(30), nazwisko varchar(30), "stopień(narty)" varchar(20), "stopień(snowboard)" varchar(20)) as
 $$
 begin
     return query
-    select i.id_instruktora, i.imie, i.nazwisko 
+    select i.id_instruktora, i.imie, i.nazwisko, max_stopien(i.id_instruktora, 1), max_stopien(i.id_instruktora, 1)
     from instruktorzy i 
     where i.imie = im;
 end;
 $$ language plpgsql; 
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 
 create or replace function dodaj_nieobecnosc(instruktor int, dzien date, h_od numeric(2), h_do numeric(2)) 
 	returns bool as
@@ -274,7 +296,7 @@ create or replace function wyswietl_poczekalnie(id_odz int, dzien date)
 $$
 begin
 	return query 
-	select l.id_klienta, l.data_rozpoczecia, s.opis 
+	select l.id_klienta, l.data_rozpoczecia, o.opis 
 	from lista_oczekujacych l
 	join odznaki o on o.id_odznaki = l.id_odznaki 
 	join sporty s on s.id_sportu = o.id_sportu
@@ -291,7 +313,7 @@ create or replace function wyswietl_poczekalnie()
 $$
 begin
 	return query 
-	select l.id_klienta, l.data_rozpoczecia, s.opis 
+	select l.id_klienta, l.data_rozpoczecia, o.opis 
 	from lista_oczekujacych l
 	join odznaki o on o.id_odznaki = l.id_odznaki 
 	join sporty s on s.id_sportu = o.id_sportu
