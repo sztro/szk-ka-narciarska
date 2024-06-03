@@ -1,106 +1,116 @@
 drop function if exists wyswietl_harmonogram(dzien date);
 create or replace function wyswietl_harmonogram(dzien date)
-returns table (Instrukor varchar(61), "9" text, "10" text, "11" text, "12" text, "13" text,  
+returns table ("Instrukor" varchar(61), "9" text, "10" text, "11" text, "12" text, "13" text,  
     "14" text,  "15" text, "16" text, "17" text, "18" text, "19" text, "20" text) as 
 $$
 begin
     return query
-    select 
-        cast(i.imie || ' ' || i.nazwisko as varchar(61)) as "Instruktor",
-        max(case when h.godz_od <= 9 and h.godz_do > 9 then 
-            case 
-                when h.czy_nieobecnosc then 'nieobecność'
-                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
-                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
-            end 
-        end) as "9",
-        max(case when h.godz_od <= 10 and h.godz_do > 10 then 
-            case 
-                when h.czy_nieobecnosc then 'nieobecność'
-                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
-                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
-            end 
-        end) as "10",
-        max(case when h.godz_od <= 11 and h.godz_do > 11 then 
-            case 
-                when h.czy_nieobecnosc then 'nieobecność'
-                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
-                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
-            end 
-        end) as "11",
-        max(case when h.godz_od <= 12 and h.godz_do > 12 then 
-            case 
-                when h.czy_nieobecnosc then 'nieobecność'
-                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
-                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
-            end 
-        end) as "12",
-        max(case when h.godz_od <= 13 and h.godz_do > 13 then 
-            case 
-                when h.czy_nieobecnosc then 'nieobecność'
-                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
-                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
-            end 
-        end) as "13",
-        max(case when h.godz_od <= 14 and h.godz_do > 14 then 
-            case 
-                when h.czy_nieobecnosc then 'nieobecność'
-                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
-                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
-            end 
-        end) as "14",
-        max(case when h.godz_od <= 15 and h.godz_do > 15 then 
-            case 
-                when h.czy_nieobecnosc then 'nieobecność'
-                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
-                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
-            end 
-        end) as "15",
-        max(case when h.godz_od <= 16 and h.godz_do > 16 then 
-            case 
-                when h.czy_nieobecnosc then 'nieobecność'
-                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
-                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
-            end 
-        end) as "16",
-        max(case when h.godz_od <= 17 and h.godz_do > 17 then 
-            case 
-                when h.czy_nieobecnosc then 'nieobecność'
-                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
-                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
-            end 
-        end) as "17",
-        max(case when h.godz_od <= 18 and h.godz_do > 18 then 
-            case 
-                when h.czy_nieobecnosc then 'nieobecność'
-                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
-                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
-            end 
-        end) as "18",
-        max(case when h.godz_od <= 19 and h.godz_do > 19 then 
-            case 
-                when h.czy_nieobecnosc then 'nieobecność'
-                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
-                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
-            end 
-        end) as "19",
-        max(case when h.godz_od <= 20 and h.godz_do > 20 then 
-            case 
-                when h.czy_nieobecnosc then 'nieobecność'
-                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
-                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
-            end 
-        end) as "20"
-    from harmonogram h
-    join instruktorzy i on h.id_instruktora = i.id_instruktora 
-    left join sporty s on h.id_sportu = s.id_sportu 
-    left join klienci k on k.id_klienta = h.id_klienta 
-    where h."data" = dzien
-    group by i.id_instruktora
-    order by i.id_instruktora; 
+    select cast(b.imie || ' ' || b.nazwisko as varchar(61)) as "Instruktor",
+    	a."9", a."10", a."11", a."12", a."13", a."14", a."15", a."16", a."17", a."18", a."19", a."20"
+    from (    
+	    select 
+	    	i.id_instruktora,
+	        max(case when h.godz_od <= 9 and h.godz_do > 9 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
+	            end 
+	        end) as "9",
+	        max(case when h.godz_od <= 10 and h.godz_do > 10 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
+	            end 
+	        end) as "10",
+	        max(case when h.godz_od <= 11 and h.godz_do > 11 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
+	            end 
+	        end) as "11",
+	        max(case when h.godz_od <= 12 and h.godz_do > 12 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
+	            end 
+	        end) as "12",
+	        max(case when h.godz_od <= 13 and h.godz_do > 13 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
+	            end 
+	        end) as "13",
+	        max(case when h.godz_od <= 14 and h.godz_do > 14 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
+	            end 
+	        end) as "14",
+	        max(case when h.godz_od <= 15 and h.godz_do > 15 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
+	            end 
+	        end) as "15",
+	        max(case when h.godz_od <= 16 and h.godz_do > 16 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
+	            end 
+	        end) as "16",
+	        max(case when h.godz_od <= 17 and h.godz_do > 17 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
+	            end 
+	        end) as "17",
+	        max(case when h.godz_od <= 18 and h.godz_do > 18 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
+	            end 
+	        end) as "18",
+	        max(case when h.godz_od <= 19 and h.godz_do > 19 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
+	            end 
+	        end) as "19",
+	        max(case when h.godz_od <= 20 and h.godz_do > 20 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
+	            end 
+	        end) as "20"
+	    from harmonogram h
+	    join instruktorzy i on h.id_instruktora = i.id_instruktora 
+	    left join sporty s on h.id_sportu = s.id_sportu 
+	    left join klienci k on k.id_klienta = h.id_klienta 
+	    where h."data" = dzien
+	    group by i.id_instruktora
+	    order by i.id_instruktora ) a
+    right join (
+    	select i.id_instruktora, i.imie, i.nazwisko
+		from instruktorzy i 
+		join dostepnosc_sezon d on d.id_instruktora = i.id_instruktora 
+		where dzien between d.data_od and d.data_do 
+		group by i.id_instruktora ) b on b.id_instruktora = a.id_instruktora; 
 end;
 $$ language plpgsql;
 
+select * from wyswietl_harmonogram('2024-01-01')
 ------------------------------------------------------------------------------------------------------------------------------------
 
 create or replace function wyplata(instruktor int, dzien date)
