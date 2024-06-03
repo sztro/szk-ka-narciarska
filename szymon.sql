@@ -2,9 +2,12 @@ create or replace function b_grupy_insert()
 returns trigger as
 $b_grupy_insert$
 declare
-    licznik int;
+    	licznik int;
 	godz_start int := new.godz_od;
 	godz_koniec int := new.godz_do;
+	stopnie_pomocnicze int[] := '{1, 5}';
+	
+	
 begin
     select count(*) from lista_oczekujacych into licznik
 	where new.data_rozpoczecia = data_rozpoczecia and new.id_odznaki = id_odznaki;
@@ -48,6 +51,16 @@ begin
 			errcode = 'NDOST',
 			message = 'Instruktor o id: '|| new.id_instruktora::text || ' niedostępny w tym czasie',
 			hint = 'Spróbuj dodać w innym terminie';
+		return null;
+	elsif (
+		select max(s.id_stopnia) from instruktorzy_stopnie s
+		left join stopnie st using(id_stopnia)
+		where id_instruktora = new.id_instruktora
+		and id_sportu = (select id_sportu from odznaki where id_odznaki = new.id_odznaki)
+		) = ANY(stopnie_pomocznicze) then
+		raise exception using
+			errcode = 'STERR',
+			message = 'Instruktor niewykwalifikowany do nauki tych zajec';
 		return null;
 	end if;
 	return new;
@@ -114,8 +127,10 @@ begin
 	if new.id_klienta in (
 		select id_klienta from grupy right join dzieci_grupy using(id_grupy)
 		where data_rozpoczecia = new.data_rozpoczecia and id_odznaki = new.id_odznaki)
-	then return null;
-	elsif max_odznaka(new.id_klienta, ( select id_sportu from odznaki where id_odznaki = new.id_odznaki) + 2 >= new.id_odznaki)
+	then raise exception using
+		errcode = 'REDUN',
+		message = 'dziecko jest juz w grupie o tych parametrach';
+	elsif max_odznaka(new.id_klienta, ( select id_sportu from odznaki where id_odznaki = new.id_odznaki))+ 2 < new.id_odznaki
 		then raise exception using
 			errcode = 'ODERR',
 			message = 'Dziecko nie ma odpowiedniej odznaki by wpisano je do grupy';
@@ -300,7 +315,7 @@ create or replace rule klienci_delete as
 on delete to klienci
 do instead nothing;
 ----------------------------------------------------------
-create or replace function dodaj_do_grupy(id_klienta int, id_odznaki int, data_rozpoczecia date)
+ create or replace function dodaj_do_grupy(id_klienta int, id_odznaki int, data_rozpoczecia date)
 returns text as
 $$
 declare
@@ -308,16 +323,20 @@ declare
 begin
 	select count(*) from lista_oczekujacych into ilosc_czekajacych;
 	insert into lista_oczekujacych(id_klienta, id_odznaki, data_rozpoczecia) values (id_klienta, id_odznaki, data_rozpoczecia);
-	if (select count(*) from lista_oczekujacych) == ilosc_czekajacych then 
+	if (select count(*) from lista_oczekujacych) = ilosc_czekajacych then 
 		return 'Dodano do grupy';
 	else 
 		return 'Dodano do poczekani';
 	end if;
-exception when others then
-	return 'Dodanie nie powiodło się';
+exception 
+	when sqlstate 'ODERR' then
+		return 'Dziecko nie ma odpowiedniej odznaki';
+	when sqlstate 'REDUN' then
+		return 'Dziecko jest juz w grupie o tych parametrach';
 end;
 $$ language plpgsql;
--------------------------------------------------
+	
+----------
 create or replace function dodaj_grupe
 	(id_instruktora int, id_odznaki int, data_rozpoczecia date, maks_dzieci int, min_dzieci int)
 returns text as

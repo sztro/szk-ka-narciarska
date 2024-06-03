@@ -1,0 +1,63 @@
+package main;
+
+import javax.swing.*;
+import java.awt.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import static main.WindowSize.SMALL_HEIGHT;
+
+public class DodajDoGrupy {
+    private String date;
+    private int clientId;
+    private int badgeId;
+
+    public DodajDoGrupy(int clientId, String date , int badgeId) {
+        this.date = date;
+        this.clientId = clientId;
+        this.badgeId = badgeId;
+    }
+
+    public void show() {
+        String url = User.URL;
+        String user = User.USERNAME;
+        String password = User.PASSWORD;
+
+        try {
+            Connection connection = DriverManager.getConnection(url, user, password);
+            Statement statement = connection.createStatement();
+
+            // Formulate the query
+            String query = "SELECT dodaj_do_grupy(" + clientId + ", " + badgeId + ", '"  + date  +  "' )";
+
+            ResultSet resultSet = statement.executeQuery(query);
+
+            String result = null;
+            if (resultSet.next()) {
+                result = resultSet.getString(1);
+            }
+
+            // Creating a window and displaying the message
+            JFrame frame = new JFrame("Umów na lekcję z konkretnym instruktorem");
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setSize(500, 500  );
+            frame.setLocationRelativeTo(null);
+            frame.setLayout(new BorderLayout());
+
+            JLabel messageLabel = new JLabel();
+            messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            messageLabel.setText(result);
+
+            frame.add(messageLabel, BorderLayout.CENTER);
+            frame.setVisible(true);
+
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
