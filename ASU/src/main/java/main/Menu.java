@@ -73,6 +73,7 @@ public class Menu extends Application {
         HBox hbox = new HBox(col1, col2, col3);
         hbox.setSpacing(20); // Odstęp między kolumnami
         hbox.setPadding(new Insets(10)); // Marginesy wokół HBox
+        hbox.setAlignment(javafx.geometry.Pos.CENTER);
 
         VBox vbox = new VBox(btnHarmonogram, hbox);
         vbox.setAlignment(javafx.geometry.Pos.CENTER);
@@ -455,6 +456,11 @@ public class Menu extends Application {
         // Obsługa zdarzeń dla przycisku "Przyzawanie odznak"
         btnPrzyznajOdznaki.setOnAction(e -> {
 
+        });
+
+        btnWyswietlPoczekalnie.setOnAction(e -> {
+            WyswietlPoczekalnie poczekalnia = new WyswietlPoczekalnie();
+            poczekalnia.show();
         });
     }
 
