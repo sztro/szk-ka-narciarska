@@ -369,12 +369,12 @@ create or replace function nadaj_odznake(id_klienta int, id_odznaki int, data_uz
 returns bool as
 $$
 begin
-	insert into dzieci_odznaki(id_klienta, id_odznaki, data_uzyskania) values
+	insert into dzieci_odznaki(id_klienta, id_odznaki, data_uzysk) values
 	(id_klienta, id_odznaki, data_uzysk);
 	return true;
-exception
-	when others then
-		return false;
+	exception
+    	when others then
+    		return false;
 end;
 $$ language plpgsql;
 ----------------------------------------------------------------------
