@@ -294,7 +294,7 @@ declare
 	data_licznik date;
 begin
 	data_licznik := new.data_od;
-	while data_licznik <= data_do loop
+	while data_licznik <= new.data_do loop
 		if not exists(
 			select * from ubezpieczenia 
 			where data_licznik between data_od and data_do
