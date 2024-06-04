@@ -295,11 +295,11 @@ $$ language plpgsql;
 
 drop function if exists wyswietl_poczekalnie(id_odz int, dzien date);
 create or replace function wyswietl_poczekalnie(id_odz int, dzien date) 
-	returns table (klient int, data_rozpoczecia date, odznaka varchar(9)) as 
+	returns table (klient int, data_rozpoczecia date, odznaka varchar(20)) as 
 $$
 begin
 	return query 
-	select l.id_klienta, l.data_rozpoczecia, o.opis 
+	select l.id_klienta, l.data_rozpoczecia, o.opis || '(' || s.opis || ')'
 	from lista_oczekujacych l
 	join odznaki o on o.id_odznaki = l.id_odznaki 
 	join sporty s on s.id_sportu = o.id_sportu
@@ -312,11 +312,11 @@ $$ language plpgsql;
 
 drop function if exists wyswietl_poczekalnie();
 create or replace function wyswietl_poczekalnie() 
-	returns table (klient int, data_rozpoczecia date, odznaka varchar(9)) as 
+	returns table (klient int, data_rozpoczecia date, odznaka text) as 
 $$
 begin
 	return query 
-	select l.id_klienta, l.data_rozpoczecia, o.opis 
+	select l.id_klienta, l.data_rozpoczecia, o.opis || ' (' || s.opis || ')'
 	from lista_oczekujacych l
 	join odznaki o on o.id_odznaki = l.id_odznaki 
 	join sporty s on s.id_sportu = o.id_sportu
@@ -326,5 +326,12 @@ $$ language plpgsql;
 
 ------------------------------------------------------------------------------------------------------------------------------------
 
+--TODO:
+-- Dodanie dwa razy tej samej osoby na tą samo grupe
+-- Wyświetlanie poczekalni z parametrami a nie bez po dodaniu do poczekalni 
+-- Kolejność insertów względem funkcji i wyzwalaczy 
+-- Redundancja w id_instruktora (grupy)
+-- Czemu można dodać do harmonogramu mimo że nie mają stopnia snowboardowego 
+-- zmniejszyć okienka wiadomości po dodaniu do grupy/poczekalni 
 
 

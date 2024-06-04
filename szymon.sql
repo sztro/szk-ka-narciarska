@@ -319,14 +319,13 @@ begin
 end;
 $$ language plpgsql;
 create or replace trigger odznaki_immutability
-before insert or update or delete on odznaki
+before update or delete on odznaki
 for each row execute procedure odznaki_immutability();
 
 ------------------------------------------------------------------------------------------------------------------------------------
 
 --TODO: trigger na dodawanie dogrup, ktory sprawdza czy dziecko ma odpowiednia odznake
 --sprawdzanie czy instruktor ma odpowiedni sport by prowadzic te zajecia uwu
--- kupa
 
 ------------------------------------------------------------------------------------------------------------------------------------
 
