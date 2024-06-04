@@ -106,7 +106,8 @@ begin
 		from instruktorzy i 
 		join dostepnosc_sezon d on d.id_instruktora = i.id_instruktora 
 		where dzien between d.data_od and d.data_do 
-		group by i.id_instruktora ) b on b.id_instruktora = a.id_instruktora; 
+		group by i.id_instruktora ) b on b.id_instruktora = a.id_instruktora
+	order by b.id_instruktora;
 end;
 $$ language plpgsql;
 
