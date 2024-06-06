@@ -912,7 +912,16 @@ INSERT INTO dzieci_odznaki(id_klienta, id_odznaki, data_uzysk) VALUES
 
 
 INSERT INTO grupy (id_odznaki, data_rozpoczecia, maks_dzieci, min_dzieci) VALUES
-
+    (1, '2024-01-01', 10, 3),
+    (3, '2024-01-08', 10, 3),
+    (5, '2024-01-15', 10, 3),
+    (7, '2024-01-22', 10, 3),
+    (9, '2023-01-29', 10, 3),
+    (2, '2024-01-01', 10, 3),
+    (4, '2024-01-08', 10, 3),
+    (6, '2024-01-15', 10, 3),
+    (8, '2024-01-22', 10, 3),
+    (10, '2023-01-29', 10, 3);
     
 INSERT INTO dzieci_grupy (id_klienta, id_grupy) VALUES
 
