@@ -113,3 +113,11 @@ begin
 end;
 $$ language plpgsql;
 
+
+INSERT INTO grupy (id_odznaki, data_rozpoczecia, maks_dzieci, min_dzieci) VALUES
+
+
+
+
+
+insert into harmonogram
