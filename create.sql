@@ -908,7 +908,7 @@ INSERT INTO odznaki (opis, id_sportu) VALUES
     ('złota', 1),
     ('złota', 2);
 
-INSERT INTO dzieci_odznaki(id_klienta, id_odznaki, data_uzysk) VALUES
+--INSERT INTO dzieci_odznaki(id_klienta, id_odznaki, data_uzysk) values;
 
 
 INSERT INTO grupy (id_odznaki, data_rozpoczecia, maks_dzieci, min_dzieci) VALUES
@@ -923,12 +923,11 @@ INSERT INTO grupy (id_odznaki, data_rozpoczecia, maks_dzieci, min_dzieci) VALUES
     (8, '2024-01-22', 10, 3),
     (10, '2023-01-29', 10, 3);
     
-INSERT INTO dzieci_grupy (id_klienta, id_grupy) VALUES
+--INSERT INTO dzieci_grupy (id_klienta, id_grupy) values;
 
 	
 INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc, id_sportu) VALUES
 -- GRUPY
-
 -- 25.12
 	(4, '2023-12-25', 9, 11, 7, NULL, false, 1),
 	(4, '2023-12-25', 11, 12, 8, NULL, false, 1),
