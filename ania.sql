@@ -65,3 +65,51 @@ end;
 $$ language plpgsql;
 
 ------------------------------------------------------------------------------------------------------------------------------------
+create or replace function currentdate() returns date
+as $$
+begin
+    return '2024-01-09'::DATE;
+end;
+$$ language plpgsql;
+-------------------------------------------------------------------------------------------------------------------------------------
+create or replace function har() returns trigger
+as $$
+begin
+    if(new.data < currentdate()) then  return null;
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+
+create or replace function dell() returns trigger
+as $$
+begin
+    if(old.data < currentdate()) then  return null;
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+
+
+create trigger harmonogram_upd
+before insert or update on harmonogram
+for each row
+execute function har();
+
+create trigger harmonogram_del
+before delete on harmonogram
+for each row
+execute function dell();
+
+create or replace function deactivate_and_delete()
+returns void
+as $$
+begin
+    alter table harmonogram disable trigger harmonogram_del;
+    delete from harmonogram
+    where "data" < currentdate() - interval '1 year';
+    alter table harmonogram enable trigger harmonogram_del;
+    return;
+end;
+$$ language plpgsql;
+
