@@ -272,6 +272,24 @@ $$ language plpgsql;
 
 ------------------------------------------------------------------------------------------------------------------------------------
 
+create or replace function instruktor_grupa(grupa int)
+	returns int as 
+$$
+declare 
+	instruktor int;
+begin 
+	select h.id_instruktora  
+	into instruktor
+	from grupy g 
+	join harmonogram h on h.id_grupy = g.id_grupy 
+	where g.id_grupy = grupa 
+	limit 1;
+	return instruktor; 
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
 create or replace function wyswietl_grupy(dzien date)
 	returns table (odznaka varchar(30), sport varchar(30), instruktor text, data_rozpoczecia date, dzieci int) as 
 $$ 
@@ -286,7 +304,7 @@ begin
 	from grupy g
 	join odznaki o on o.id_odznaki = g.id_odznaki 
 	join sporty s on s.id_sportu = o.id_sportu  
-	join instruktorzy i on i.id_instruktora = g.id_instruktora 
+	join instruktorzy i on i.id_instruktora = instruktor_grupa(g.id_grupy)
 	where g.data_rozpoczecia > dzien;
 end;
 $$ language plpgsql;
@@ -295,12 +313,13 @@ $$ language plpgsql;
 
 drop function if exists wyswietl_poczekalnie(id_odz int, dzien date);
 create or replace function wyswietl_poczekalnie(id_odz int, dzien date) 
-	returns table (klient int, data_rozpoczecia date, odznaka varchar(20)) as 
+	returns table (klient text, data_rozpoczecia date, odznaka text) as 
 $$
 begin
 	return query 
-	select l.id_klienta, l.data_rozpoczecia, o.opis || '(' || s.opis || ')'
+	select l.id_klienta || '. ' || k.imie || ' ' || k.nazwisko, l.data_rozpoczecia, o.opis || '(' || s.opis || ')'
 	from lista_oczekujacych l
+	join klienci k on l.id_klienta = k.id_klienta
 	join odznaki o on o.id_odznaki = l.id_odznaki 
 	join sporty s on s.id_sportu = o.id_sportu
 	where l.id_odznaki = id_odz
@@ -312,12 +331,13 @@ $$ language plpgsql;
 
 drop function if exists wyswietl_poczekalnie();
 create or replace function wyswietl_poczekalnie() 
-	returns table (klient int, data_rozpoczecia date, odznaka text) as 
+	returns table (klient text, data_rozpoczecia date, odznaka text) as 
 $$
 begin
 	return query 
-	select l.id_klienta, l.data_rozpoczecia, o.opis || ' (' || s.opis || ')'
+	select l.id_klienta || '. ' || k.imie || ' ' || k.nazwisko, l.data_rozpoczecia, o.opis || '(' || s.opis || ')'
 	from lista_oczekujacych l
+	join klienci k on l.id_klienta = k.id_klienta
 	join odznaki o on o.id_odznaki = l.id_odznaki 
 	join sporty s on s.id_sportu = o.id_sportu
 	order by l.data_rozpoczecia, l.id_odznaki;
@@ -333,5 +353,6 @@ $$ language plpgsql;
 -- Redundancja w id_instruktora (grupy)
 -- Czemu można dodać do harmonogramu mimo że nie mają stopnia snowboardowego 
 -- zmniejszyć okienka wiadomości po dodaniu do grupy/poczekalni 
+-- teraz grupy trwają 7 dni zamiast 5
 
 
