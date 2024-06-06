@@ -130,7 +130,7 @@ create or replace function harmonogram_add()
 returns trigger as
 $harmonogram_add$
 declare
-	stopnie_pomocicze int[] = '{1.5}';
+	stopnie_pomocicze int[] = '{1,5}';
 begin
 	if not exists(
 		select * from dostepnosc_sezon 
@@ -171,6 +171,10 @@ begin
             errcode = 'STERR',
             message = 'Instruktor niewykwalifikowany do nauki tych zajec';
         return null;
+	elsif new.id_grupy is not null then
+		if (select data_rozpoczecia from grupy g where g.id_grupy = new.id_grupy) >new.data then
+			return null;
+		end if;
 	end if;
 	return new;
 end;
@@ -328,29 +332,37 @@ exception
 		return 'Dziecko nie ma odpowiedniej odznaki';
 	when sqlstate 'REDUN' then
 		return 'Dziecko jest juz w grupie o tych parametrach';
+	when others then
+		return 'Błąd';
 end;
 $$ language plpgsql;
 	
 ------------------------------------------------------------------------------------------------------------------------------------
 
-create or replace function dodaj_grupe
-	(id_instruktora int, id_odznaki int, data_rozpoczecia date, maks_dzieci int, min_dzieci int)
+create or replace function dodaj_grupe(instruktor int, id_odzn int, data_rozpoczecia date, maks_dzieci int, min_dzieci int)
 returns text as
 $$ 
 declare
-	godz_od int := 9;
-	godz_do int := 12;
-	data_it date := data_rozpoczecia;
+	godz_od int;
+	godz_do int;
+	data_it date;
+	grupa int;
+	sport int;
 begin
+		godz_do = 12;
+		godz_od = 9;
+		data_it = data_rozpoczecia;
 		insert into grupy
 			(id_odznaki,data_rozpoczecia, maks_dzieci, min_dzieci) 
 		values
-			(id_odznaki, data_rozpoczecia, maks_dzieci, min_dzieci);
-		for i in 0..4 loop
-			insert into harmonogram(id_instruktora, "data", godz_od, godz_do, id_grupy, sport)
-			values (id_instruktora, data_it, godz_od, godz_do, (select max(id_grupy) from grupy), (select id_sportu from odznaki o where id_odzaki = o.id_odznaki));
-			data_it := data_it + interval '1 day';
-		end loop;
+			(id_odzn, data_rozpoczecia, maks_dzieci, min_dzieci);
+		select max(id_grupy) into grupa from grupy;
+		select id_sportu into sport from odznaki o where id_odzn = o.id_odznaki;
+		for i in 1 .. 5 loop
+			INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc, id_sportu) VALUES
+			(instruktor, data_it, godz_od, godz_do, null, grupa, false, sport);
+			 data_it := data_it + interval '1 day';
+		 end loop;
 		return 'Grupe utworzono pomyślnie';
 exception
 	when sqlstate 'ERRDZ' then
@@ -363,6 +375,8 @@ exception
 		return 'Instruktor ma inne zajęcia w tym terminie';
 	when sqlstate 'ERDAT' then
 		return 'Grupa tworzona w przeszłości';
+	when others then
+		return 'Błąd';
 end;
 $$ language plpgsql;
 
@@ -391,3 +405,10 @@ end;
 $$ language plpgsql;
 
 ------------------------------------------------------------------------------------------------------------------------------------
+create or replace function archiwizuj_liste_oczekujacych()
+returns void as
+$$
+begin
+	delete from lista_oczekujacych where data_rozpoczecia < currentdate();
+end;
+$$ language plpgsql;
