@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import static main.WindowSize.SMALL_HEIGHT;
+import static main.WindowSize.*;
 
 public class DodajDoGrupy {
     private String date;
@@ -40,7 +40,7 @@ public class DodajDoGrupy {
 
             JFrame frame = new JFrame(result);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.setSize(500, 500  );
+            frame.setSize(300, SMALL_HEIGHT);
             frame.setLocationRelativeTo(null);
             frame.setLayout(new BorderLayout());
 
