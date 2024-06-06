@@ -3,68 +3,25 @@ returns trigger as
 $b_grupy_insert$
 declare
     licznik int;
-	godz_start int := 9;
-	godz_koniec int := 12;
-	stopnie_pomocnicze int[] = '{1,5}';
-	stopien_instruktora int;
 begin
     select count(*) from lista_oczekujacych into licznik
 	where new.data_rozpoczecia = data_rozpoczecia and new.id_odznaki = id_odznaki;
-	
-	select max(s.id_stopnia) from instruktorzy_stopnie s into stopien_instruktora
-		left join stopnie st using(id_stopnia)
-		where id_instruktora = new.id_instruktora
-		and id_sportu = (select id_sportu from odznaki where id_odznaki = new.id_odznaki);
-   if licznik < new.min_dzieci then
+    if licznik < new.min_dzieci then
         raise exception using
         	errcode = 'ERRDZ',
         	message = 'Nie ma wystarczająco chętnych by utworzyć grupe',
         	hint = 'Spróbuj  stworzyć grupe w innym terminie, o innym stopniu, lub poczekaj aż zapisze się wiecej osób';
         return null;
-    elsif exists(
-		select * from harmonogram 
-		where "data" between new.data_rozpoczecia and new.data_rozpoczecia + interval '4 days'
-		and id_instruktora = new.id_instruktora
-		and	(
-			(godz_od >= godz_start and godz_od < godz_koniec)
-			or (godz_do > godz_start and godz_do <= godz_koniec)
-			or (godz_od <= godz_start and godz_do >= godz_koniec)
-		)
-	) then
+	elsif new.data_rozpoczecia < currentdate() then
 		raise exception using
-			errcode = 'TAKEN', 
-			message = 'Instruktor ma inne zajecia  w tym terminie ';
+			errcode = 'ERDAT',
+			message = 'próba utworzenia grupy w przeszłości';
 		return null;
-	elsif  (
-		select id_sportu from odznaki 
-		where id_odznaki = new.id_odznaki) NOT IN 
-		(select id_sportu from instruktorzy_stopnie 
-		left join stopnie using(id_stopnia) 
-		where id_instruktora = new.id_instruktora)
-		then
-			raise exception using
-				errcode = 'STERR',
-				message = 'Instruktor nie uczy tego sportu';
-		return null;
-	elsif not exists(
-		select * from dostepnosc_sezon 
-		where id_instruktora = new.id_instruktora 
-		and new.data_rozpoczecia between data_od and data_do
-	) then 
-		raise exception using
-			errcode = 'NDOST',
-			message = 'Instruktor o id: '|| new.id_instruktora::text || ' niedostępny w tym czasie',
-			hint = 'Spróbuj dodać w innym terminie';
-		return null;
-	elsif stopien_instruktora = ANY(stopnie_pomocnicze) then
-		raise exception using
-			errcode = 'STERR',
-			message = 'Instruktor niewykwalifikowany do nauki tych zajec';
-		return null;
-	end if;
-	return new;
+    end if;
+    return new;
 end;
 $b_grupy_insert$ language plpgsql;
+
 create or replace trigger grupy_insert before insert on grupy
 for each row execute procedure b_grupy_insert();
 
@@ -74,15 +31,12 @@ create or replace function aft_grupy_insert()
 returns trigger as
 $aft_grupy_insert$
 declare
-	licznik int;
+    licznik int;
     chetni cursor for select l.id_klienta from lista_oczekujacych l
-		where l.data_rozpoczecia = new.data_rozpoczecia 
-		and l.id_odznaki = new.id_odznaki;
+	where l.data_rozpoczecia = new.data_rozpoczecia 
+	and l.id_odznaki = new.id_odznaki;
     rekord record;
     wskaźnik int := 0;
-	temp_data date;
-	godz_start int := 9;
-	godz_koniec int := 12;
 begin
 	select 
 		count(*) 
@@ -99,14 +53,6 @@ begin
        	delete from lista_oczekujacych where current of chetni;
        	wskaźnik := wskaźnik + 1;
     end loop;
-    wskaźnik := 0;
-    temp_data = new.data_rozpoczecia;
-    while wskaźnik < 5 loop
-		insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_grupy, czy_nieobecnosc, id_sportu)
-		values (new.id_instruktora, temp_data, godz_start, godz_koniec, new.id_grupy, false, (select id_sportu from odznaki where new.id_odznaki = id_odznaki));
-		wskaźnik := wskaźnik + 1;
-		temp_data := temp_data + interval '1 day';
-    end loop;	
     return new;
 end;
 $aft_grupy_insert$ language plpgsql;
@@ -183,6 +129,8 @@ for each row execute procedure lista_oczekujacych_ins();
 create or replace function harmonogram_add()
 returns trigger as
 $harmonogram_add$
+declare
+	stopnie_pomocicze int[] = '{1.5}';
 begin
 	if not exists(
 		select * from dostepnosc_sezon 
@@ -218,6 +166,11 @@ begin
 				errcode = 'STERR',
 				message = 'Instruktor nie uczy tego sportu';
 		return null;
+	elsif stopien_instruktora = ANY(stopnie_pomocnicze) then
+        raise exception using
+            errcode = 'STERR',
+            message = 'Instruktor niewykwalifikowany do nauki tych zajec';
+        return null;
 	end if;
 	return new;
 end;
@@ -383,13 +336,22 @@ $$ language plpgsql;
 create or replace function dodaj_grupe
 	(id_instruktora int, id_odznaki int, data_rozpoczecia date, maks_dzieci int, min_dzieci int)
 returns text as
-$$
+$$ 
+declare
+	godz_od int := 9;
+	godz_do int := 12;
+	data_it date := data_rozpoczecia;
 begin
-	insert into grupy
-		(id_instruktora, id_odznaki,data_rozpoczecia, maks_dzieci, min_dzieci) 
-	values
-		(id_instruktora, id_odznaki, data_rozpoczecia, maks_dzieci, min_dzieci);
-	return 'Grupe utworzono pomyślnie';
+		insert into grupy
+			(id_odznaki,data_rozpoczecia, maks_dzieci, min_dzieci) 
+		values
+			(id_odznaki, data_rozpoczecia, maks_dzieci, min_dzieci);
+		for i in 0..4 loop
+			insert into harmonogram(id_instruktora, "data", godz_od, godz_do, id_grupy, sport)
+			values (id_instruktora, data_it, godz_od, godz_do, (select max(id_grupy) from grupy), (select id_sportu from odznaki o where id_odzaki = o.id_odznaki));
+			data_it := data_it + interval '1 day';
+		end loop;
+		return 'Grupe utworzono pomyślnie';
 exception
 	when sqlstate 'ERRDZ' then
 		return 'Za mało dzieci by utworzyć grupe';
@@ -399,6 +361,8 @@ exception
 		return 'Instruktor nie ma kwalifikacji by prowadzić tą grupe';
 	when sqlstate 'TAKEN' then
 		return 'Instruktor ma inne zajęcia w tym terminie';
+	when sqlstate 'ERDAT' then
+		return 'Grupa tworzona w przeszłości';
 end;
 $$ language plpgsql;
 
