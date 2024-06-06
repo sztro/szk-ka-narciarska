@@ -965,12 +965,7 @@ INSERT INTO dzieci_odznaki(id_klienta, id_odznaki, data_uzysk) VALUES
     (40, 2, '2024-01-03');
 
 INSERT INTO grupy (id_odznaki, data_rozpoczecia, maks_dzieci, min_dzieci) VALUES
-    (1, '2024-01-11', 10, 3),
-    (3, '2024-01-18', 10, 3),
-    (5, '2024-01-25', 10, 3),
-    (6, '2024-01-18', 10, 3),
-    (2, '2023-12-28', 10, 3),
-    (4, '2024-01-04', 10, 3);
+
     
 INSERT INTO dzieci_grupy (id_klienta, id_grupy) VALUES
 	(2, 1),
@@ -1017,48 +1012,7 @@ INSERT INTO dzieci_grupy (id_klienta, id_grupy) VALUES
 	
 INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc, id_sportu) VALUES
 -- GRUPY
-	(1, '2024-01-11', 9, 12, NULL, 1, false, 1),
-	(1, '2024-01-12', 9, 12, NULL, 1, false, 1),
-	(1, '2024-01-13', 9, 12, NULL, 1, false, 1),
-	(1, '2024-01-14', 9, 12, NULL, 1, false, 1),
-	(1, '2024-01-15', 9, 12, NULL, 1, false, 1),
-	(1, '2024-01-16', 9, 12, NULL, 1, false, 1),
-	(1, '2024-01-17', 9, 12, NULL, 1, false, 1),
-	(2, '2024-01-18', 9, 12, NULL, 2, false, 1),
-	(2, '2024-01-19', 9, 12, NULL, 2, false, 1),
-	(2, '2024-01-20', 9, 12, NULL, 2, false, 1),
-	(2, '2024-01-21', 9, 12, NULL, 2, false, 1),
-	(2, '2024-01-22', 9, 12, NULL, 2, false, 1),
-	(2, '2024-01-23', 9, 12, NULL, 2, false, 1),
-	(2, '2024-01-24', 9, 12, NULL, 2, false, 1),
-	(3, '2024-01-25', 9, 12, NULL, 3, false, 1),
-	(3, '2024-01-26', 9, 12, NULL, 3, false, 1),
-	(3, '2024-01-27', 9, 12, NULL, 3, false, 1),
-	(3, '2024-01-28', 9, 12, NULL, 3, false, 1),
-	(3, '2024-01-29', 9, 12, NULL, 3, false, 1),
-	(3, '2024-01-30', 9, 12, NULL, 3, false, 1),
-	(3, '2024-01-31', 9, 12, NULL, 3, false, 1),
-	(7, '2024-01-18', 9, 12, NULL, 4, false, 2),
-	(7, '2024-01-19', 9, 12, NULL, 4, false, 2),
-	(7, '2024-01-20', 9, 12, NULL, 4, false, 2),
-	(7, '2024-01-21', 9, 12, NULL, 4, false, 2),
-	(7, '2024-01-22', 9, 12, NULL, 4, false, 2),
-	(7, '2024-01-23', 9, 12, NULL, 4, false, 2),
-	(7, '2024-01-24', 9, 12, NULL, 4, false, 2),
-	(6, '2023-12-28', 9, 12, NULL, 5, false, 2),
-	(6, '2023-12-29', 9, 12, NULL, 5, false, 2),
-	(6, '2023-12-30', 9, 12, NULL, 5, false, 2),
-	(6, '2023-12-31', 9, 12, NULL, 5, false, 2),
-	(6, '2024-01-01', 9, 12, NULL, 5, false, 2),
-	(6, '2024-01-02', 9, 12, NULL, 5, false, 2),
-	(6, '2024-01-03', 9, 12, NULL, 5, false, 2),
-	(6, '2024-01-04', 9, 12, NULL, 6, false, 2),
-	(6, '2024-01-05', 9, 12, NULL, 6, false, 2),
-	(6, '2024-01-06', 9, 12, NULL, 6, false, 2),
-	(6, '2024-01-07', 9, 12, NULL, 6, false, 2),
-	(6, '2024-01-08', 9, 12, NULL, 6, false, 2),
-	(6, '2024-01-09', 9, 12, NULL, 6, false, 2),
-	(6, '2024-01-10', 9, 12, NULL, 6, false, 2),
+
 -- 25.12
 	(4, '2023-12-25', 9, 11, 7, NULL, false, 1),
 	(4, '2023-12-25', 11, 12, 8, NULL, false, 1),
