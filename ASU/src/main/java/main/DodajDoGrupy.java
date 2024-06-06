@@ -47,7 +47,7 @@ public class DodajDoGrupy {
             JLabel messageLabel = new JLabel();
             messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
             messageLabel.setText(result);
-            WyswietlPoczekalnie poczekalnia = new WyswietlPoczekalnie();
+            Poczekalnia poczekalnia = new Poczekalnia(clientId,date);
             poczekalnia.show();
 
             frame.add(messageLabel, BorderLayout.CENTER);

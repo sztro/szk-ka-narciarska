@@ -125,8 +125,6 @@ CREATE TABLE grupy (
 	id_grupy SERIAL NOT NULL PRIMARY KEY,
 	id_odznaki INT NOT NULL REFERENCES odznaki,
 	data_rozpoczecia DATE NOT NULL,
-	id_odznaki INT NOT NULL REFERENCES odznaki,
-	data_rozpoczecia DATE NOT NUL
 	maks_dzieci INT NOT NULL,
 	min_dzieci INT NOT NULL,
 	CHECK(maks_dzieci >= min_dzieci)
@@ -523,7 +521,7 @@ INSERT INTO dzieci_odznaki(id_klienta, id_odznaki, data_uzysk) VALUES
     (35, 4, '2023-03-14'),
     (40, 2, '2024-01-03');
 
-INSERT INTO grupy (id_instruktora, id_odznaki, data_rozpoczecia, maks_dzieci, min_dzieci) VALUES
+INSERT INTO grupy (id_odznaki, data_rozpoczecia, maks_dzieci, min_dzieci) VALUES
     (1, '2024-01-11', 10, 3),
     (3, '2024-01-18', 10, 3),
     (5, '2024-01-25', 10, 3),
