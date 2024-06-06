@@ -115,9 +115,22 @@ $$ language plpgsql;
 
 
 INSERT INTO grupy (id_odznaki, data_rozpoczecia, maks_dzieci, min_dzieci) VALUES
+    (1, '2024-01-01', 10, 3),
+    (3, '2024-01-08', 10, 3),
+    (5, '2024-01-15', 10, 3),
+    (6, '2024-01-22', 10, 3),
+    (2, '2023-01-29', 10, 3),
+    (2, '2024-01-01', 10, 3),
+    (4, '2024-01-08', 10, 3),
+    (6, '2024-01-15', 10, 3),
+    (7, '2024-01-22', 10, 3),
+    (3, '2023-01-29', 10, 3);
 
 
+7 - 26 narty
+32 - 46 snnowboard
+120 - 503 klienci
 
-
-
-insert into harmonogram
+insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc, id_sportu) values
+    --GRUPY
+    (7, '2024-01-01', 9, 12, null, 1, false, )
