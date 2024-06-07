@@ -58,7 +58,7 @@ public class WyswietlGrupy {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 1) {
-                        JTable target = (JTable)e.getSource();
+                        JTable target = (JTable) e.getSource();
                         int row = target.getSelectedRow();
                         String stringValue = (String) table.getValueAt(row, 0);
                         int value = Integer.parseInt(stringValue);
@@ -69,11 +69,16 @@ public class WyswietlGrupy {
                 }
             });
 
+            JLabel messageLabel = new JLabel("Kliknij w grupę, aby wyświetlić listę dzieci", JLabel.CENTER);
+            messageLabel.setFont(new Font("Roboto", Font.PLAIN, 16));
+            messageLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
             JFrame frame = new JFrame("Dostępne grupy od daty: " + date);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setSize(WIDTH, HEIGHT);
             frame.setLayout(new BorderLayout());
             frame.setLocationRelativeTo(null);
+            frame.add(messageLabel, BorderLayout.NORTH); // Add the label to the north region of the border layout
             frame.add(scrollPane, BorderLayout.CENTER);
             frame.setVisible(true);
 
