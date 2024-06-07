@@ -166,7 +166,7 @@ begin
 				errcode = 'STERR',
 				message = 'Instruktor nie uczy tego sportu';
 		return null;
-	elsif stopien_instruktora = ANY(stopnie_pomocnicze) then
+	elsif (select max(id_stopnia) from instruktorzy_stopnie  i where new.id_instruktora = i.id_instruktora) = ANY(stopnie_pomocnicze) then
         raise exception using
             errcode = 'STERR',
             message = 'Instruktor niewykwalifikowany do nauki tych zajec';
