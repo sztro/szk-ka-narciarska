@@ -86,7 +86,7 @@ begin
 end;
 $$ language plpgsql;
 
-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------check
 
 create or replace function lista_oczekujacych_ins()
 returns trigger as
@@ -188,7 +188,7 @@ create or replace  rule instruktorzy_delete as
 on delete to instruktorzy
 do instead nothing;
 
-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------check
 
 create or replace function dzieci_grupy_del()
 returns trigger as
@@ -225,7 +225,6 @@ begin
         	delete from lista_oczekujacych where current of chetni;
         	liczba_osob := liczba_osob + 1;
 		end loop;
-		return new;
 	end if;
 	if liczba_osob = 0 then
 		delete from grupy where id_grupy = old.id_grupy;
@@ -242,7 +241,7 @@ create or replace rule grupy_update as
 on update to grupy
 do instead nothing;
 
-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------check
 
 create or replace function dostepnosc_sezon_tr()
 returns trigger as
@@ -284,7 +283,7 @@ for each row execute procedure odznaki_immutability();
 --TODO: trigger na dodawanie dogrup, ktory sprawdza czy dziecko ma odpowiednia odznake
 --sprawdzanie czy instruktor ma odpowiedni sport by prowadzic te zajecia uwu
 
-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------check
 
 create or replace function dzieci_grupy_insert()
 returns trigger as 
@@ -312,7 +311,7 @@ create or replace rule klienci_delete as
 on delete to klienci
 do instead nothing;
 
-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------check
 
  create or replace function dodaj_do_grupy(id_klienta int, id_odznaki int, data_rozpoczecia date)
 returns text as
@@ -337,7 +336,7 @@ exception
 end;
 $$ language plpgsql;
 	
-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------check
 
 create or replace function dodaj_grupe(instruktor int, id_odzn int, data_rozpoczecia date, maks_dzieci int, min_dzieci int)
 returns text as
@@ -389,7 +388,7 @@ create or replace rule dostepnosc_sezon_rule2 as
 on delete to dostepnosc_sezon
 do instead nothing;
 
-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------check
 
 create or replace function nadaj_odznake(id_klienta int, id_odznaki int, data_uzysk date )
 returns bool as
@@ -404,7 +403,7 @@ begin
 end;
 $$ language plpgsql;
 
-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------check
 create or replace function archiwizuj_liste_oczekujacych()
 returns void as
 $$
