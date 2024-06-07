@@ -10,10 +10,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import javax.swing.*;
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
+import static main.WindowSize.CURRENT_DATE;
 
 public class PrzyznajOdznaki {
     public void show() {
@@ -28,6 +31,7 @@ public class PrzyznajOdznaki {
 
         Label dataUzyskaniaLabel = new Label("Data Uzyskania:");
         DatePicker dataUzyskaniaPicker = new DatePicker();
+        dataUzyskaniaPicker.setValue(CURRENT_DATE);
 
         Button submitButton = new Button("Przyznaj Odznakę");
 
@@ -46,6 +50,8 @@ public class PrzyznajOdznaki {
             String dataUzyskania = dataUzyskaniaPicker.getValue().toString();
 
             boolean result = nadajOdznake(idKlienta, idOdznaki, dataUzyskania);
+//            JLabel messageLabel = new JLabel();
+//            messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
             if (result) {
                 JOptionPane.showMessageDialog(null, "Odznaka przyznana pomyślnie.");
             } else {

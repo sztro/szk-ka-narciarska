@@ -9,9 +9,9 @@ def increase_dates(file_path):
                 if len(part) == 12 and part[0] == "'": 
                     date = part.strip("'")
                     year, month, day = map(int, date.split('-'))
-                    day += 2 
+                    day += 3                                        # o ile dni się zmieni
                     if day > 31:
-                        day = 1
+                        day = day - 31
                         month += 1
                     modified_date = f"'{year:04d}-{month:02d}-{day:02d}'"
                     parts[i] = modified_date

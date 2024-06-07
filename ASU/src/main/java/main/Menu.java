@@ -406,7 +406,7 @@ public class Menu extends Application {
         btnDodajDoGrupy.setOnAction(e -> {
                 TextField clientIdField = new TextField();
                 DatePicker datePicker = new DatePicker();
-            datePicker.setValue(CURRENT_DATE);
+                datePicker.setValue(CURRENT_DATE);
                 TextField badgePicker = new TextField();
                 VBox inputVBox = new VBox(
                         new Label("ID klienta"), clientIdField,
