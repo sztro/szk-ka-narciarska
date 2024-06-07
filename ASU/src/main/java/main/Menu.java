@@ -94,7 +94,7 @@ public class Menu extends Application {
 
         btnHarmonogram.setOnAction(e -> {
             DatePicker datePicker = new DatePicker();
-            datePicker.setValue(LocalDate.of(2024, 1, 1));
+            datePicker.setValue(CURRENT_DATE);
             Button okButton = new Button("OK");
             VBox datePickerVBox = new VBox(datePicker, okButton);
             datePickerVBox.setSpacing(10);
@@ -216,7 +216,7 @@ public class Menu extends Application {
         btnWyswietlWyplateDzienna.setOnAction(e -> {
             TextField idField = new TextField();
             DatePicker datePicker = new DatePicker();
-            datePicker.setValue(LocalDate.of(2024, 1, 1));
+            datePicker.setValue(CURRENT_DATE);
             VBox inputVBox = new VBox(
                     new Label("ID Instruktora"),
                     idField,
@@ -255,7 +255,7 @@ public class Menu extends Application {
         btnUmowNaLekcjeZInstruktorem.setOnAction(e -> {
             TextField instructorIdField = new TextField();
             DatePicker datePicker = new DatePicker();
-            datePicker.setValue(LocalDate.of(2024, 1, 1));
+            datePicker.setValue(CURRENT_DATE);
             TextField startHourField = new TextField();
             TextField endHourField = new TextField();
             TextField clientIdField = new TextField();
@@ -295,7 +295,7 @@ public class Menu extends Application {
         btnDodajNieobecnosc.setOnAction(e -> {
             TextField idField = new TextField();
             DatePicker datePicker = new DatePicker();
-            datePicker.setValue(LocalDate.of(2024, 1, 1));
+            datePicker.setValue(CURRENT_DATE);
             TextField godzinaRozpoczeciaField = new TextField();
             TextField godzinaZakonczeniaField = new TextField();
             VBox inputVBox = new VBox(
@@ -344,7 +344,7 @@ public class Menu extends Application {
 
         btnUmowNaLekcjeZDowolnymInstruktorem.setOnAction(e -> {
             DatePicker datePicker = new DatePicker();
-            datePicker.setValue(LocalDate.of(2024, 1, 1));
+            datePicker.setValue(CURRENT_DATE);
             TextField startHourField = new TextField();
             TextField endHourField = new TextField();
             TextField clientIdField = new TextField();
@@ -381,7 +381,7 @@ public class Menu extends Application {
 
         btnWyswietlGrupy.setOnAction(e -> {
             DatePicker datePicker = new DatePicker();
-            datePicker.setValue(LocalDate.of(2024, 1, 1));
+            datePicker.setValue(CURRENT_DATE);
             Button okButton = new Button("OK");
             VBox datePickerVBox = new VBox(datePicker, okButton);
             datePickerVBox.setSpacing(10);
@@ -406,7 +406,7 @@ public class Menu extends Application {
         btnDodajDoGrupy.setOnAction(e -> {
                 TextField clientIdField = new TextField();
                 DatePicker datePicker = new DatePicker();
-            datePicker.setValue(LocalDate.of(2024, 1, 1));
+            datePicker.setValue(CURRENT_DATE);
                 TextField badgePicker = new TextField();
                 VBox inputVBox = new VBox(
                         new Label("ID klienta"), clientIdField,

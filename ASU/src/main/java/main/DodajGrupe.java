@@ -29,7 +29,7 @@ public class DodajGrupe {
 
         Label dataRozpoczeciaLabel = new Label("Data Rozpoczęcia:");
         DatePicker dataRozpoczeciaPicker = new DatePicker();
-        dataRozpoczeciaPicker.setValue(LocalDate.of(2024, 1, 1));
+        dataRozpoczeciaPicker.setValue(CURRENT_DATE);
 
         Label maksDzieciLabel = new Label("Maks. Dzieci:");
         TextField maksDzieciField = new TextField();
