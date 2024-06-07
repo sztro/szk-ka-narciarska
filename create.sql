@@ -18899,7 +18899,7 @@ create or replace function harmonogram_add()
 returns trigger as
 $harmonogram_add$
 declare
-	stopnie_pomocicze int[] = '{1,5}';
+	stopnie_pomocnicze int[] = '{1,5}';
 begin
 	if not exists(
 		select * from dostepnosc_sezon 
