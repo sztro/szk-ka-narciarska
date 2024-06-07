@@ -49,6 +49,7 @@ public class Menu extends Application {
 
         for (Button button : buttons) {
             button.setPrefWidth(BUTTON_WIDTH);
+//            button.setStyle("-fx-cursor: hand;");
         }
 
         // Kolumna 1
@@ -88,6 +89,7 @@ public class Menu extends Application {
 
         Scene scene = new Scene(vbox, WIDTH, HEIGHT);
         primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
         primaryStage.show();
 
         btnHarmonogram.setOnAction(e -> {

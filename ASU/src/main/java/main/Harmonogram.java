@@ -8,21 +8,34 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 
 public class Harmonogram {
-    private String data;
+    private LocalDate data;
+    private JFrame frame;
+
     public Harmonogram(String data) {
-        this.data = data;
+        this.data = LocalDate.parse(data);
     }
+
     public void show() {
+        frame = new JFrame("Harmonogram               " + data.toString());
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setSize(800, 600);
+        updateHarmonogram();
+        frame.setVisible(true);
+    }
+
+    private void updateHarmonogram() {
         String url = User.URL;
         String user = User.USERNAME;
         String password = User.PASSWORD;
-
+        frame.setTitle("Harmonogram               " + data.toString());
         try {
             Connection connection = DriverManager.getConnection(url, user, password);
             Statement statement = connection.createStatement();
-            String query = "SELECT * FROM wyswietl_harmonogram('" + data + "')";
+            String query = "SELECT * FROM wyswietl_harmonogram('" + data.toString() + "')";
             ResultSet resultSet = statement.executeQuery(query);
 
             int columnCount = resultSet.getMetaData().getColumnCount();
@@ -57,12 +70,31 @@ public class Harmonogram {
                 table.getColumnModel().getColumn(i).setCellRenderer(renderer);
             }
 
-            JFrame frame = new JFrame("Harmonogram               " + data);
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            frame.add(scrollPane);
-            frame.setSize(800, 600);
-            frame.setVisible(true);
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(scrollPane, BorderLayout.CENTER);
+
+            JButton previousButton = new JButton("Poprzedni dzień");
+            JButton nextButton = new JButton("Następny dzień");
+
+            previousButton.addActionListener(e -> {
+                data = data.minusDays(1);
+                updateHarmonogram();
+            });
+
+            nextButton.addActionListener(e -> {
+                data = data.plusDays(1);
+                updateHarmonogram();
+            });
+
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.add(previousButton);
+            buttonPanel.add(nextButton);
+            panel.add(buttonPanel, BorderLayout.SOUTH);
+
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(panel);
+            frame.revalidate();
+            frame.repaint();
 
             resultSet.close();
             statement.close();
