@@ -50,6 +50,8 @@ DROP RULE IF EXISTS klienci_delete ON klienci CASCADE;
 DROP INDEX IF EXISTS klienci_idx;
 DROP INDEX IF EXISTS instruktorzy_idx;
 
+-------------------------------------------------------------------------------------------------------------------------------------
+
 CREATE TABLE instruktorzy (
 	id_instruktora SERIAL PRIMARY KEY,
 	imie VARCHAR(30) NOT NULL,
@@ -165,6 +167,12 @@ CREATE TABLE lista_oczekujacych (
 	PRIMARY KEY(id_klienta, data_rozpoczecia, id_odznaki)
 );
 
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------- PRZYKŁADOWE DANE ----------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+
 INSERT INTO instruktorzy (imie, nazwisko, numer_telefonu) VALUES
 	('Szymon', 'Trofimiec', 135792468),
 	('Urszula', 'Pilśniak', 111222555),
@@ -264,16 +272,15 @@ INSERT INTO ubezpieczenia (numer_polisy, id_instruktora, data_od, data_do) VALUE
 
 INSERT INTO dostepnosc_sezon (id_instruktora, data_od, data_do) VALUES
     (1, '2024-01-01', '2024-01-18'),
-    (1, '2024-01-23', '2024-02-10'),
     (2, '2023-12-26', '2024-01-05'),
-    (2, '2024-01-16', '2024-02-07'),
-    (3, '2024-01-20', '2024-02-15'),
+    (2, '2024-01-16', '2024-01-21'),
+    (3, '2024-01-20', '2024-01-21'),
     (4, '2023-12-25', '2024-01-01'),
-    (4, '2024-01-15', '2024-01-25'),
+    (4, '2024-01-15', '2024-01-21'),
     (6, '2023-12-26', '2024-01-13'),
     (6, '2024-01-15', '2024-01-19'),
     (7, '2023-12-26', '2024-01-05'),
-    (7, '2024-01-17', '2024-01-27'),
+    (7, '2024-01-17', '2024-01-21'),
 	(8, '2024-01-01', '2024-03-31'),
 	(9, '2024-01-01', '2024-03-31'),
 	(10, '2024-01-01', '2024-03-31'),
@@ -18276,5 +18283,898 @@ INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, i
     (27, '2024-03-31', 16, 17, 451, null, false, 2),
     (27, '2024-03-31', 17, 20, null, null, true, null);
 
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------- FUNKCJE  I WYZWALACZE -------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+   
+create or replace function wstaw_klienta (imiee varchar(30), nazwiskoo varchar(30), kontaktt numeric(9), dataa date) 
+returns bool 
+as $$
+declare 
+    c int;
+begin
+    select into c count(*) 
+    from klienci 
+    where imie = imiee and nazwisko = nazwiskoo and kontakt = kontaktt and data_urodz = dataa;
 
+    if c != 0 then return false;
+    end if;
+    if c = 0 then
+    insert into klienci (imie, nazwisko, kontakt, data_urodz) values
+        (imiee, nazwiskoo, kontaktt, dataa);
+    return true;
+    end if;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function wstaw_nieobecnosci (id int, dataa date, godzina_od numeric(2), godzina_do numeric(2))
+returns bool
+as $$
+begin 
+    insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc) values
+        (id, dataa, godzina_od, godzina_do, null, null, true, null);
+    return true;
+
+    exception 
+    when others then return false;
+end;
+$$ language plpgsql;
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function umow_konkretny(id_in int, dataa date, godzina_od int, godzina_do int, id_kli int, id_sportu int)
+returns bool
+as $$
+begin
+   insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc, id_sportu) values
+        (id_in, dataa, godzina_od, godzina_do, id_kli, null, false, id_sportu);
+        return true;
+        exception
+            when others then return false;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+drop function if exists id_klienta (i varchar(30), n varchar(30));
+create or replace function id_klienta (i varchar(30), n varchar(30))
+returns table (id_klienta int, imie varchar(30), nazwisko varchar(30), kontakt numeric(9), data_urodz date, "Odznaka (narty)" varchar(20), "Odznaka (snnowboard)" varchar(20))
+as $$
+begin
+    return query
+    select *, 
+    	(select o.opis from odznaki o where o.id_odznaki = max_odznaka(k.id_klienta, 1)) as "Odznaka (narty)",
+    	(select o.opis from odznaki o where o.id_odznaki = max_odznaka(k.id_klienta, 2)) as "Odznaka (snnowboard)"
+	from klienci k
+	where k.imie = i
+    and k.nazwisko = n;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function currentdate() returns date
+as $$
+begin
+    return '2024-01-09'::DATE;
+end;
+$$ language plpgsql;
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function har() returns trigger
+as $$
+begin
+    if(new.data < currentdate()) then  return null;
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function dell() returns trigger
+as $$
+begin
+    if(old.data < currentdate()) then  return null;
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+create trigger harmonogram_upd
+before insert or update on harmonogram
+for each row
+execute function har();
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+create trigger harmonogram_del
+before delete on harmonogram
+for each row
+execute function dell();
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function deactivate_and_delete()
+returns void
+as $$
+begin
+    alter table harmonogram disable trigger harmonogram_del;
+    delete from harmonogram
+    where "data" < currentdate() - interval '1 year';
+    alter table harmonogram enable trigger harmonogram_del;
+    return;
+end;
+$$ language plpgsql;
 	
+-------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function wyswietl_harmonogram(dzien date)
+returns table ("Instrukor" varchar(100), "9" text, "10" text, "11" text, "12" text, "13" text,  
+    "14" text,  "15" text, "16" text, "17" text, "18" text, "19" text) as 
+$$
+begin
+    return query
+    select cast(b.id_instruktora || '. ' || b.imie || ' ' || b.nazwisko as varchar(100)) as "Instruktor",
+    	a."9", a."10", a."11", a."12", a."13", a."14", a."15", a."16", a."17", a."18", a."19"
+    from (    
+	    select 
+	    	i.id_instruktora,
+	        max(case when h.godz_od <= 9 and h.godz_do > 9 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
+	            end 
+	        end) as "9",
+	        max(case when h.godz_od <= 10 and h.godz_do > 10 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
+	            end 
+	        end) as "10",
+	        max(case when h.godz_od <= 11 and h.godz_do > 11 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
+	            end 
+	        end) as "11",
+	        max(case when h.godz_od <= 12 and h.godz_do > 12 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
+	            end 
+	        end) as "12",
+	        max(case when h.godz_od <= 13 and h.godz_do > 13 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
+	            end 
+	        end) as "13",
+	        max(case when h.godz_od <= 14 and h.godz_do > 14 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
+	            end 
+	        end) as "14",
+	        max(case when h.godz_od <= 15 and h.godz_do > 15 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
+	            end 
+	        end) as "15",
+	        max(case when h.godz_od <= 16 and h.godz_do > 16 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
+	            end 
+	        end) as "16",
+	        max(case when h.godz_od <= 17 and h.godz_do > 17 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa'  
+	            end 
+	        end) as "17",
+	        max(case when h.godz_od <= 18 and h.godz_do > 18 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
+	            end 
+	        end) as "18",
+	        max(case when h.godz_od <= 19 and h.godz_do > 19 then 
+	            case 
+	                when h.czy_nieobecnosc then 'nieobecność'
+	                when h.id_klienta is not null then substring(s.opis, 1, 1) || ' ' || k.imie
+	                when h.id_grupy is not null then substring(s.opis, 1, 1) || ' ' || 'grupa' 
+	            end 
+	        end) as "19"
+	    from harmonogram h
+	    join instruktorzy i on h.id_instruktora = i.id_instruktora 
+	    left join sporty s on h.id_sportu = s.id_sportu 
+	    left join klienci k on k.id_klienta = h.id_klienta 
+	    where h."data" = dzien
+	    group by i.id_instruktora
+	    order by i.id_instruktora ) a
+    right join (
+    	select i.id_instruktora, i.imie, i.nazwisko
+		from instruktorzy i 
+		join dostepnosc_sezon d on d.id_instruktora = i.id_instruktora 
+		where dzien between d.data_od and d.data_do 
+		group by i.id_instruktora ) b on b.id_instruktora = a.id_instruktora
+	order by b.id_instruktora;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function wyplata(instruktor int, dzien date)
+	returns int as 
+$$
+declare 
+	stawka_narty int;
+	stawka_deska int;
+	l_godzin_narty int;
+	l_godzin_deska int;
+begin 	
+	select s.stawka_godzinowa
+	into stawka_narty 
+	from instruktorzy i 
+		join instruktorzy_stopnie si on si.id_instruktora = i.id_instruktora  
+		join stawki_stopnie s on s.id_stopnia = si.id_stopnia 
+		join stopnie st on s.id_stopnia = st.id_stopnia 
+	where i.id_instruktora = instruktor
+		and st.id_sportu = 1
+	order by si.data_od desc
+	limit 1;
+	select s.stawka_godzinowa
+	into stawka_deska 
+	from instruktorzy i 
+		join instruktorzy_stopnie si on si.id_instruktora = i.id_instruktora  
+		join stawki_stopnie s on s.id_stopnia = si.id_stopnia 
+		join stopnie st on s.id_stopnia = st.id_stopnia 
+	where i.id_instruktora = instruktor
+		and st.id_sportu = 2
+	order by si.data_od desc
+	limit 1;
+	select sum(h.godz_do - h.godz_od)  
+	into l_godzin_narty
+	from harmonogram h 
+	where h.id_instruktora = instruktor
+		and "data" = dzien
+		and czy_nieobecnosc is false
+		and id_sportu = 1;
+	select sum(h.godz_do - h.godz_od)    
+	into l_godzin_deska
+	from harmonogram h 
+	where h.id_instruktora = instruktor
+		and "data" = dzien
+		and czy_nieobecnosc is false
+		and id_sportu = 2;
+	return coalesce(l_godzin_narty * stawka_narty, 0) + coalesce(l_godzin_deska * stawka_deska, 0);
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function umow_dowolny(klient int, dzien date, h_od int, h_do int, sport int)
+	returns varchar(30) as 
+$$
+declare
+	id integer;
+	imie varchar(30);
+begin
+	select h.id_instruktora into id
+	from harmonogram h 
+	join dostepnosc_sezon ds on h.id_instruktora = ds.id_instruktora 
+	join instruktorzy_stopnie ins on ins.id_instruktora = h.id_instruktora 
+	join stopnie s on s.id_stopnia = ins.id_stopnia
+	where s.id_sportu = sport
+		and h.id_instruktora not in (
+		select id_instruktora 
+		from harmonogram h 
+		where "data" = dzien
+			and h.godz_od <= h_od
+			and h.godz_do >= h_do	
+		)
+		and ds.data_od <= dzien
+		and ds.data_do >= dzien
+		and h."data" = dzien
+	group by h.id_instruktora 
+	order by count(*)
+	limit 1;
+	if id is null then return 'Brak instruktora'; end if;
+	insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc, id_sportu) values
+	(id, dzien, h_od, h_do, klient, null, false, sport);
+	select i.imie into imie
+	from instruktorzy i 
+	where i.id_instruktora = id;
+	return imie;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function max_stopien(instruktor int, sport int) 
+	returns varchar(100) as 
+$$
+declare 
+	stopien_instruktora varchar(100);
+begin 
+	select s.nazwa
+	into stopien_instruktora
+	from instruktorzy_stopnie i 
+	left join stopnie s on s.id_stopnia = i.id_stopnia
+	where id_sportu = sport
+		and i.id_instruktora = instruktor
+	order by i.id_stopnia desc
+	limit 1;
+	return stopien_instruktora;
+end;
+$$ language plpgsql; 
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function znajdz_instruktora(im varchar(30)) 
+	returns table (id_instruktora int, imie varchar(30), nazwisko varchar(30), "stopień(narty)" varchar(20), "stopień(snowboard)" varchar(20)) as
+$$
+begin
+    return query
+    select i.id_instruktora, i.imie, i.nazwisko, max_stopien(i.id_instruktora, 1), max_stopien(i.id_instruktora, 2)
+    from instruktorzy i 
+    where i.imie = im;
+end;
+$$ language plpgsql; 
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function dodaj_nieobecnosc(instruktor int, dzien date, h_od numeric(2), h_do numeric(2)) 
+	returns bool as
+$$
+begin
+    insert into harmonogram(id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc, id_sportu) values
+		(instruktor, dzien, h_od, h_do, null, null, true, null);
+	return true;
+	exception
+	when others then return false;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create index if not exists klienci_idx on klienci(imie, nazwisko); --include (id_klienta);
+create index if not exists instruktorzy_idx on instruktorzy(imie); --include (nazwisko, id_instruktora);
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function ile_dzieci(grupa int) 
+	returns int as
+$$ 
+declare 
+	suma int;
+begin
+	select count(*)
+	into suma
+	from dzieci_grupy d
+	where d.id_grupy = grupa;
+	return suma;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function instruktor_grupa(grupa int)
+	returns int as 
+$$
+declare 
+	instruktor int;
+begin 
+	select h.id_instruktora  
+	into instruktor
+	from grupy g 
+	join harmonogram h on h.id_grupy = g.id_grupy 
+	where g.id_grupy = grupa 
+	limit 1;
+	return instruktor; 
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function wyswietl_grupy(dzien date)
+	returns table (id int, odznaka varchar(30), sport varchar(30), instruktor text, data_rozpoczecia date, dzieci int) as 
+$$ 
+begin 
+	return query
+	select 
+		g.id_grupy,
+		o.opis,
+		s.opis,
+		i.imie || ' ' || substring(i.nazwisko, 1, 1),
+		g.data_rozpoczecia,
+		ile_dzieci(g.id_grupy)
+	from grupy g
+	left join odznaki o on o.id_odznaki = g.id_odznaki 
+	left join sporty s on s.id_sportu = o.id_sportu  
+	left join instruktorzy i on i.id_instruktora = instruktor_grupa(g.id_grupy)
+	where g.data_rozpoczecia >= dzien;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function wyswietl_dzieci_grupy(grupa int)
+	returns table (imie varchar(30), nazwisko varchar(30), kontakt numeric(9,0)) as 
+$$ 
+begin 
+	return query
+	select k.imie, k.nazwisko, k.kontakt
+	from dzieci_grupy d
+	join klienci k on k.id_klienta = d.id_klienta 
+	where d.id_grupy = grupa;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+drop function if exists wyswietl_poczekalnie(id_odz int, dzien date);
+create or replace function wyswietl_poczekalnie(id_odz int, dzien date) 
+	returns table (klient text, data_rozpoczecia date, odznaka text) as 
+$$
+begin
+	return query 
+	select l.id_klienta || '. ' || k.imie || ' ' || k.nazwisko, l.data_rozpoczecia, o.opis || '(' || s.opis || ')'
+	from lista_oczekujacych l
+	join klienci k on l.id_klienta = k.id_klienta
+	join odznaki o on o.id_odznaki = l.id_odznaki 
+	join sporty s on s.id_sportu = o.id_sportu
+	where l.id_odznaki = id_odz
+	and l.data_rozpoczecia = dzien;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+drop function if exists wyswietl_poczekalnie();
+create or replace function wyswietl_poczekalnie() 
+	returns table (klient text, data_rozpoczecia date, odznaka text) as 
+$$
+begin
+	return query 
+	select l.id_klienta || '. ' || k.imie || ' ' || k.nazwisko, l.data_rozpoczecia, o.opis || '(' || s.opis || ')'
+	from lista_oczekujacych l
+	join klienci k on l.id_klienta = k.id_klienta
+	join odznaki o on o.id_odznaki = l.id_odznaki 
+	join sporty s on s.id_sportu = o.id_sportu
+	order by l.data_rozpoczecia, l.id_odznaki, k.id_klienta;
+end;
+$$ language plpgsql;
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function b_grupy_insert()
+returns trigger as
+$b_grupy_insert$
+declare
+    licznik int;
+begin
+    select count(*) from lista_oczekujacych into licznik
+	where new.data_rozpoczecia = data_rozpoczecia and new.id_odznaki = id_odznaki;
+    if licznik < new.min_dzieci then
+        raise exception using
+        	errcode = 'ERRDZ',
+        	message = 'Nie ma wystarczająco chętnych by utworzyć grupe',
+        	hint = 'Spróbuj  stworzyć grupe w innym terminie, o innym stopniu, lub poczekaj aż zapisze się wiecej osób';
+        return null;
+	elsif new.data_rozpoczecia < currentdate() then
+		raise exception using
+			errcode = 'ERDAT',
+			message = 'próba utworzenia grupy w przeszłości';
+		return null;
+    end if;
+    return new;
+end;
+$b_grupy_insert$ language plpgsql;
+
+create or replace trigger grupy_insert before insert on grupy
+for each row execute procedure b_grupy_insert();
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function aft_grupy_insert()
+returns trigger as
+$aft_grupy_insert$
+declare
+    licznik int;
+    chetni cursor for select l.id_klienta from lista_oczekujacych l
+	where l.data_rozpoczecia = new.data_rozpoczecia 
+	and l.id_odznaki = new.id_odznaki;
+    rekord record;
+    wskaźnik int := 0;
+begin
+	select 
+		count(*) 
+	from 
+		lista_oczekujacych 
+	into licznik
+	where 
+		new.data_rozpoczecia = data_rozpoczecia 
+		and new.id_odznaki = id_odznaki;
+	open chetni;
+    while wskaźnik < new.maks_dzieci and wskaźnik < licznik loop
+        fetch from chetni into rekord;
+        insert into dzieci_grupy (id_klienta, id_grupy) values (rekord.id_klienta, new.id_grupy);
+       	delete from lista_oczekujacych where current of chetni;
+       	wskaźnik := wskaźnik + 1;
+    end loop;
+    return new;
+end;
+$aft_grupy_insert$ language plpgsql;
+create or replace trigger aft_grupy_insert after insert on grupy
+for each row execute procedure aft_grupy_insert();
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function licznosc_grupy(id_grp int)
+returns int as
+$$
+declare
+a int;
+begin
+	select count(*) from dzieci_grupy d into a where d.id_grupy = id_grp;
+	return a;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function max_odznaka(id_k int, id_s int)
+returns integer as
+$$
+declare
+	a int;
+begin
+	select coalesce(max(id_odznaki),0) from dzieci_odznaki
+	left join odznaki using(id_odznaki) into a
+	where id_klienta = id_k and id_sportu = id_s;
+	return a;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function lista_oczekujacych_ins()
+returns trigger as
+$lista_oczekujacych_ins$
+declare
+	id_grp int;
+begin
+	if new.id_klienta in (
+		select id_klienta from grupy right join dzieci_grupy using(id_grupy)
+		where data_rozpoczecia = new.data_rozpoczecia and id_odznaki = new.id_odznaki)
+	then raise exception using
+		errcode = 'REDUN',
+		message = 'dziecko jest juz w grupie o tych parametrach';
+	elsif max_odznaka(new.id_klienta, ( select id_sportu from odznaki where id_odznaki = new.id_odznaki))+ 2 < new.id_odznaki
+		then raise exception using
+			errcode = 'ODERR',
+			message = 'Dziecko nie ma odpowiedniej odznaki by wpisano je do grupy';
+		return null;
+	elsif exists(
+		select * from grupy 
+		where data_rozpoczecia = new.data_rozpoczecia and id_odznaki = new.id_odznaki 
+		and licznosc_grupy(id_grupy) < maks_dzieci
+	)then	
+		select id_grupy from grupy into id_grp
+		where data_rozpoczecia = new.data_rozpoczecia and id_odznaki = new.id_odznaki 
+		and licznosc_grupy(id_grupy) < maks_dzieci
+		limit 1;
+		
+		insert into dzieci_grupy (id_klienta, id_grupy) VALUES (new.id_klienta, id_grp);
+		return null;
+	end if;
+	return new;
+end;
+$lista_oczekujacych_ins$ language plpgsql;
+create or replace trigger lista_oczekujacych_ins before insert or update on lista_oczekujacych
+for each row execute procedure lista_oczekujacych_ins();
+	
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function harmonogram_add()
+returns trigger as
+$harmonogram_add$
+declare
+	stopnie_pomocicze int[] = '{1,5}';
+begin
+	if not exists(
+		select * from dostepnosc_sezon 
+		where id_instruktora = new.id_instruktora 
+		and new.data between data_od and data_do
+	) then 
+		raise exception using
+			errcode = 'NDOST',
+			message = 'Instruktor o id: '|| new.id_instruktora::text || ' niedostępny w tym czasie',
+			hint = 'Spróbuj dodać w innym terminie';
+		return old;
+	elsif exists (
+		select * from harmonogram
+		where "data" = new.data 
+		and id_instruktora = new.id_instruktora
+		and	(
+			(godz_od >= new.godz_od and godz_od < new.godz_do)
+			or (godz_do > new.godz_od and godz_do <= new.godz_do)
+			or (godz_od <= new.godz_od and godz_do >= new.godz_do)
+		)	
+	) then 
+		raise exception using
+			errcode = 'TAKEN',
+			message = 'Instruktor o id : ' || new.id_instruktora::text || ' ma inne zajęcia w tym terminie',
+			hint = 'Wybierz inny termin';
+		return old;
+	elsif new.id_sportu is not null and new.id_sportu NOT IN 
+		(select id_sportu from instruktorzy_stopnie 
+		left join stopnie using(id_stopnia) 
+		where id_instruktora = new.id_instruktora)
+		then
+			raise exception using
+				errcode = 'STERR',
+				message = 'Instruktor nie uczy tego sportu';
+		return null;
+	elsif (select max(id_stopnia) from instruktorzy_stopnie  i where new.id_instruktora = i.id_instruktora) = ANY(stopnie_pomocnicze) then
+        raise exception using
+            errcode = 'STERR',
+            message = 'Instruktor niewykwalifikowany do nauki tych zajec';
+        return null;
+	elsif new.id_grupy is not null then
+		if (select data_rozpoczecia from grupy g where g.id_grupy = new.id_grupy) >new.data then
+			return null;
+		end if;
+	end if;
+	return new;
+end;
+$harmonogram_add$ language plpgsql;
+create or replace trigger harmonogram_add before insert or update on harmonogram
+for each row execute procedure harmonogram_add();
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace  rule instruktorzy_delete as
+on delete to instruktorzy
+do instead nothing;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function dzieci_grupy_del()
+returns trigger as
+$dzieci_grupy_del$
+declare
+	liczba_osob int;
+	licznik int;
+	maks_osob int;
+	wskaznik int := 0;
+	chetni cursor for select * from lista_oczekujacych
+	where (data_rozpoczecia, id_odznaki) = (
+		select data_rozpoczecia, id_odznaki from grupy
+		where id_grupy = old.id_grupy
+	);
+	rekord record;
+begin
+	liczba_osob := licznosc_grupy(old.id_grupy);
+	select maks_dzieci from grupy into maks_osob where id_grupy = old.id_grupy;
+	select count(*) from lista_oczekujacych into licznik
+	where (data_rozpoczecia, id_odznaki) = (
+		select data_rozpoczecia, id_odznaki from grupy
+		where id_grupy = old.id_grupy);
+	licznik := licznik;	
+	if liczba_osob < maks_osob then 
+		open chetni;
+		while liczba_osob < maks_osob and wskaznik < licznik loop
+			fetch from chetni into rekord;
+			wskaznik := wskaznik + 1;
+			if rekord.id_klienta in (select id_klienta from dzieci_grupy where id_grupy = old.id_grupy) then
+				delete from lista_oczekujacych where current of chetni;
+				continue;
+			end if;
+        	insert into dzieci_grupy (id_klienta, id_grupy) values (rekord.id_klienta, old.id_grupy);
+        	delete from lista_oczekujacych where current of chetni;
+        	liczba_osob := liczba_osob + 1;
+		end loop;
+		return new;
+	end if;
+	if liczba_osob = 0 then
+		delete from grupy where id_grupy = old.id_grupy;
+	end if;
+	return new;
+end;
+$dzieci_grupy_del$ language plpgsql;
+create or replace trigger dzieci_grupy_del after update or delete on dzieci_grupy
+for each row execute procedure dzieci_grupy_del();
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace rule grupy_update as
+on update to grupy
+do instead nothing;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function dostepnosc_sezon_tr()
+returns trigger as
+$dostepnosc_sezon_tr$
+declare
+	data_licznik date;
+begin
+	data_licznik := new.data_od;
+	while data_licznik <= new.data_do loop
+		if not exists(
+			select * from ubezpieczenia 
+			where data_licznik between data_od and data_do
+			and id_instruktora = new.id_instruktora )
+		then return null;
+		end if;
+		data_licznik := data_licznik + interval '1 day' ;
+	end loop;
+	return new;
+end;
+$dostepnosc_sezon_tr$ language plpgsql;
+create or replace trigger dostepnosc_sezon_tr before update or insert on dostepnosc_sezon
+for each row execute procedure dostepnosc_sezon_tr();
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function odznaki_immutability()
+returns trigger as
+$$
+begin
+	return null;
+end;
+$$ language plpgsql;
+create or replace trigger odznaki_immutability
+before update or delete on odznaki
+for each row execute procedure odznaki_immutability();
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function dzieci_grupy_insert()
+returns trigger as 
+$dzieci_grupy_insert$
+declare
+	odznaka int;
+begin
+	select id_odznaki from grupy g into odznaka 
+	where g.id_grupy = new.id_grupy;
+	if max_odznaka(new.id_klienta, ( select id_sportu from odznaki where id_odznaki = odznaka  ) )+ 2 < odznaka
+		then raise exception using
+			errcode = 'ODERR',
+			message = 'Dziecko nie ma odpowiedniej odznaki by wpisano je do grupy';
+		return old;
+	end if;
+	return new;
+end;
+$dzieci_grupy_insert$ language plpgsql;
+create or replace trigger dzieci_grupy_insert before insert or update on dzieci_grupy
+for each row execute procedure dzieci_grupy_insert();
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace rule klienci_delete as
+on delete to klienci
+do instead nothing;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+ create or replace function dodaj_do_grupy(id_klienta int, id_odznaki int, data_rozpoczecia date)
+returns text as
+$$
+declare
+	ilosc_czekajacych int;
+begin
+	select count(*) from lista_oczekujacych into ilosc_czekajacych;
+	insert into lista_oczekujacych(id_klienta, id_odznaki, data_rozpoczecia) values (id_klienta, id_odznaki, data_rozpoczecia);
+	if (select count(*) from lista_oczekujacych) = ilosc_czekajacych then 
+		return 'Dodano do grupy';
+	else 
+		return 'Dodano do poczekani';
+	end if;
+exception 
+	when sqlstate 'ODERR' then
+		return 'Dziecko nie ma odpowiedniej odznaki';
+	when sqlstate 'REDUN' then
+		return 'Dziecko jest juz w grupie o tych parametrach';
+	when others then
+		return 'Błąd';
+end;
+$$ language plpgsql;
+	
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function dodaj_grupe(instruktor int, id_odzn int, data_rozpoczecia date, maks_dzieci int, min_dzieci int)
+returns text as
+$$ 
+declare
+	godz_od int;
+	godz_do int;
+	data_it date;
+	grupa int;
+	sport int;
+begin
+		godz_do = 12;
+		godz_od = 9;
+		data_it = data_rozpoczecia;
+		insert into grupy
+			(id_odznaki,data_rozpoczecia, maks_dzieci, min_dzieci) 
+		values
+			(id_odzn, data_rozpoczecia, maks_dzieci, min_dzieci);
+		select max(id_grupy) into grupa from grupy;
+		select id_sportu into sport from odznaki o where id_odzn = o.id_odznaki;
+		for i in 1 .. 5 loop
+			INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc, id_sportu) VALUES
+			(instruktor, data_it, godz_od, godz_do, null, grupa, false, sport);
+			 data_it := data_it + interval '1 day';
+		 end loop;
+		return 'Grupe utworzono pomyślnie';
+exception
+	when sqlstate 'ERRDZ' then
+		return 'Za mało dzieci by utworzyć grupe';
+	when sqlstate 'NDOST' then
+		return 'Instruktor nie ma dostępności w tym czasie';
+	when sqlstate 'STERR' then
+		return 'Instruktor nie ma kwalifikacji by prowadzić tą grupe';
+	when sqlstate 'TAKEN' then
+		return 'Instruktor ma inne zajęcia w tym terminie';
+	when sqlstate 'ERDAT' then
+		return 'Grupa tworzona w przeszłości';
+	when others then
+		return 'Błąd';
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace rule dostepnosc_sezon_rule1 as
+on  update to dostepnosc_sezon
+do instead nothing;
+create or replace rule dostepnosc_sezon_rule2 as
+on delete to dostepnosc_sezon
+do instead nothing;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function nadaj_odznake(id_klienta int, id_odznaki int, data_uzysk date )
+returns bool as
+$$
+begin
+	insert into dzieci_odznaki(id_klienta, id_odznaki, data_uzysk) values
+	(id_klienta, id_odznaki, data_uzysk);
+	return true;
+	exception
+    	when others then
+    		return false;
+end;
+$$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace function archiwizuj_liste_oczekujacych()
+returns void as
+$$
+begin
+	delete from lista_oczekujacych where data_rozpoczecia < currentdate();
+end;
+$$ language plpgsql;
+
