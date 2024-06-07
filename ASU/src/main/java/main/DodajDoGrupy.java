@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Objects;
 
 import static main.WindowSize.*;
 
@@ -47,8 +48,10 @@ public class DodajDoGrupy {
             JLabel messageLabel = new JLabel();
             messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
             messageLabel.setText(result);
-            Poczekalnia poczekalnia = new Poczekalnia(clientId,date);
-            poczekalnia.show();
+            if (result.equals("Dodano do poczekani")) {
+                Poczekalnia poczekalnia = new Poczekalnia(clientId, date);
+                poczekalnia.show();
+            }
 
             frame.add(messageLabel, BorderLayout.CENTER);
             frame.setVisible(true);

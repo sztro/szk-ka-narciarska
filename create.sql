@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS harmonogram CASCADE;
 DROP TABLE IF EXISTS stawki_stopnie;
 DROP TABLE IF EXISTS sporty;
 DROP TABLE IF EXISTS lista_oczekujacych CASCADE;
-drop functionIF EXISTS wyswietl_dzieci_grupy(grupa int) cascade;
+drop function IF EXISTS wyswietl_dzieci_grupy(grupa int) cascade;
 DROP FUNCTION IF EXISTS umow_konkretny (id_in integer, dataa date, godzina_od integer, godzina_do integer, id_kli integer) CASCADE;
 DROP FUNCTION IF EXISTS wstaw_klienta(varchar(30), varchar(30), numeric(9), date) CASCADE;
 DROP FUNCTION IF EXISTS wstaw_nieobecnosci(int, date, numeric(2), numeric(2)) CASCADE;
@@ -909,7 +909,12 @@ INSERT INTO odznaki (opis, id_sportu) VALUES
     ('złota', 1),
     ('złota', 2);
 
---INSERT INTO dzieci_odznaki(id_klienta, id_odznaki, data_uzysk) values;
+INSERT INTO dzieci_odznaki(id_klienta, id_odznaki, data_uzysk) values
+	(12, 2, '2014-01-01'),
+	(18, 4, '2014-01-01'),
+	(18, 7, '2014-01-01'),
+	(40, 1, '2014-01-01'),
+	(62, 3, '2014-01-01');
 
 
 INSERT INTO grupy (id_odznaki, data_rozpoczecia, maks_dzieci, min_dzieci) VALUES
