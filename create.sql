@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS harmonogram CASCADE;
 DROP TABLE IF EXISTS stawki_stopnie;
 DROP TABLE IF EXISTS sporty;
 DROP TABLE IF EXISTS lista_oczekujacych CASCADE;
+drop functionIF EXISTS wyswietl_dzieci_grupy(grupa int) cascade;
 DROP FUNCTION IF EXISTS umow_konkretny (id_in integer, dataa date, godzina_od integer, godzina_do integer, id_kli integer) CASCADE;
 DROP FUNCTION IF EXISTS wstaw_klienta(varchar(30), varchar(30), numeric(9), date) CASCADE;
 DROP FUNCTION IF EXISTS wstaw_nieobecnosci(int, date, numeric(2), numeric(2)) CASCADE;

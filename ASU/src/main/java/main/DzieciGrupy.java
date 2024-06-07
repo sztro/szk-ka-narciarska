@@ -1,26 +1,22 @@
 package main;
 
 import javax.swing.*;
-import javax.swing.event.MouseInputAdapter;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import static main.WindowSize.*;
+import static main.WindowSize.HEIGHT;
+import static main.WindowSize.WIDTH;
 
-public class WyswietlGrupy {
-
-    private String date;
-
-    public WyswietlGrupy(String date) {
-        this.date = date;
+public class DzieciGrupy {
+    private int grupa;
+    public DzieciGrupy(int grupa) {
+        this.grupa = grupa;
     }
-
     public void show() {
         String url = User.URL;
         String user = User.USERNAME;
@@ -29,7 +25,7 @@ public class WyswietlGrupy {
         try {
             Connection connection = DriverManager.getConnection(url, user, password);
             Statement statement = connection.createStatement();
-            String query = "SELECT * FROM wyswietl_grupy('" + date + "')";
+            String query = "SELECT * FROM wyswietl_dzieci_grupy(" + grupa + ")";
             ResultSet resultSet = statement.executeQuery(query);
 
             int columnCount = resultSet.getMetaData().getColumnCount();
@@ -50,31 +46,20 @@ public class WyswietlGrupy {
             JTable table = new JTable(tableModel);
             JScrollPane scrollPane = new JScrollPane(table);
 
-            TableColumnModel columnModel = table.getColumnModel();
-            TableColumn firstColumn = columnModel.getColumn(0);
-            firstColumn.setMaxWidth(22);
+            TableColumn column = table.getColumnModel().getColumn(0);
+            int preferredWidth = 0;
+            for (int row = 0; row < table.getRowCount(); row++) {
+                TableCellRenderer cellRenderer = table.getCellRenderer(row, 0);
+                Component c = table.prepareRenderer(cellRenderer, row, 0);
+                preferredWidth = Math.max(c.getPreferredSize().width, preferredWidth);
+            }
+            column.setPreferredWidth(preferredWidth + 10);
 
-            table.addMouseListener(new MouseInputAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getClickCount() == 1) {
-                        JTable target = (JTable)e.getSource();
-                        int row = target.getSelectedRow();
-                        String stringValue = (String) table.getValueAt(row, 0);
-                        int value = Integer.parseInt(stringValue);
-                        DzieciGrupy addgroup = new DzieciGrupy(value);
-                        addgroup.show();
-//                        JOptionPane.showMessageDialog(null, "Wartość z pierwszej kolumny: " + value);
-                    }
-                }
-            });
-
-            JFrame frame = new JFrame("Dostępne grupy od daty: " + date);
+            JFrame frame = new JFrame("Grupa");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.add(scrollPane);
             frame.setSize(WIDTH, HEIGHT);
-            frame.setLayout(new BorderLayout());
             frame.setLocationRelativeTo(null);
-            frame.add(scrollPane, BorderLayout.CENTER);
             frame.setVisible(true);
 
             resultSet.close();

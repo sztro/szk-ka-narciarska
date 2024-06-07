@@ -127,10 +127,9 @@ $$ language plpgsql;
 --32 - 46 snnowboard
 --120 - 220 klienci
 insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc, id_sportu) values
---    --GRUPY
-    (8, '2024-01-01', 9, 12, null, 1, false, 1),
+	(8, '2024-01-01', 9, 12, null, 1, false, 1),
     (8, '2024-01-02', 9, 12, null, 1, false, 1),
-         (8, '2024-01-03', 9, 12, null, 1, false, 1),
+    (8, '2024-01-03', 9, 12, null, 1, false, 1),
          (8, '2024-01-04', 9, 12, null, 1, false, 1),
          (8, '2024-01-05', 9, 12, null, 1, false, 1),
          (33, '2024-01-01', 9, 12, null, 6, false, 2),
@@ -178,11 +177,6 @@ insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, i
          (37, '2024-01-31', 9, 12, null, 10, false, 2),
          (37, '2024-02-01', 9, 12, null, 10, false, 2),
          (37, '2024-02-02', 9, 12, null, 10, false, 2),
-     --poniedziałek (id_instruktora, "data", godz_od, godz_do, id_klienta, id_grupy, czy_nieobecnosc, id_sportu)
---         (7, '2024-01-01', 12, 13, 257, null, false, 1),
---         (7, '2024-01-01', 13, 14, null, null, true, null),
---         (7, '2024-01-01', 14, 16, 258, null, false, 1),
---         (7, '2024-01-01', 17, 20, 259, null, false, 1),
          (8, '2024-01-01', 12, 14, 260, null, false, 1),
          (8, '2024-01-01', 14, 15, null, null, true, null),
          (8, '2024-01-01', 15, 17, 261, null, false, 1),
@@ -344,10 +338,6 @@ insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, i
           (46, '2024-01-01', 14, 15, null, null, true, null),
           (46, '2024-01-01', 15, 17, 264, null, false, 2),
           (46, '2024-01-01', 17, 19, 265, null, false, 2),
---          (7, '2024-01-03', 12, 13, 257, null, false, 1),
---          (7, '2024-01-03', 13, 14, null, null, true, null),
---          (7, '2024-01-03', 14, 16, 258, null, false, 1),
---          (7, '2024-01-03', 17, 20, 259, null, false, 1),
           (8, '2024-01-03', 12, 14, 260, null, false, 1),
           (8, '2024-01-03', 14, 15, null, null, true, null),
           (8, '2024-01-03', 15, 17, 261, null, false, 1),
@@ -542,6 +532,7 @@ INSERT INTO dzieci_odznaki(id_klienta, id_odznaki, data_uzysk) VALUES
     (147, 10,'2024-02-03'),
     (148, 10,'2024-02-03'),
     (149, 10,'2024-02-03');
+   
 INSERT INTO dzieci_grupy (id_klienta, id_grupy) VALUES
     (120,1),
     (121,1),
