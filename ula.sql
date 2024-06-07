@@ -938,4 +938,4 @@ insert into harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, i
 (46, '2024-01-04', 11, 12, 205, null, false, 2),
 (46, '2024-01-04', 12, 13, 206, null, false, 2),
 (46, '2024-01-04', 14, 15, null, null, true, null),
-(46, '2024-01-04', 16, 17, 207, null, false, 2),
+(46, '2024-01-04', 16, 17, 207, null, false, 2);
