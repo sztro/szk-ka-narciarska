@@ -18282,6 +18282,21 @@ INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, i
     (27, '2024-03-31', 14, 15, null, null, true, null),
     (27, '2024-03-31', 16, 17, 451, null, false, 2),
     (27, '2024-03-31', 17, 20, null, null, true, null);
+   
+   insert into lista_oczekujacych(id_klienta, data_rozpoczecia, id_odznaki) values 
+	(5, '2024-01-08', 1),
+	(6, '2024-01-08', 1),
+	(7, '2024-01-08', 1),
+	(9, '2024-01-08', 1),
+	(1, '2024-01-08', 1),
+	(2, '2024-01-15', 2),
+	(3, '2024-01-15', 2),
+	(4, '2024-01-15', 2),
+	(8, '2024-01-15', 2),
+	(3, '2024-01-08', 2),
+	(2, '2024-01-08', 2),
+	(1, '2024-01-08', 3),
+	(4, '2024-01-08', 3);
 
 -------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------------------
@@ -18297,7 +18312,7 @@ declare
 begin
     select into c count(*) 
     from klienci 
-    where imie = imiee and nazwisko = nazwiskoo and kontakt = kontaktt and data_urodz = dataa;
+    where imie = imiee and nazwisko = nazwiskoo and kontakt = kontaktt;
 
     if c != 0 then return false;
     end if;
@@ -18340,7 +18355,6 @@ $$ language plpgsql;
 
 ------------------------------------------------------------------------------------------------------------------------------------
 
-drop function if exists id_klienta (i varchar(30), n varchar(30));
 create or replace function id_klienta (i varchar(30), n varchar(30))
 returns table (id_klienta int, imie varchar(30), nazwisko varchar(30), kontakt numeric(9), data_urodz date, "Odznaka (narty)" varchar(20), "Odznaka (snnowboard)" varchar(20))
 as $$
@@ -18369,7 +18383,10 @@ $$ language plpgsql;
 create or replace function har() returns trigger
 as $$
 begin
-    if(new.data < currentdate()) then  return null;
+    if(new.data < currentdate()) then  
+   		raise exception using
+   			errcode = 'ERDAT',
+   			message = 'Nie można edytować harmonogramu wstecz';
     end if;
     return new;
 end;
