@@ -197,9 +197,9 @@ public class Menu extends Application {
                 String contact = contactField.getText();
                 LocalDate birthDate = birthDatePicker.getValue();
                 if (!firstName.isEmpty() && !lastName.isEmpty() && !contact.isEmpty()) {
-                    long contactNumber;
+                    String contactNumber;
                     try {
-                        contactNumber = Long.parseLong(contact);
+                        contactNumber = contact;
                         String birthDateString = (birthDate != null) ? birthDate.toString() : null;
                         DodajKlienta addClient = new DodajKlienta(firstName, lastName, contactNumber, birthDateString);
                         addClient.show();

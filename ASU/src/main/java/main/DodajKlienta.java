@@ -12,10 +12,10 @@ import static main.WindowSize.*;
 public class DodajKlienta {
     private String firstName;
     private String lastName;
-    private long contact;
+    private String contact;
     private String birthDate;
 
-    public DodajKlienta(String firstName, String lastName, long contact, String birthDate) {
+    public DodajKlienta(String firstName, String lastName, String contact, String birthDate) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.contact = contact;
@@ -32,9 +32,9 @@ public class DodajKlienta {
             Statement statement = connection.createStatement();
             String query;
             if (birthDate != null) {
-                query = "SELECT wstaw_klienta('" + firstName + "', '" + lastName + "', " + contact + ", '" + birthDate + "')";
+                query = "SELECT wstaw_klienta('" + firstName + "', '" + lastName + "', '" + contact + "', '" + birthDate + "')";
             } else {
-                query = "SELECT wstaw_klienta('" + firstName + "', '" + lastName + "', " + contact + ", NULL)";
+                query = "SELECT wstaw_klienta('" + firstName + "', '" + lastName + "', '" + contact + "', NULL)";
             }            ResultSet resultSet = statement.executeQuery(query);
 
             boolean result = false;
