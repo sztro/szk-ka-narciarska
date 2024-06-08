@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS stawki_stopnie;
 DROP TABLE IF EXISTS sporty;
 DROP TABLE IF EXISTS lista_oczekujacych CASCADE;
 DROP FUNCTION IF EXISTS umow_konkretny (id_in integer, dataa date, godzina_od integer, godzina_do integer, id_kli integer) CASCADE;
-DROP FUNCTION IF EXISTS wstaw_klienta(varchar(30), varchar(30), numeric(9), date) CASCADE;
+DROP FUNCTION IF EXISTS wstaw_klienta(varchar(30), varchar(30), varchar(15), date) CASCADE;
 DROP FUNCTION IF EXISTS wstaw_nieobecnosci(int, date, numeric(2), numeric(2)) CASCADE;
 DROP FUNCTION IF EXISTS umow_konkretny(int, date, int, int, int, int) CASCADE;
 DROP FUNCTION IF EXISTS id_klienta(varchar(30), varchar(30)) CASCADE;
@@ -62,7 +62,7 @@ CREATE TABLE instruktorzy (
 	id_instruktora SERIAL PRIMARY KEY,
 	imie VARCHAR(30) NOT NULL,
 	nazwisko VARCHAR(30) NOT NULL,
-	numer_telefonu NUMERIC(9) NOT NULL
+	numer_telefonu varchar(15) NOT NULL
 );
 
 CREATE TABLE sporty (
@@ -113,7 +113,7 @@ CREATE TABLE klienci (
     id_klienta SERIAL PRIMARY KEY,
     imie VARCHAR(30) NOT NULL,
     nazwisko VARCHAR(30) NOT NULL,
-    kontakt NUMERIC(9) NOT NULL,
+    kontakt varchar(15) NOT NULL,
     data_urodz DATE
 );
 
@@ -18310,7 +18310,7 @@ INSERT INTO harmonogram (id_instruktora, "data", godz_od, godz_do, id_klienta, i
 -------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------------------
    
-create or replace function wstaw_klienta (imiee varchar(30), nazwiskoo varchar(30), kontaktt numeric(9), dataa date) 
+create or replace function wstaw_klienta (imiee varchar(30), nazwiskoo varchar(30), kontaktt varchar(15), dataa date) 
 returns bool 
 as $$
 declare 
@@ -18362,7 +18362,7 @@ $$ language plpgsql;
 ------------------------------------------------------------------------------------------------------------------------------------
 
 create or replace function id_klienta (i varchar(30), n varchar(30))
-returns table (id_klienta int, imie varchar(30), nazwisko varchar(30), kontakt numeric(9), data_urodz date, "Odznaka (narty)" varchar(20), "Odznaka (snnowboard)" varchar(20))
+returns table (id_klienta int, imie varchar(30), nazwisko varchar(30), kontakt varchar(15), data_urodz date, "Odznaka (narty)" varchar(20), "Odznaka (snnowboard)" varchar(20))
 as $$
 begin
     return query
