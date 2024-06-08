@@ -13,7 +13,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import java.awt.GraphicsEnvironment;
 
 import java.time.LocalDate;
 
@@ -452,7 +451,6 @@ public class Menu extends Application {
     }
 
     public static void main(String[] args) {
-
         launch(args);
     }
 }
