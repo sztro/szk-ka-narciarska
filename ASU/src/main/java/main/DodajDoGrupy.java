@@ -49,7 +49,7 @@ public class DodajDoGrupy {
             messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
             messageLabel.setText(result);
             if (result.equals("Dodano do poczekani")) {
-                Poczekalnia poczekalnia = new Poczekalnia(clientId, date);
+                Poczekalnia poczekalnia = new Poczekalnia(badgeId, date);
                 poczekalnia.show();
             }
 
