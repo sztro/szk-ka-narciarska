@@ -62,7 +62,8 @@ CREATE TABLE instruktorzy (
 	id_instruktora SERIAL PRIMARY KEY,
 	imie VARCHAR(30) NOT NULL,
 	nazwisko VARCHAR(30) NOT NULL,
-	numer_telefonu varchar(15) NOT NULL
+	numer_telefonu varchar(15) NOT null,
+	CONSTRAINT kontakt_in_check CHECK (numer_telefonu ~ '^[+0-9][0-9]*$')
 );
 
 CREATE TABLE sporty (
@@ -114,7 +115,8 @@ CREATE TABLE klienci (
     imie VARCHAR(30) NOT NULL,
     nazwisko VARCHAR(30) NOT NULL,
     kontakt varchar(15) NOT NULL,
-    data_urodz DATE
+    data_urodz DATE,
+    CONSTRAINT kontakt_kl_check CHECK (kontakt ~ '^[+0-9][0-9]*$')
 );
 
 CREATE TABLE odznaki (
