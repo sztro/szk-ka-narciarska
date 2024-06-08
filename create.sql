@@ -18744,7 +18744,7 @@ $$ language plpgsql;
 ------------------------------------------------------------------------------------------------------------------------------------
 
 create or replace function wyswietl_dzieci_grupy(grupa int)
-	returns table (imie varchar(30), nazwisko varchar(30), kontakt numeric(9,0)) as 
+	returns table (imie varchar(30), nazwisko varchar(30), kontakt varchar(15)) as 
 $$ 
 begin 
 	return query
