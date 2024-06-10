@@ -70,14 +70,17 @@ public class Harmonogram {
                             }
                             int response = JOptionPane.showConfirmDialog(frame, message, "Potwierdzenie", JOptionPane.YES_NO_OPTION);
                             if (response == JOptionPane.YES_OPTION) {
+                                try {
                                 Object firstColumnValue = target.getValueAt(row, 0);
                                 String godzina = target.getColumnName(column);
                                 int index = firstColumnValue.toString().indexOf('.');
                                 String id = firstColumnValue.toString().substring(0, index);
+                                Connection connection = DriverManager.getConnection(url, user, password);
+                                Statement statement = connection.createStatement();
                                 String query = "SELECT usun_zajecia(" + id + ", '" + data.toString() + "', " + godzina + ");";
                                 System.out.println(query);
-                                try {
-                                    ResultSet resultSet = statement.executeQuery(query);
+                                ResultSet resultSet = statement.executeQuery(query);
+                                updateHarmonogram();
                                 } catch (SQLException ex) {
                                     throw new RuntimeException(ex);
                                 }
