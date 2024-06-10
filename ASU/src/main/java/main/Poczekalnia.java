@@ -47,7 +47,6 @@ public class Poczekalnia {
                 }
                 tableModel.addRow(rowData);
 
-                // Create group key based on date and badge
                 String groupKey = rowData[1] + rowData[2];
                 if (!groupKeys.contains(groupKey)) {
                     groupKeys.add(groupKey);
