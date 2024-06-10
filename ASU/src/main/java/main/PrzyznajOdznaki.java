@@ -45,10 +45,17 @@ public class PrzyznajOdznaki {
         stage.show();
 
         submitButton.setOnAction(e -> {
-            int idKlienta = Integer.parseInt(idKlientaField.getText());
-            int idOdznaki = Integer.parseInt(idOdznakiField.getText());
-            String dataUzyskania = dataUzyskaniaPicker.getValue().toString();
+            int idKlienta = -1;
+            int idOdznaki = -1;
 
+            try {
+                idKlienta = Integer.parseInt(idKlientaField.getText());
+                idOdznaki = Integer.parseInt(idOdznakiField.getText());
+            } catch(NumberFormatException ex) {
+                System.out.println("Zły format danych");
+                return;
+            }
+            String dataUzyskania = dataUzyskaniaPicker.getValue().toString();
             boolean result = nadajOdznake(idKlienta, idOdznaki, dataUzyskania);
 //            JLabel messageLabel = new JLabel();
 //            messageLabel.setHorizontalAlignment(SwingConstants.CENTER);

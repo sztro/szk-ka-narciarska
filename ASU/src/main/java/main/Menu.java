@@ -192,6 +192,7 @@ public class Menu extends Application {
             addStage.setScene(new Scene(addVBox, 300, 300));
             addStage.show();
             addButton.setOnAction(event -> {
+
                 String firstName = firstNameField.getText();
                 String lastName = lastNameField.getText();
                 String contact = contactField.getText();
@@ -280,15 +281,20 @@ public class Menu extends Application {
             confirmStage.setScene(new Scene(confirmVBox, 400, 500));
             confirmStage.show();
             confirmButton.setOnAction(event -> {
-                int instructorId = Integer.parseInt(instructorIdField.getText());
-                LocalDate selectedDate = datePicker.getValue();
-                int startHour = Integer.parseInt(startHourField.getText());
-                int endHour = Integer.parseInt(endHourField.getText());
-                int clientId = Integer.parseInt(clientIdField.getText());
-                int sportId = Integer.parseInt(sportIdField.getText());
-                UmowDoKonkretnego scheduleLesson = new UmowDoKonkretnego(instructorId, selectedDate.toString(), startHour, endHour, clientId, sportId);
-                scheduleLesson.show();
-                confirmStage.close();
+                try {
+                    int instructorId = Integer.parseInt(instructorIdField.getText());
+                    LocalDate selectedDate = datePicker.getValue();
+                    int startHour = Integer.parseInt(startHourField.getText());
+                    int endHour = Integer.parseInt(endHourField.getText());
+                    int clientId = Integer.parseInt(clientIdField.getText());
+                    int sportId = Integer.parseInt(sportIdField.getText());
+                    UmowDoKonkretnego scheduleLesson = new UmowDoKonkretnego(instructorId, selectedDate.toString(), startHour, endHour, clientId, sportId);
+                    scheduleLesson.show();
+                    confirmStage.close();
+                } catch(NumberFormatException ex) {
+                    System.out.println("Nieprawidłowy format danych");
+                    return;
+                }
             });
         });
 
@@ -368,14 +374,20 @@ public class Menu extends Application {
             confirmStage.setScene(new Scene(confirmVBox, 400, 500));
             confirmStage.show();
             confirmButton.setOnAction(event -> {
-                LocalDate selectedDate = datePicker.getValue();
-                int startHour = Integer.parseInt(startHourField.getText());
-                int endHour = Integer.parseInt(endHourField.getText());
-                int clientId = Integer.parseInt(clientIdField.getText());
-                int sportId = Integer.parseInt(sportIdField.getText());
-                UmowDoDowolnego scheduleLesson = new UmowDoDowolnego(selectedDate.toString(), startHour, endHour, clientId, sportId);
-                scheduleLesson.show();
-                confirmStage.close();
+                try {
+                    LocalDate selectedDate = datePicker.getValue();
+                    int startHour = Integer.parseInt(startHourField.getText());
+                    int endHour = Integer.parseInt(endHourField.getText());
+                    int clientId = Integer.parseInt(clientIdField.getText());
+                    int sportId = Integer.parseInt(sportIdField.getText());
+                    UmowDoDowolnego scheduleLesson = new UmowDoDowolnego(selectedDate.toString(), startHour, endHour, clientId, sportId);
+                    scheduleLesson.show();
+                    confirmStage.close();
+                } catch(NumberFormatException ex) {
+                    System.out.println("Nieprawidłowy format danych");
+                    return;
+                }
+
             });
         });
 
@@ -425,12 +437,16 @@ public class Menu extends Application {
                 confirmStage.setScene(new Scene(confirmVBox, SMALL_WIDTH, 250));
                 confirmStage.show();
                 confirmButton.setOnAction(event -> {
-                    int clientId = Integer.parseInt(clientIdField.getText());
-                    LocalDate selectedDate = datePicker.getValue();
-                    int badgeId = Integer.parseInt(badgePicker.getText());
-                    DodajDoGrupy addgroup = new DodajDoGrupy( clientId, selectedDate.toString(), badgeId);
-                    addgroup.show();
-                    confirmStage.close();
+                    try {
+                        int clientId = Integer.parseInt(clientIdField.getText());
+                        LocalDate selectedDate = datePicker.getValue();
+                        int badgeId = Integer.parseInt(badgePicker.getText());
+                        DodajDoGrupy addgroup = new DodajDoGrupy(clientId, selectedDate.toString(), badgeId);
+                        addgroup.show();
+                        confirmStage.close();
+                    }catch(NumberFormatException ex) {
+                        System.out.println("Nieprawidłowy format danych");
+                    }
                 });
         });
 

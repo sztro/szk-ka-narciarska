@@ -49,14 +49,18 @@ public class DodajGrupe {
         stage.show();
 
         submitButton.setOnAction(e -> {
-            int idInstruktora = Integer.parseInt(idInstruktoraField.getText());
-            int idOdznaki = Integer.parseInt(idOdznakiField.getText());
-            int maksDzieci = Integer.parseInt(maksDzieciField.getText());
-            int minDzieci = Integer.parseInt(minDzieciField.getText());
-            String dataRozpoczecia = dataRozpoczeciaPicker.getValue().toString();
+            try {
+                int idInstruktora = Integer.parseInt(idInstruktoraField.getText());
+                int idOdznaki = Integer.parseInt(idOdznakiField.getText());
+                int maksDzieci = Integer.parseInt(maksDzieciField.getText());
+                int minDzieci = Integer.parseInt(minDzieciField.getText());
+                String dataRozpoczecia = dataRozpoczeciaPicker.getValue().toString();
 
-            String result = dodajGrupe(idInstruktora, idOdznaki, dataRozpoczecia, maksDzieci, minDzieci);
-            JOptionPane.showMessageDialog(null, result);
+                String result = dodajGrupe(idInstruktora, idOdznaki, dataRozpoczecia, maksDzieci, minDzieci);
+                JOptionPane.showMessageDialog(null, result);
+            }catch(NumberFormatException ex){
+                System.out.println("Nieprawidłowy format danych");
+            }
         });
     }
 
