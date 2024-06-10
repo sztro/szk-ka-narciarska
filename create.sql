@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS harmonogram CASCADE;
 DROP TABLE IF EXISTS stawki_stopnie;
 DROP TABLE IF EXISTS sporty;
 DROP TABLE IF EXISTS lista_oczekujacych CASCADE;
+DROP FUNCTION IF EXISTS usun_zajecia( id_instr int, p_data date, godz numeric(2)) CASCADE;
 DROP FUNCTION IF EXISTS umow_konkretny (id_in integer, dataa date, godzina_od integer, godzina_do integer, id_kli integer) CASCADE;
 DROP FUNCTION IF EXISTS wstaw_klienta(varchar(30), varchar(30), varchar(15), date) CASCADE;
 DROP FUNCTION IF EXISTS wstaw_nieobecnosci(int, date, numeric(2), numeric(2)) CASCADE;
@@ -18407,9 +18408,25 @@ as $$
 begin
     if(old.data < currentdate()) then  return null;
     end if;
-    return new;
+    return old;
 end;
 $$ language plpgsql;
+
+------------------------------------------------------------------------------------------------------------------------------------
+create or replace function usun_zajecia( id_instr int, p_data date, godz numeric(2))
+returns bool
+as $$
+begin
+    delete from harmonogram
+    where id_instruktora = id_instr and "data" = p_data and godz >= godz_od and godz < godz_do and id_grupy = null;
+    if id_grupy != null then return false;
+    end if;
+    return true;
+    exception
+        when others then return false;
+end;
+$$ language plpgsql;
+
 
 -------------------------------------------------------------------------------------------------------------------------------------
 

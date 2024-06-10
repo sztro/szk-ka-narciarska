@@ -44,6 +44,7 @@ DROP FUNCTION IF EXISTS nadaj_odznake(int, int, date) CASCADE;
 DROP FUNCTION IF EXISTS archiwizuj_liste_oczekujacych();
 DROP FUNCTION IF EXISTS currentdate();
 DROP FUNCTION IF EXISTS deactivate_and_delete();
+DROP FUNCTION IF EXISTS usun_zajecia( id_instr int, p_data date, godz numeric(2)) CASCADE;
 DROP FUNCTION IF EXISTS dell();
 DROP FUNCTION IF EXISTS har();
 DROP FUNCTION IF EXISTS instruktor_grupa(int);

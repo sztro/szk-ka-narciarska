@@ -5,8 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="624c215c-9f32-4d9a-9a29-bf39ea276c7c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ASU/src/main/java/main/Harmonogram.java" beforeDir="false" afterPath="$PROJECT_DIR$/ASU/src/main/java/main/Harmonogram.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ula.sql" beforeDir="false" afterPath="$PROJECT_DIR$/ula.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASU/src/main/java/main/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/ASU/src/main/java/main/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clear.sql" beforeDir="false" afterPath="$PROJECT_DIR$/clear.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/create.sql" beforeDir="false" afterPath="$PROJECT_DIR$/create.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,10 +19,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 2
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 2
+}</component>
   <component name="ProjectId" id="2hHLvdpD5VWPH8tGyHO370l6twy" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -28,13 +31,14 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Harmonogram.executor": "Run",
+    "Application.Menu.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/krzac/szk-ka-narciarska"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Menu">
     <configuration name="Harmonogram" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="main.Harmonogram" />
       <module name="asu" />
@@ -48,8 +52,22 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Menu" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="main.Menu" />
+      <module name="asu" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="main.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Menu" />
         <item itemvalue="Application.Harmonogram" />
       </list>
     </recent_temporary>
@@ -64,5 +82,16 @@
       <updated>1717246291169</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

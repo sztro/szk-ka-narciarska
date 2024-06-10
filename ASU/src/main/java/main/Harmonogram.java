@@ -80,6 +80,8 @@ public class Harmonogram {
                                 String query = "SELECT usun_zajecia(" + id + ", '" + data.toString() + "', " + godzina + ");";
                                 System.out.println(query);
                                 ResultSet resultSet = statement.executeQuery(query);
+                                boolean result = statement.execute(query);
+                                    System.out.printf(String.valueOf(result));
                                 updateHarmonogram();
                                 } catch (SQLException ex) {
                                     throw new RuntimeException(ex);
