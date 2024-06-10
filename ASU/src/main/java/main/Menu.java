@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import org.postgresql.util.PSQLException;
 
 import java.time.LocalDate;
 
@@ -199,15 +200,11 @@ public class Menu extends Application {
                 LocalDate birthDate = birthDatePicker.getValue();
                 if (!firstName.isEmpty() && !lastName.isEmpty() && !contact.isEmpty()) {
                     String contactNumber;
-                    try {
                         contactNumber = contact;
                         String birthDateString = (birthDate != null) ? birthDate.toString() : null;
                         DodajKlienta addClient = new DodajKlienta(firstName, lastName, contactNumber, birthDateString);
                         addClient.show();
                         addStage.close();
-                    } catch (NumberFormatException ex) {
-                        System.out.println("Nieprawidłowy format numeru kontaktowego");
-                    }
                 } else {
                     System.out.println("Proszę wypełnić wszystkie pola z wyjątkiem daty urodzenia, jeśli nie jest dostępna");
                 }

@@ -64,7 +64,7 @@ public class DodajKlienta {
             statement.close();
             connection.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Nieprawidłowy format danych");
         }
     }
 }
