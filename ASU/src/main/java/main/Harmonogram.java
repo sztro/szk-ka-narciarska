@@ -4,10 +4,9 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.*;
 import java.time.LocalDate;
 
 public class Harmonogram {
@@ -55,6 +54,38 @@ public class Harmonogram {
 
             JTable table = new JTable(tableModel);
             JScrollPane scrollPane = new JScrollPane(table);
+
+            table.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        JTable target = (JTable)e.getSource();
+                        int row = target.getSelectedRow();
+                        int column = target.getSelectedColumn();
+                        Object value = target.getValueAt(row, column);
+
+                        if (value != null && !value.toString().isEmpty()) {
+                            String message = "Usunąć zajęcia?";
+                            if ("nieobecność".equalsIgnoreCase(value.toString())) {
+                                message = "Usunąć nieobecność?";
+                            }
+                            int response = JOptionPane.showConfirmDialog(frame, message, "Potwierdzenie", JOptionPane.YES_NO_OPTION);
+                            if (response == JOptionPane.YES_OPTION) {
+                                Object firstColumnValue = target.getValueAt(row, 0);
+                                String godzina = target.getColumnName(column);
+                                int index = firstColumnValue.toString().indexOf('.');
+                                String id = firstColumnValue.toString().substring(0, index);
+                                String query = "SELECT usun_zajecia(" + id + ", '" + data.toString() + "', " + godzina + ");";
+                                System.out.println(query);
+                                try {
+                                    ResultSet resultSet = statement.executeQuery(query);
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
 
             TableColumn column = table.getColumnModel().getColumn(0);
             int preferredWidth = 0;
