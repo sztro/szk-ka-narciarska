@@ -18418,9 +18418,9 @@ returns bool
 as $$
 begin
     delete from harmonogram
-    where id_instruktora = id_instr and "data" = p_data and godz >= godz_od and godz < godz_do and id_grupy = null;
-    if id_grupy != null then return false;
-    end if;
+    where id_instruktora = id_instr and "data" = p_data and  id_grupy is null
+    and godz >= godz_od and godz < godz_do;
+
     return true;
     exception
         when others then return false;
